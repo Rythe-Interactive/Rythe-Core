@@ -6,6 +6,7 @@ add_library(core ${RYTHE_LIBRARY_TYPE} ${sources})
 rythe_add_third_party(
 	CURRENT core
 	LIBRARY spdlog
+	LIBRARY_HEADER_ONLY
 	PATH "${RYTHE_DIR_ENGINE}/core/third_party/spdlog"
 	INCLUDE "${RYTHE_DIR_ENGINE}/core/third_party/spdlog/include"
 	FOLDER "third_party"
@@ -15,6 +16,7 @@ rythe_add_third_party(
 rythe_add_third_party(
 	CURRENT core
 	LIBRARY tinygltf
+	LIBRARY_HEADER_ONLY
 	PATH "${RYTHE_DIR_ENGINE}/core/third_party/tinygltf"
 	INCLUDE "${RYTHE_DIR_ENGINE}/core/third_party/"
 	FOLDER "third_party/tinygltf"
@@ -25,6 +27,7 @@ set(JUST_INSTALL_CEREAL ON CACHE BOOL "" FORCE)
 rythe_add_third_party(
 	CURRENT core
 	LIBRARY cereal
+	LIBRARY_HEADER_ONLY
 	PATH "${RYTHE_DIR_ENGINE}/core/third_party/cereal"
 	INCLUDE "${RYTHE_DIR_ENGINE}/core/third_party/cereal/include"
 	FOLDER "third_party"
@@ -58,6 +61,7 @@ set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 rythe_add_third_party(
 	CURRENT core
 	LIBRARY tinyobjloader
+	LIBRARY_HEADER_ONLY
 	PATH "${RYTHE_DIR_ENGINE}/core/third_party/tinyobj"
 	INCLUDE "${RYTHE_DIR_ENGINE}/core/third_party/tinyobj"
 	FOLDER "third_party"
