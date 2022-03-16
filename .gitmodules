@@ -1,0 +1,21 @@
+[submodule "third_party/spdlog"]
+	path = third_party/spdlog
+	url = https://github.com/gabime/spdlog.git
+[submodule "third_party/tinygltf"]
+	path = third_party/tinygltf
+	url = https://github.com/syoyo/tinygltf.git
+[submodule "third_party/cereal"]
+	path = third_party/cereal
+	url = https://github.com/USCiLab/cereal.git
+[submodule "third_party/argh"]
+	path = third_party/argh
+	url = https://github.com/adishavit/argh.git
+[submodule "third_party/opencl"]
+	path = third_party/opencl
+	url = https://github.com/KhronosGroup/OpenCL-SDK.git
+[submodule "third_party/tinyobj"]
+	path = third_party/tinyobj
+	url = https://github.com/Rythe-Interactive/tinyobjloader.git
+[submodule "third_party/stb"]
+	path = third_party/stb
+	url = https://github.com/nothings/stb.git
