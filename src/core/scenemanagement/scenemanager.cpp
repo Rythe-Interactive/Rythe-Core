@@ -2,9 +2,6 @@
 #include <core/serialization/serializationutil.hpp>
 #include <core/logging/logging.hpp>
 #include <core/common/string_extra.hpp>
-//#include <core/defaults/defaultcomponents.hpp>
-//#include <rendering/components/camera.hpp>
-
 
 namespace legion::core::scenemanagement
 {
