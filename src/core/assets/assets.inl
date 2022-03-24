@@ -344,17 +344,17 @@ namespace legion::core::assets
         if (!traits.is_valid_path)
         {
             progress->complete(legion_exception_msg("invalid file traits: not a valid path"));
-            return;
+            return {};
         }
         else if (!traits.exists)
         {
             progress->complete(legion_exception_msg("invalid file traits: file does not exist"));
-            return;
+            return {};
         }
         else if (!traits.can_be_read)
         {
             progress->complete(legion_exception_msg("invalid file traits: file cannot be read"));
-            return;
+            return {};
         }
 
         schd::Scheduler::queueJobs(1, [
