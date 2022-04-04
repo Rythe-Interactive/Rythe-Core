@@ -1,0 +1,51 @@
+# GH Action: Build
+# Clones Rythe-Engine, but changes the submodule hash to {{ github.sha }}
+name: build
+on: [push, pull_request]
+  
+jobs:
+  build:
+    name: "${{ matrix.platform }} (${{ matrix.type }}) (${{ matrix.compiler }})"
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        type: [Debug, Release]
+        platform: [windows-2019]
+        compiler: [clang++]
+
+        include:
+          # MSVC + Clang requires setting the cmake toolset to "-T ClangCL"
+          - platform: windows-2019
+            compiler: clang++
+            toolset: -T ClangCL
+
+    # Runner platform
+    runs-on: ${{ matrix.platform }}
+
+    steps:
+    - name: Clone Rythe-Engine
+      run: git clone --recurse-submodules --branch develop https://github.com/Rythe-Interactive/Rythe-Engine.git
+
+    - name: Change submodule commit
+      working-directory: Rythe-Engine/rythe/engine/core
+      run: git checkout ${{ github.sha }}
+
+    - name: Create Build Environment
+      run: cmake -E make_directory Rythe-Engine/build
+
+    - name: Configure CMake
+      shell: bash
+      working-directory: Rythe-Engine/build
+      run: cmake ../
+        ${{ matrix.toolset }}
+        -DCMAKE_CXX_COMPILER=${{ matrix.compiler }} 
+        -DCMAKE_BUILD_TYPE=${{ matrix.type }}
+        -DRYTHE_BUILD_APPLICATIONS=ON
+        -DRYTHE_BUILD_OPTION_ASAN=ON
+        # -DRYTHE_MODULE_CORE Core is an exception; it doesn't need to be enabled manually
+
+    - name: Build all
+      working-directory: Rythe-Engine/build
+      shell: bash
+      run: cmake --build . --config ${{ matrix.type }}
