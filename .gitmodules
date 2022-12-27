@@ -19,3 +19,9 @@
 [submodule "third_party/stb"]
 	path = third_party/stb
 	url = https://github.com/nothings/stb.git
+[submodule "third_party/robin-map"]
+	path = third_party/robin-map
+	url = https://github.com/Tessil/robin-map.git
+[submodule "third_party/impossibly-fast-delegates"]
+	path = third_party/impossibly-fast-delegates
+	url = https://github.com/Rythe-Interactive/impossibly-fast-delegates.git
