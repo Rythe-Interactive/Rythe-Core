@@ -78,5 +78,14 @@ rythe_add_third_party(
 	FOLDER_TARGETS stb
 )
 
+rythe_add_third_party(
+	CURRENT core
+	LIBRARY rythe-standard-library
+	PATH "${RYTHE_DIR_ENGINE}/core/third_party/rythe-standard-library"
+	INCLUDE "${RYTHE_DIR_ENGINE}/core/third_party/rythe-standard-library/src"
+	FOLDER "third_party"
+	FOLDER_TARGETS rythe-standard-library
+)
+
 rythe_configure_module(core)
 rythe_copy_module_output(core rythe/engine/core)
