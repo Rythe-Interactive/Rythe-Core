@@ -3,9 +3,10 @@
 #include <memory>
 #include <type_traits>
 
-#include <core/common/assert.hpp>
-#include <core/containers/delegate.hpp>
-#include <core/async/rw_spinlock.hpp>
+#include <rsl/delegate>
+
+#include "core/common/assert.hpp"
+#include "core/async/rw_spinlock.hpp"
 
 namespace rythe::core::common
 {
@@ -22,7 +23,7 @@ namespace rythe::core::common
 
             constexpr _managed_resource_del(T* src) noexcept : m_store(src) {}
 
-            void operator()(delegate<void(T&)>* const _ptr) const
+            void operator()(rsl::delegate<void(T&)>* const _ptr) const
             {
                 _ptr->invoke(*m_store);
                 delete _ptr;
@@ -37,13 +38,13 @@ namespace rythe::core::common
         T value;
 
     private:
-        std::shared_ptr<delegate<void(T&)>> m_ref_counter;
+        std::shared_ptr<rsl::delegate<void(T&)>> m_ref_counter;
 
     public:
         explicit managed_resource(std::nullptr_t) : value(), m_ref_counter(nullptr) {}
 
         template<typename... Args>
-        managed_resource(delegate<void(T&)> destroyFunc, Args&&... args) noexcept(std::is_nothrow_constructible_v<T, Args...>)
+        managed_resource(rsl::delegate<void(T&)> destroyFunc, Args&&... args) noexcept(std::is_nothrow_constructible_v<T, Args...>)
             : value(std::forward<Args>(args)...),
             m_ref_counter(new delegate<void(T&)>(destroyFunc), detail::_managed_resource_del<T>{ &value })
         {

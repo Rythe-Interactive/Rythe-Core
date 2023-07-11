@@ -18,7 +18,7 @@ namespace rythe::core
     }
 
     template<>
-    inline data_view<byte> image::raw_data<byte>()
+    inline data_view<rsl::byte> image::raw_data<rsl::byte>()
     {
         if (m_format == channel_format::eight_bit)
             return m_data;
@@ -56,7 +56,7 @@ namespace rythe::core
     }
 
     template<>
-    inline const data_view<byte> image::raw_data<byte>() const
+    inline const data_view<rsl::byte> image::raw_data<rsl::byte>() const
     {
         if (m_format == channel_format::eight_bit)
             return { m_data.data(), m_data.size(), m_data.offset() };

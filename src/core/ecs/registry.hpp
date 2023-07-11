@@ -3,20 +3,20 @@
 #include <unordered_map>
 #include <memory>
 
-#include <core/containers/sparse_map.hpp>
-#include <core/containers/hashed_sparse_set.hpp>
 #include <rsl/primitives>
 #include <rsl/type_util>
-#include <core/common/hash.hpp>
-#include <core/engine/enginesubsystem.hpp>
+#include <rsl/hash>
 
-#include <core/ecs/containers/component_pool.hpp>
-#include <core/ecs/data/component_type.hpp>
-#include <core/ecs/handles/entity.hpp>
-#include <core/ecs/handles/component.hpp>
-#include <core/ecs/data/entity_data.hpp>
-#include <core/ecs/prototypes/entity_prototype.hpp>
-#include <core/ecs/meta/meta.hpp>
+#include "core/containers/sparse_map.hpp"
+#include "core/containers/hashed_sparse_set.hpp"
+#include "core/engine/enginesubsystem.hpp"
+#include "core/ecs/containers/component_pool.hpp"
+#include "core/ecs/data/component_type.hpp"
+#include "core/ecs/handles/entity.hpp"
+#include "core/ecs/handles/component.hpp"
+#include "core/ecs/data/entity_data.hpp"
+#include "core/ecs/prototypes/entity_prototype.hpp"
+#include "core/ecs/meta/meta.hpp"
 
 /**
  * @file registry.hpp
@@ -53,7 +53,7 @@ namespace rythe::core::ecs
 
         static std::unordered_map<rsl::id_type, std::unique_ptr<component_type_base>>& componentTypes();
 
-        L_NODISCARD static rsl::id_type getNextEntityId();
+        R_NODISCARD static rsl::id_type getNextEntityId();
 
         static void onInit();
         static void onShutdown();
@@ -65,7 +65,7 @@ namespace rythe::core::ecs
          *       doesn't require a check for whether the world already exists or not.
          * @return World entity.
          */
-        L_NODISCARD static entity getWorld();
+        R_NODISCARD static entity getWorld();
 
         /**@brief Manually registers a component type. Allows use of non templated functions for this component type.
          * @note This function generally not necessary to call manually. All templated functions will try to register
@@ -88,33 +88,33 @@ namespace rythe::core::ecs
         /**@brief Get a pointer to the family of a certain component type.
          */
         template<typename ComponentType, typename... Args>
-        L_NODISCARD static component_pool<ComponentType>* getFamily(Args&&... args);
+        R_NODISCARD static component_pool<ComponentType>* getFamily(Args&&... args);
 
         /**@brief Non templated way to get a pointer to the family of a certain component type.
          * @note Will throw an exception if non of the templated functions have been called
          *       before for this component type due to the type not being registered yet.
          * @param typeId Local type hash of the component type.
          */
-        L_NODISCARD static component_pool_base* getFamily(rsl::id_type typeId);
+        R_NODISCARD static component_pool_base* getFamily(rsl::id_type typeId);
 
-        L_NODISCARD static const std::string& getFamilyName(rsl::id_type id);
+        R_NODISCARD static const std::string& getFamilyName(rsl::id_type id);
 
         /**@brief Gets the container with all the component storage families.
          */
-        L_NODISCARD static std::unordered_map<rsl::id_type, std::unique_ptr<component_pool_base>>& getFamilies();
+        R_NODISCARD static std::unordered_map<rsl::id_type, std::unique_ptr<component_pool_base>>& getFamilies();
 
         /**@brief Creates empty entity with the world as its parent.
          */
-        L_NODISCARD static entity createEntity();
+        R_NODISCARD static entity createEntity();
 
-        L_NODISCARD static entity createEntity(const std::string& name);
+        R_NODISCARD static entity createEntity(const std::string& name);
 
         /**@brief Creates empty entity with a specific entity as its parent.
          * @param parent Entity to assign as the parent of the new entity.
          */
-        L_NODISCARD static entity createEntity(entity parent);
+        R_NODISCARD static entity createEntity(entity parent);
 
-        L_NODISCARD static entity createEntity(const std::string& name, entity parent);
+        R_NODISCARD static entity createEntity(const std::string& name, entity parent);
 
         /**@brief Destroys an entity and all its components.
          * @param target Entity to destroy.
@@ -127,26 +127,26 @@ namespace rythe::core::ecs
          * @param target Entity to check.
          * @return True if the entity is valid and alive, false if the entity is dead or non existent.
          */
-        L_NODISCARD static bool checkEntity(entity target);
-        L_NODISCARD static bool checkEntity(rsl::id_type target);
+        R_NODISCARD static bool checkEntity(entity target);
+        R_NODISCARD static bool checkEntity(rsl::id_type target);
 
         /**@brief Gets the component compositions of all entities.
          */
-        L_NODISCARD static std::unordered_map<rsl::id_type, std::unordered_set<rsl::id_type>>& entityCompositions();
+        R_NODISCARD static std::unordered_map<rsl::id_type, std::unordered_set<rsl::id_type>>& entityCompositions();
 
         /**@brief Gets the entity specific data of all entities.
          */
-        L_NODISCARD static std::unordered_map<rsl::id_type, entity_data>& entityData();
+        R_NODISCARD static std::unordered_map<rsl::id_type, entity_data>& entityData();
 
         /**@brief Gets the component composition of a specific entity.
          */
-        L_NODISCARD static std::unordered_set<rsl::id_type>& entityComposition(entity target);
-        L_NODISCARD static std::unordered_set<rsl::id_type>& entityComposition(rsl::id_type target);
+        R_NODISCARD static std::unordered_set<rsl::id_type>& entityComposition(entity target);
+        R_NODISCARD static std::unordered_set<rsl::id_type>& entityComposition(rsl::id_type target);
 
         /**@brief Gets the entity specific data of a specific entity.
          */
-        L_NODISCARD static entity_data& entityData(rsl::id_type target);
-        L_NODISCARD static entity getEntity(rsl::id_type target);
+        R_NODISCARD static entity_data& entityData(rsl::id_type target);
+        R_NODISCARD static entity getEntity(rsl::id_type target);
 
         /**@brief Creates a new component of a certain type for a specific entity.
          * @tparam ComponentType Type of component to create.
@@ -207,17 +207,17 @@ namespace rythe::core::ecs
          * @return True if the target has the component, false if not.
          */
         template<typename ComponentType>
-        L_NODISCARD static bool hasComponent(entity target);
+        R_NODISCARD static bool hasComponent(entity target);
 
         template<typename ComponentType0, typename ComponentType1, typename... ComponentTypeN>
-        L_NODISCARD static bool hasComponent(entity target);
+        R_NODISCARD static bool hasComponent(entity target);
 
         /**@brief Checks if a specific entity has a certain component.
          * @param typeId Type hash of the component type to check for.
          * @param target Entity to check the component for.
          * @return True if the target has the component, false if not.
          */
-        L_NODISCARD static bool hasComponent(rsl::id_type typeId, entity target);
+        R_NODISCARD static bool hasComponent(rsl::id_type typeId, entity target);
 
         /**@brief Gets a reference to an existing component.
          * @tparam ComponentType Type of the component to fetch.
@@ -225,17 +225,17 @@ namespace rythe::core::ecs
          * @return Reference to the component.
          */
         template<typename ComponentType>
-        L_NODISCARD static component_ref_t<ComponentType> getComponent(entity target);
+        R_NODISCARD static component_ref_t<ComponentType> getComponent(entity target);
 
         template<typename ComponentType0, typename ComponentType1, typename... ComponentTypeN>
-        L_NODISCARD static component_ref_tuple<ComponentType0, ComponentType1, ComponentTypeN... > getComponent(entity target);
+        R_NODISCARD static component_ref_tuple<ComponentType0, ComponentType1, ComponentTypeN... > getComponent(entity target);
 
         /**@brief Gets a pointer to an existing component.
          * @param typeId Type hash of the component to fetch.
          * @param target Entity to get the component from.
          * @return Pointer to the component.
          */
-        L_NODISCARD static void* getComponent(rsl::id_type typeId, entity target);
+        R_NODISCARD static void* getComponent(rsl::id_type typeId, entity target);
     };
 
     ReportSubSystem(Registry);

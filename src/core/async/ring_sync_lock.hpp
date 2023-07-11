@@ -18,11 +18,11 @@ namespace rythe::core::async
     {
     private:
         const rsl::uint m_maxRank;
-        std::atomic_rsl::uint m_rank;
+        std::atomic_uint m_rank;
         const std::thread::id owningThread;
         rw_spinlock m_waitersLock;
         std::unordered_map<rsl::uint, transferable_atomic<rsl::uint>> m_waiters;
-        std::atomic_rsl::uint m_subscribers;
+        std::atomic_uint m_subscribers;
         std::atomic_bool m_release;
 
     public:

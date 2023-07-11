@@ -5,7 +5,7 @@
 #include <core/containers/containers.hpp>
 #include <core/filesystem/resource.hpp>
 #include <core/filesystem/view.hpp>
-#include <core/logging/logging.hpp>
+#include <rsl/logging>
 
 /**
  * @file assetimporter.hpp

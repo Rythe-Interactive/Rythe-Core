@@ -1,6 +1,6 @@
 #include <core/async/async_operation.hpp>
 #include <thread>
-#include <core/logging/logging.hpp>
+#include <rsl/logging>
 
 namespace rythe::core::async
 {
@@ -73,7 +73,7 @@ namespace rythe::core::async
                 break;
             case wait_priority::real_time:
             default:
-                L_PAUSE_INSTRUCTION();
+                R_PAUSE_INSTRUCTION();
                 break;
             }
         }

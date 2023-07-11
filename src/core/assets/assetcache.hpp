@@ -4,15 +4,16 @@
 #include <memory>
 
 #include <rsl/type_util>
-#include <core/filesystem/filesystem.hpp>
-#include <core/common/result.hpp>
-#include <core/async/async_operation.hpp>
-#include <core/engine/engine.hpp>
-#include <core/engine/enginesubsystem.hpp>
 
-#include <core/assets/asset.hpp>
-#include <core/assets/assetloader.hpp>
-#include <core/assets/import_settings.hpp>
+#include "core/filesystem/filesystem.hpp"
+#include "core/common/result.hpp"
+#include "core/async/async_operation.hpp"
+#include "core/engine/engine.hpp"
+#include "core/engine/enginesubsystem.hpp"
+               
+#include "core/assets/asset.hpp"
+#include "core/assets/assetloader.hpp"
+#include "core/assets/import_settings.hpp"
 
 namespace rythe::core::assets
 {
@@ -65,7 +66,7 @@ namespace rythe::core::assets
 
     public:
 
-        static byte reportAssetToEngine();
+        static rsl::byte reportAssetToEngine();
 
         template<typename LoaderType>
         static bool hasLoader();
@@ -119,4 +120,4 @@ namespace rythe::core::assets
     };
 }
 
-#define ReportAssetType(Type) ANON_VAR(byte, CONCAT(_reportAsset_, Type)) = rythe::core::assets::AssetCache< Type >::reportAssetToEngine();
+#define ReportAssetType(Type) ANON_VAR(rsl::byte, CONCAT(_reportAsset_, Type)) = rythe::core::assets::AssetCache< Type >::reportAssetToEngine();

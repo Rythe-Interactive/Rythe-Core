@@ -3,9 +3,10 @@
 #include <unordered_set>
 
 #include <rsl/primitives>
-#include <core/containers/hashed_sparse_set.hpp>
+#include <rsl/utilities>
 
-#include <core/ecs/meta/meta.hpp>
+#include "core/containers/hashed_sparse_set.hpp"
+#include "core/ecs/meta/meta.hpp"
 
 /**
  * @file entity.hpp
@@ -168,33 +169,33 @@ namespace rythe::core::ecs
          *        Specializations are for: nullptr_t, rsl::id_type, entity.
          */
         template<typename T>
-        L_NODISCARD bool operator ==(T val) const;
+        R_NODISCARD bool operator ==(T val) const;
 
         /**@brief Not equal operator with any numerical types or other entities.
          *        Specializations are for: nullptr_t, rsl::id_type, entity.
          */
         template<typename T>
-        L_NODISCARD bool operator !=(T val) const;
+        R_NODISCARD bool operator !=(T val) const;
 
         /**@brief Allows entity handles to act like an entity ID.
          * @return ID of the entity.
          */
-        L_NODISCARD operator rsl::id_type () const noexcept;
+        R_NODISCARD operator rsl::id_type () const noexcept;
 
         /**@brief Checks if the entity is alive and valid.
          * @return True if the entity is alive and valid, otherwise false.
          * @note There might be more convenient alternatives like: `if(entity)` or `if(entity != nullptr)`
          */
-        L_NODISCARD bool valid() const noexcept;
+        R_NODISCARD bool valid() const noexcept;
 
         /**@brief Directly access the entity specific data.
          * @return Returns entity.data
          */
-        L_NODISCARD entity_data* operator->() noexcept;
-        L_NODISCARD const entity_data* operator->() const noexcept;
+        R_NODISCARD entity_data* operator->() noexcept;
+        R_NODISCARD const entity_data* operator->() const noexcept;
 
-        L_NODISCARD std::unordered_set<rsl::id_type>& component_composition();
-        L_NODISCARD const std::unordered_set<rsl::id_type>& component_composition() const;
+        R_NODISCARD std::unordered_set<rsl::id_type>& component_composition();
+        R_NODISCARD const std::unordered_set<rsl::id_type>& component_composition() const;
 
         /**@brief Replaces current parent with a new one.
          */
@@ -205,7 +206,7 @@ namespace rythe::core::ecs
          * @note You could also use entity->parent or entity.data->parent. This will avoid a possible function call.
          *       This function exists for legacy reasons and for API completeness.
          */
-        L_NODISCARD entity get_parent() const;
+        R_NODISCARD entity get_parent() const;
 
         /**@brief Adds a new child to this entity and thus makes this entity replace the child's current parent.
          */
@@ -231,37 +232,37 @@ namespace rythe::core::ecs
 
         /**@brief Fetches set of all child entities of this entity.
          */
-        L_NODISCARD entity_set& children();
-        L_NODISCARD const entity_set& children() const;
+        R_NODISCARD entity_set& children();
+        R_NODISCARD const entity_set& children() const;
 
         /**@brief Fetches a specific child in the children list of this entity.
          * @note Children in the list are in no specific ordering due to memory pooling.
          */
-        L_NODISCARD entity get_child(rsl::size_type index) const;
+        R_NODISCARD entity get_child(rsl::size_type index) const;
 
         /**@brief Gets iterator to the first child.
          */
-        L_NODISCARD child_iterator begin();
-        L_NODISCARD const_child_iterator begin() const;
-        L_NODISCARD const_child_iterator cbegin() const;
+        R_NODISCARD child_iterator begin();
+        R_NODISCARD const_child_iterator begin() const;
+        R_NODISCARD const_child_iterator cbegin() const;
 
         /**@brief Gets reverse iterator to the last child.
          */
-        L_NODISCARD child_reverse_iterator rbegin();
-        L_NODISCARD const_child_reverse_iterator rbegin() const;
-        L_NODISCARD const_child_reverse_iterator crbegin() const;
+        R_NODISCARD child_reverse_iterator rbegin();
+        R_NODISCARD const_child_reverse_iterator rbegin() const;
+        R_NODISCARD const_child_reverse_iterator crbegin() const;
 
         /**@brief Gets iterator to the last child.
          */
-        L_NODISCARD child_iterator end();
-        L_NODISCARD const_child_iterator end() const;
-        L_NODISCARD const_child_iterator cend() const;
+        R_NODISCARD child_iterator end();
+        R_NODISCARD const_child_iterator end() const;
+        R_NODISCARD const_child_iterator cend() const;
 
         /**@brief Gets reverse iterator to the first child.
          */
-        L_NODISCARD child_reverse_iterator rend();
-        L_NODISCARD const_child_reverse_iterator rend() const;
-        L_NODISCARD const_child_reverse_iterator crend() const;
+        R_NODISCARD child_reverse_iterator rend();
+        R_NODISCARD const_child_reverse_iterator rend() const;
+        R_NODISCARD const_child_reverse_iterator crend() const;
 
         /**@brief Destroys the entity and it's components. May Destroy all children recursively.
          * @param recurse Whether deeper layers of hierarchy should be destroyed as well or just this entity.
@@ -312,23 +313,23 @@ namespace rythe::core::ecs
          * @return True if the entity has the component, false if not.
          */
         template<typename component_type>
-        L_NODISCARD bool has_component() const;
+        R_NODISCARD bool has_component() const;
         template<typename component_type0, typename component_type1, typename... component_typeN>
-        L_NODISCARD bool has_component() const;
+        R_NODISCARD bool has_component() const;
 
         /**@brief Gets a component handle to a certain component on this entity. 
          * @tparam component_type Type of the component to get.
          * @return Component handle to the component.
          */
         template<typename component_type>
-        L_NODISCARD wrap_component_t<component_type> get_component();
+        R_NODISCARD wrap_component_t<component_type> get_component();
         template<typename component_type>
-        L_NODISCARD const_wrap_component_t<component_type> get_component() const;
+        R_NODISCARD const_wrap_component_t<component_type> get_component() const;
 
         template<typename component_type0, typename component_type1, typename... component_typeN>
-        L_NODISCARD component_tuple<component_type0, component_type1, component_typeN...> get_component();
+        R_NODISCARD component_tuple<component_type0, component_type1, component_typeN...> get_component();
         template<typename component_type0, typename component_type1, typename... component_typeN>
-        L_NODISCARD const_component_tuple<component_type0, component_type1, component_typeN...> get_component() const;
+        R_NODISCARD const_component_tuple<component_type0, component_type1, component_typeN...> get_component() const;
 
         /**@brief Removes and destroys a component from this entity.
          * @tparam component_type Type of the component to remove.

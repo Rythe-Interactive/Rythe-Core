@@ -1,6 +1,6 @@
 #include <core/events/defaultevents.hpp>
 #include <core/scheduling/scheduler.hpp>
-#include <core/logging/logging.hpp>
+#include <rsl/logging>
 
 namespace rythe::core::events
 {

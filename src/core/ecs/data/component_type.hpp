@@ -1,7 +1,7 @@
 #pragma once
-#include <core/ecs/containers/component_pool.hpp>
+#include <rsl/type_util>
 
-#include <core/types/type_util.hpp>
+#include "core/ecs/containers/component_pool.hpp"
 
 namespace rythe::core::ecs
 {
@@ -22,7 +22,7 @@ namespace rythe::core::ecs
     template<typename ComponentType>
     struct component_type : public component_type_base
     {
-        component_type() : component_type_base(nameOfType<ComponentType>(), typeHash<ComponentType>()) {}
+        component_type() : component_type_base(rsl::nameOfType<ComponentType>(), rsl::typeHash<ComponentType>()) {}
         NO_DEF_CTOR_RULE5(component_type);
 
         virtual std::unique_ptr<component_pool_base> create_pool() override

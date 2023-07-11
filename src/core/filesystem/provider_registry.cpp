@@ -2,7 +2,7 @@
 #include <algorithm>
 #include <core/containers/iterator_tricks.hpp>
 #include <rsl/type_util>
-#include <core/logging/logging.hpp>
+#include <rsl/logging>
 #include <core/filesystem/basic_resolver.hpp>
 
 namespace rythe::core::filesystem

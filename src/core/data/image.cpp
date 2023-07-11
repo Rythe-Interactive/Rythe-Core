@@ -10,7 +10,7 @@ namespace rythe::core
         rsl::size_type channelSize = static_cast<rsl::size_type>(m_format);
         rsl::size_type colorSize = static_cast<rsl::size_type>(m_components) * channelSize;
 
-        byte* end = m_data.end();
+        rsl::byte* end = m_data.end();
         for (auto colorPtr = m_data.begin(); colorPtr < end; colorPtr += colorSize)
         {
             math::color color;
@@ -56,8 +56,8 @@ namespace rythe::core
             }
             case image_components::grey_alpha:
             {
-                byte* gPtr = colorPtr + channelSize * 0;
-                byte* aPtr = colorPtr + channelSize * 1;
+                rsl::byte* gPtr = colorPtr + channelSize * 0;
+                rsl::byte* aPtr = colorPtr + channelSize * 1;
 
                 switch (m_format)
                 {
@@ -96,9 +96,9 @@ namespace rythe::core
             }
             case image_components::rgb:
             {
-                byte* rPtr = colorPtr + channelSize * 0;
-                byte* gPtr = colorPtr + channelSize * 1;
-                byte* bPtr = colorPtr + channelSize * 2;
+                rsl::byte* rPtr = colorPtr + channelSize * 0;
+                rsl::byte* gPtr = colorPtr + channelSize * 1;
+                rsl::byte* bPtr = colorPtr + channelSize * 2;
 
                 switch (m_format)
                 {
@@ -134,10 +134,10 @@ namespace rythe::core
             }
             case image_components::rgba:
             {
-                byte* rPtr = colorPtr + channelSize * 0;
-                byte* gPtr = colorPtr + channelSize * 1;
-                byte* bPtr = colorPtr + channelSize * 2;
-                byte* aPtr = colorPtr + channelSize * 3;
+                rsl::byte* rPtr = colorPtr + channelSize * 0;
+                rsl::byte* gPtr = colorPtr + channelSize * 1;
+                rsl::byte* bPtr = colorPtr + channelSize * 2;
+                rsl::byte* aPtr = colorPtr + channelSize * 3;
 
                 switch (m_format)
                 {
@@ -184,7 +184,7 @@ namespace rythe::core
         return common::success;
     }
 
-    image::image(const math::ivec2& res, channel_format format, image_components comp, const data_view<byte>& data)
+    image::image(const math::ivec2& res, channel_format format, image_components comp, const data_view<rsl::byte>& data)
         : m_resolution(res), m_format(format), m_components(comp), m_data(data)
     {
     }
@@ -237,7 +237,7 @@ namespace rythe::core
         if (dataSize != m_data.size())
             return rythe_exception_msg("Image size mismatch");
 
-        byte* end = m_data.end();
+        rsl::byte* end = m_data.end();
         rsl::size_type i = static_cast<rsl::size_type>(0u);
         for (auto colorPtr = m_data.begin(); colorPtr < end; colorPtr += colorSize)
         {
@@ -249,7 +249,7 @@ namespace rythe::core
                 {
                 case channel_format::eight_bit:
                 {
-                    *colorPtr = static_cast<byte>(math::iround(colors[i].r * 255.f));
+                    *colorPtr = static_cast<rsl::byte>(math::iround(colors[i].r * 255.f));
                     break;
                 }
                 case channel_format::sixteen_bit:
@@ -270,15 +270,15 @@ namespace rythe::core
             }
             case image_components::grey_alpha:
             {
-                byte* gPtr = colorPtr + channelSize * 0;
-                byte* aPtr = colorPtr + channelSize * 1;
+                rsl::byte* gPtr = colorPtr + channelSize * 0;
+                rsl::byte* aPtr = colorPtr + channelSize * 1;
 
                 switch (m_format)
                 {
                 case channel_format::eight_bit:
                 {
-                    *gPtr = static_cast<byte>(math::iround(colors[i].r * 255.f));
-                    *aPtr = static_cast<byte>(math::iround(colors[i].a * 255.f));
+                    *gPtr = static_cast<rsl::byte>(math::iround(colors[i].r * 255.f));
+                    *aPtr = static_cast<rsl::byte>(math::iround(colors[i].a * 255.f));
                     break;
                 }
                 case channel_format::sixteen_bit:
@@ -301,17 +301,17 @@ namespace rythe::core
             }
             case image_components::rgb:
             {
-                byte* rPtr = colorPtr + channelSize * 0;
-                byte* gPtr = colorPtr + channelSize * 1;
-                byte* bPtr = colorPtr + channelSize * 2;
+                rsl::byte* rPtr = colorPtr + channelSize * 0;
+                rsl::byte* gPtr = colorPtr + channelSize * 1;
+                rsl::byte* bPtr = colorPtr + channelSize * 2;
 
                 switch (m_format)
                 {
                 case channel_format::eight_bit:
                 {
-                    *rPtr = static_cast<byte>(math::iround(colors[i].r * 255.f));
-                    *gPtr = static_cast<byte>(math::iround(colors[i].g * 255.f));
-                    *bPtr = static_cast<byte>(math::iround(colors[i].b * 255.f));
+                    *rPtr = static_cast<rsl::byte>(math::iround(colors[i].r * 255.f));
+                    *gPtr = static_cast<rsl::byte>(math::iround(colors[i].g * 255.f));
+                    *bPtr = static_cast<rsl::byte>(math::iround(colors[i].b * 255.f));
                     break;
                 }
                 case channel_format::sixteen_bit:
@@ -336,19 +336,19 @@ namespace rythe::core
             }
             case image_components::rgba:
             {
-                byte* rPtr = colorPtr + channelSize * 0;
-                byte* gPtr = colorPtr + channelSize * 1;
-                byte* bPtr = colorPtr + channelSize * 2;
-                byte* aPtr = colorPtr + channelSize * 3;
+                rsl::byte* rPtr = colorPtr + channelSize * 0;
+                rsl::byte* gPtr = colorPtr + channelSize * 1;
+                rsl::byte* bPtr = colorPtr + channelSize * 2;
+                rsl::byte* aPtr = colorPtr + channelSize * 3;
 
                 switch (m_format)
                 {
                 case channel_format::eight_bit:
                 {
-                    *rPtr = static_cast<byte>(math::iround(colors[i].r * 255.f));
-                    *gPtr = static_cast<byte>(math::iround(colors[i].g * 255.f));
-                    *bPtr = static_cast<byte>(math::iround(colors[i].b * 255.f));
-                    *aPtr = static_cast<byte>(math::iround(colors[i].a * 255.f));
+                    *rPtr = static_cast<rsl::byte>(math::iround(colors[i].r * 255.f));
+                    *gPtr = static_cast<rsl::byte>(math::iround(colors[i].g * 255.f));
+                    *bPtr = static_cast<rsl::byte>(math::iround(colors[i].b * 255.f));
+                    *aPtr = static_cast<rsl::byte>(math::iround(colors[i].a * 255.f));
                     break;
                 }
                 case channel_format::sixteen_bit:
@@ -400,7 +400,7 @@ namespace rythe::core
         return m_data == other.m_data;
     }
 
-    byte* image::data() noexcept
+    rsl::byte* image::data() noexcept
     {
         return m_data.data();
     }

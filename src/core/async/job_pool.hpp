@@ -1,9 +1,9 @@
 #pragma once
 #include <list>
 #include <memory>
+#include <rsl/delegate>
 
 #include <core/async/async_operation.hpp>
-#include <core/containers/delegate.hpp>
 #include <core/containers/pointer.hpp>
 
 namespace rythe::core::async
@@ -25,10 +25,10 @@ namespace rythe::core::async
         std::shared_ptr<async_progress<void>> m_progress;
         std::atomic<rsl::size_type> m_index;
         rsl::size_type m_size;
-        delegate<void()> m_job;
+        rsl::delegate<void()> m_job;
 
     public:
-        job_pool(rsl::size_type count, const delegate<void()>& func) : m_progress(new async_progress<void>(count)), m_index(count), m_size(count), m_job(func) {}
+        job_pool(rsl::size_type count, const rsl::delegate<void()>& func) : m_progress(new async_progress<void>(count)), m_index(count), m_size(count), m_job(func) {}
 
         std::shared_ptr<async_progress<void>> get_progress() const noexcept;
 
@@ -73,7 +73,7 @@ namespace rythe::core::async
                 {
                     jobPoolPtr->prime_job();
                     jobPoolPtr->complete_job();
-                    L_PAUSE_INSTRUCTION();
+                    R_PAUSE_INSTRUCTION();
                     break;
                 }
                 case wait_priority::real_time:

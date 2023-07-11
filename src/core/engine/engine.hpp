@@ -1,17 +1,17 @@
 #pragma once
-#include <rsl/type_util>
-#include <core/engine/module.hpp>
-#include <rsl/primitives>
-#include <core/types/meta.hpp>
-#include <core/async/spinlock.hpp>
-#include <core/containers/pointer.hpp>
-#include <core/logging/logging.hpp>
-
-#include <argh.h>
-
 #include <map>
 #include <vector>
 #include <memory>
+
+#include <argh.h>
+
+#include <rsl/type_util>
+#include <rsl/logging>
+#include <rsl/primitives>
+
+#include "core/engine/module.hpp"
+#include "core/async/spinlock.hpp"
+#include "core/containers/pointer.hpp"
 
 /**
  * @file engine.hpp
@@ -77,7 +77,7 @@ namespace rythe::core
     {
         friend class rythe::core::scheduling::Scheduler;
     private:
-        std::map<priority_type, std::vector<std::unique_ptr<Module>>, std::greater<>> m_modules;
+        std::map<rsl::priority_type, std::vector<std::unique_ptr<Module>>, std::greater<>> m_modules;
 
         std::atomic_bool m_shouldRestart;
 
@@ -86,19 +86,19 @@ namespace rythe::core
 
         static rsl::id_type generateId();
 
-        L_NODISCARD static multicast_delegate<void()>& initializationSequence();
-        L_NODISCARD static multicast_delegate<void()>& shutdownSequence();
+        R_NODISCARD static rsl::multicast_delegate<void()>& initializationSequence();
+        R_NODISCARD static rsl::multicast_delegate<void()>& shutdownSequence();
 
         void shutdownModules();
 
     public:
         template<typename Func>
-        static byte subscribeToInit(Func&& func);
+        static rsl::byte subscribeToInit(Func&& func);
         template<typename Func>
-        static byte subscribeToShutdown(Func&& func);
+        static rsl::byte subscribeToShutdown(Func&& func);
 
         template<typename SubSystem>
-        static byte reportSubSystem();
+        static rsl::byte reportSubSystem();
 
         engine_id id;
 
@@ -121,7 +121,7 @@ namespace rythe::core
          * @param args The arguments you want to pass to the module constructor.
          * @ref rythe::core::Module
          */
-        template <typename ModuleType, typename... Args CNDOXY(inherits_from<ModuleType, Module> = 0)>
+        template <typename ModuleType, typename... Args CNDOXY(rsl::inherits_from<ModuleType, Module> = 0)>
         void reportModule(Args&&...args);
 
         void initialize();
@@ -136,10 +136,10 @@ namespace rythe::core
         void shutdown();
     };
 
-#define OnEngineInit(Type, Func) ANON_VAR(byte, CONCAT(_onInit_, Type)) = rythe::core::Engine::subscribeToInit(Func);
-#define OnEngineShutdown(Type, Func) ANON_VAR(byte, CONCAT(_onShutdown_, Type)) = rythe::core::Engine::subscribeToShutdown(Func);
+#define OnEngineInit(Type, Func) ANON_VAR(rsl::byte, CONCAT(_onInit_, Type)) = rythe::core::Engine::subscribeToInit(Func);
+#define OnEngineShutdown(Type, Func) ANON_VAR(rsl::byte, CONCAT(_onShutdown_, Type)) = rythe::core::Engine::subscribeToShutdown(Func);
 
-#define ReportSubSystem(Type) ANON_VAR(byte, CONCAT(_reportSubSystem_, Type)) = rythe::core::Engine::reportSubSystem<Type>();
+#define ReportSubSystem(Type) ANON_VAR(rsl::byte, CONCAT(_reportSubSystem_, Type)) = rythe::core::Engine::reportSubSystem<Type>();
 
 }
 

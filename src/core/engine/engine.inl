@@ -4,7 +4,7 @@
 namespace rythe::core
 {
     template<typename Func>
-    inline byte Engine::subscribeToInit(Func&& func)
+    inline rsl::byte Engine::subscribeToInit(Func&& func)
     {
         static_assert(sizeof(func) == sizeof(ptr_type), "Parameter passed to subscribeToInit is not a function.");
         static std::unordered_set<ptr_type> items;
@@ -19,7 +19,7 @@ namespace rythe::core
     }
 
     template<typename Func>
-    inline byte Engine::subscribeToShutdown(Func&& func)
+    inline rsl::byte Engine::subscribeToShutdown(Func&& func)
     {
         static_assert(sizeof(func) == sizeof(ptr_type), "Parameter passed to subscribeToShutdown is not a function.");
         static std::unordered_set<ptr_type> items;
@@ -34,14 +34,14 @@ namespace rythe::core
     }
 
     template<typename SubSystem>
-    inline byte Engine::reportSubSystem()
+    inline rsl::byte Engine::reportSubSystem()
     {
         subscribeToInit(&SubSystem::init);
         subscribeToShutdown(&SubSystem::shutdown);
         return 0;
     }
 
-    template <typename ModuleType, typename... Args CNDOXY(inherits_from<ModuleType, Module>)>
+    template <typename ModuleType, typename... Args CNDOXY(rsl::inherits_from<ModuleType, Module>)>
     inline void Engine::reportModule(Args && ...args)
     {
         std::unique_ptr<Module> module = std::make_unique<ModuleType>(std::forward<Args>(args)...);

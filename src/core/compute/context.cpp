@@ -1,5 +1,5 @@
 #include <core/compute/context.hpp>
-#include <core/logging/logging.hpp>
+#include <rsl/logging>
 
 #include <string>
 
@@ -11,8 +11,8 @@ namespace rythe::core::compute {
     {
         create();
 
-        cl_rsl::uint ret_num_devices;
-        cl_rsl::uint ret_num_platforms;
+        cl_uint ret_num_devices;
+        cl_uint ret_num_platforms;
 
         //get a suitable computing platform
         cl_int ret = clGetPlatformIDs(1, &instance.m_platform_id, &ret_num_platforms);

@@ -3,7 +3,7 @@
 #include <unordered_set>
 #include <functional>
 
-#include <core/common/hash.hpp>
+#include <rsl/hash>
 
 /**
  * @file filter_info.hpp

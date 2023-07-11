@@ -57,14 +57,14 @@ namespace rythe::core::scheduling
         return m_processes.erase(process->id());
     }
 
-    void ProcessChain::runInCurrentThread(time::span deltaTime)
+    void ProcessChain::runInCurrentThread(rsl::span deltaTime)
     {
-        m_onChainStart(deltaTime, time::span(Clock::elapsedSinceTickStart()));
+        m_onChainStart(deltaTime, rsl::span(Clock::elapsedSinceTickStart()));
 
         for (auto [_, ptr] : m_processes)
             ptr->execute(deltaTime);
 
-        m_onChainEnd(deltaTime, time::span(Clock::elapsedSinceTickStart()));
+        m_onChainEnd(deltaTime, rsl::span(Clock::elapsedSinceTickStart()));
     }
 
 }

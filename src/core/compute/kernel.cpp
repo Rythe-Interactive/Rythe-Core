@@ -1,6 +1,6 @@
 #include <core/compute/kernel.hpp>
 #include <core/compute/program.hpp>
-#include <core/logging/logging.hpp>
+#include <rsl/logging>
 
 #include "context.hpp"
 
@@ -9,13 +9,13 @@ namespace rythe::core::compute
     Kernel& Kernel::buildBufferNames()
     {
         rsl::size_type size;
-        cl_rsl::uint num_args;
+        cl_uint num_args;
         std::string container;
 
         //get the number of kernel arguments
-        clGetKernelInfo(m_func, CL_KERNEL_NUM_ARGS, sizeof(cl_rsl::uint), &num_args, nullptr);
+        clGetKernelInfo(m_func, CL_KERNEL_NUM_ARGS, sizeof(cl_uint), &num_args, nullptr);
 
-        for (cl_rsl::uint i = 0; i < num_args; ++i) {
+        for (cl_uint i = 0; i < num_args; ++i) {
 
             //get the length of the kernel argument
             if (clGetKernelArgInfo(m_func, i, CL_KERNEL_ARG_NAME, 0, nullptr, &size) == CL_KERNEL_ARG_INFO_NOT_AVAILABLE) {
@@ -54,14 +54,14 @@ namespace rythe::core::compute
     Kernel& Kernel::setBuffer(Buffer buffer, const std::string& name)
     {
         //translate name to index
-        param_find([this, b = std::forward<Buffer>(buffer)](cl_rsl::uint index)
+        param_find([this, b = std::forward<Buffer>(buffer)](cl_uint index)
         {
             this->setBuffer(b, index);
         }, name);
         return *this;
     }
 
-    Kernel& Kernel::setBuffer(Buffer buffer, cl_rsl::uint index)
+    Kernel& Kernel::setBuffer(Buffer buffer, cl_uint index)
     {
         //set kernel argument
         const cl_int ret = clSetKernelArg(m_func, index, buffer.m_data ? sizeof(cl_mem) : sizeof(cl_sampler), &buffer.m_memory_object);
@@ -161,14 +161,14 @@ namespace rythe::core::compute
     Kernel& Kernel::setAndEnqueueBuffer(Buffer buffer, const std::string& name, block_mode blocking)
     {
         //translate name to index
-        param_find([this, b = std::forward<Buffer>(buffer), blocking](cl_rsl::uint index)
+        param_find([this, b = std::forward<Buffer>(buffer), blocking](cl_uint index)
         {
             setAndEnqueueBuffer(b, index, blocking);
         }, name);
         return *this;
     }
 
-    Kernel& Kernel::setAndEnqueueBuffer(Buffer buffer, cl_rsl::uint index, block_mode blocking)
+    Kernel& Kernel::setAndEnqueueBuffer(Buffer buffer, cl_uint index, block_mode blocking)
     {
         //set and ... enqueue_buffer
         //nothing fun to see here
@@ -184,7 +184,7 @@ namespace rythe::core::compute
         cl_int ret = clEnqueueNDRangeKernel(
             m_queue,
             m_func,
-            static_cast<cl_rsl::uint>(size),
+            static_cast<cl_uint>(size),
             nullptr,
             globals.data(),
             locals.data(),
@@ -259,14 +259,14 @@ namespace rythe::core::compute
     Kernel& Kernel::setKernelArg(void* value, rsl::size_type size, const std::string& name)
     {
         //translate name to index
-        param_find([this, size, v = std::forward<void*>(value)](cl_rsl::uint index)
+        param_find([this, size, v = std::forward<void*>(value)](cl_uint index)
         {
             this->setKernelArg(v, size, index);
         }, name);
         return *this;
     }
 
-    Kernel& Kernel::setKernelArg(void* value, rsl::size_type size, cl_rsl::uint index)
+    Kernel& Kernel::setKernelArg(void* value, rsl::size_type size, cl_uint index)
     {
         if (clSetKernelArg(m_func, index, size, value) != CL_SUCCESS)
         {

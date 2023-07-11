@@ -43,7 +43,7 @@ namespace rythe::core::compute
 
         m_kernel->readWriteMode(buffer_type::READ_BUFFER);
 
-        cl_rsl::uint i = 0;
+        cl_uint i = 0;
         for (Buffer& buffer : buffers)
         {
             if (!buffer.isValid()) continue;

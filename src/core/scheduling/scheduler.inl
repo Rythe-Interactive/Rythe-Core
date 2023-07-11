@@ -21,7 +21,7 @@ namespace rythe::core::scheduling
     }
 
     template<typename functor, typename ...argument_types>
-    inline L_ALWAYS_INLINE pointer<std::thread> Scheduler::reserveThread(functor&& function, argument_types && ...args)
+    inline R_ALWAYS_INLINE pointer<std::thread> Scheduler::reserveThread(functor&& function, argument_types && ...args)
     {
         return createThread(std::forward<functor>(function), std::forward<argument_types>(args)...);
     }

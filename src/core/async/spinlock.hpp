@@ -1,9 +1,11 @@
 #pragma once
-#include <rsl/type_util>
-#include <core/common/assert.hpp>
-#include <core/logging/logging.hpp>
 #include <atomic>
 #include <mutex> // Anyone who includes this file can also use std::lock_guard
+
+#include <rsl/type_util>
+#include <rsl/logging>
+
+#include "core/common/assert.hpp"
 
 /**@file spinlock.hpp
  */
@@ -17,7 +19,7 @@ namespace rythe::core::async
     {
     private:
         static bool m_forceRelease;
-        static std::atomic_rsl::uint m_lastId;
+        static std::atomic_uint m_lastId;
         static thread_local std::unordered_map<rsl::id_type, rsl::uint> m_localState;
         mutable std::atomic_bool m_lock = { false };
         rsl::uint m_id = m_lastId.fetch_add(1, std::memory_order_relaxed);
@@ -39,7 +41,7 @@ namespace rythe::core::async
 
         /**@brief Tries to lock the spinlock, returns if the spinlock is not available.
          */
-        L_NODISCARD bool try_lock() const noexcept;
+        R_NODISCARD bool try_lock() const noexcept;
 
         /**@brief Unlocks the spinlock.
          */

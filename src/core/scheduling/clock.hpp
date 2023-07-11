@@ -1,10 +1,12 @@
 #pragma once
 #include <atomic>
 
-#include <core/engine/engine.hpp>
-#include <core/engine/enginesubsystem.hpp>
-#include <core/containers/delegate.hpp>
-#include <core/time/time.hpp>
+#include <rsl/delegate>
+#include <rsl/time>
+
+#include "core/engine/engine.hpp"
+#include "core/engine/enginesubsystem.hpp"
+#include "core/time/time.hpp"
 
 namespace rythe::core::scheduling
 {
@@ -21,7 +23,7 @@ namespace rythe::core::scheduling
         using span_type = time::main_clock::span_type;
         using time_type = span_type::time_type;
         using tick_callback_type = void(span_type);
-        using tick_callback_delegate = delegate<tick_callback_type>;
+        using tick_callback_delegate = rsl::delegate<tick_callback_type>;
 
     private:
         span_type m_lastTickStart = 0;
@@ -30,7 +32,7 @@ namespace rythe::core::scheduling
         span_type m_lastTickDuration = 0;
         span_type m_waitBuffer = 0;
         std::atomic<bool> m_doTick = { false };
-        multicast_delegate<tick_callback_type> m_onTick;
+        rsl::multicast_delegate<tick_callback_type> m_onTick;
         time_type m_timeScale = static_cast<Clock::time_type>(1);
 
         static void advance(span_type start, span_type elapsed);

@@ -4,9 +4,9 @@
 #include <core/containers/iterator_tricks.hpp>
 
 namespace rythe::core::filesystem {
-    std::shared_ptr<byte_vec> artifact_cache::get_cache(const std::string& identifier, std::size_t size_hint)
+    std::shared_ptr<rsl::byte_vec> artifact_cache::get_cache(const std::string& identifier, std::size_t size_hint)
     {
-        std::shared_ptr<byte_vec> result;
+        std::shared_ptr<rsl::byte_vec> result;
 
         static auto& driver = get_driver();
         {
@@ -19,9 +19,9 @@ namespace rythe::core::filesystem {
                 //prepare new provider
                 score = driver.current_mean.load();
                 if(size_hint)
-                    ptr = std::make_shared<byte_vec>(size_hint);
+                    ptr = std::make_shared<rsl::byte_vec>(size_hint);
                 else
-                    ptr = std::make_shared<byte_vec>();
+                    ptr = std::make_shared<rsl::byte_vec>();
             }
             else
             {
@@ -70,7 +70,7 @@ namespace rythe::core::filesystem {
         //elements while gc is running, such that we do not insert and remove simultaneously
         async::readwrite_guard guard(m_big_gc_lock);
 
-        composer([&score_heap](L_MAYBEUNUSED auto& p,auto score)
+        composer([&score_heap](R_MAYBEUNUSED auto& p,auto score)
         {
             //push all scores into a heap for sorting
             score_heap.emplace_back(score);

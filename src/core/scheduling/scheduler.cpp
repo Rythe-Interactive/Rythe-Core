@@ -6,9 +6,9 @@ namespace rythe::core::scheduling
 {
     thread_local Engine* Scheduler::m_currentEngineInstance;
 
-    multicast_delegate<Scheduler::thread_callback_type>& Scheduler::getOnThreadCreate()
+    rsl::multicast_delegate<Scheduler::thread_callback_type>& Scheduler::getOnThreadCreate()
     {
-        static multicast_delegate<thread_callback_type> m_onThreadCreate;
+        static rsl::multicast_delegate<thread_callback_type> m_onThreadCreate;
         return m_onThreadCreate;
     }
 
@@ -46,8 +46,8 @@ namespace rythe::core::scheduling
         log::info("Starting thread.");
 
         time::timer clock;
-        time::span timeBuffer;
-        time::span sleepTime;
+        rsl::span timeBuffer;
+        rsl::span sleepTime;
 
         while (!instance.m_exit.load(std::memory_order_relaxed))
         {
@@ -136,13 +136,13 @@ namespace rythe::core::scheduling
 
     void Scheduler::doTick(Clock::span_type deltaTime)
     {
-        time::span dt{ deltaTime };
-        instance.m_onFrameStart(dt, time::span(Clock::elapsedSinceTickStart()));
+        rsl::span dt{ deltaTime };
+        instance.m_onFrameStart(dt, rsl::span(Clock::elapsedSinceTickStart()));
 
         for (auto [_, chain] : instance.m_processChains)
             chain.runInCurrentThread(dt);
 
-        instance.m_onFrameEnd(dt, time::span(Clock::elapsedSinceTickStart()));
+        instance.m_onFrameEnd(dt, rsl::span(Clock::elapsedSinceTickStart()));
     }
 
     void Scheduler::hookThreadToEngine(Engine& context)
@@ -240,7 +240,7 @@ namespace rythe::core::scheduling
             if (m_lowPower)
                 std::this_thread::yield();
             else
-                L_PAUSE_INSTRUCTION();
+                R_PAUSE_INSTRUCTION();
         }
 
         m_currentEngineInstance->shutdownModules();

@@ -28,7 +28,7 @@ namespace rythe::core::scheduling
         using frame_callback_type = chain_callback_type;
         using frame_callback_delegate = chain_callback_delegate;
         using thread_callback_type = void();
-        using thread_callback_delegate = delegate<thread_callback_type>;
+        using thread_callback_delegate = rsl::delegate<thread_callback_type>;
 
     private:
         static constexpr rsl::size_type reserved_threads = 1; // this, OS
@@ -38,8 +38,8 @@ namespace rythe::core::scheduling
 
         sparse_map<rsl::id_type, ProcessChain> m_processChains;
 
-        multicast_delegate<frame_callback_type> m_onFrameStart;
-        multicast_delegate<frame_callback_type> m_onFrameEnd;
+        rsl::multicast_delegate<frame_callback_type> m_onFrameStart;
+        rsl::multicast_delegate<frame_callback_type> m_onFrameEnd;
 
         const rsl::size_type m_maxThreadCount = reserved_threads >= std::thread::hardware_concurrency() ? 0 : std::thread::hardware_concurrency() - reserved_threads;
         rsl::size_type m_availableThreads = m_maxThreadCount;
@@ -58,7 +58,7 @@ namespace rythe::core::scheduling
 
         thread_local static Engine* m_currentEngineInstance;
 
-        static multicast_delegate<thread_callback_type>& getOnThreadCreate();
+        static rsl::multicast_delegate<thread_callback_type>& getOnThreadCreate();
 
         static void onInit();
         static void onShutdown();
@@ -66,7 +66,7 @@ namespace rythe::core::scheduling
         static void threadMain(Engine& engine, bool lowPower, std::string name);
 
         template<typename Function, typename... Args >
-        L_NODISCARD static pointer<std::thread> createThread(Function&& function, Args&&... args);
+        R_NODISCARD static pointer<std::thread> createThread(Function&& function, Args&&... args);
 
         static void tryCompleteJobPool();
 
@@ -78,9 +78,9 @@ namespace rythe::core::scheduling
         static pointer<Engine> currentEngineInstance();
 
         template<typename functor, typename... argument_types>
-        L_NODISCARD static pointer<std::thread> reserveThread(functor&& function, argument_types&&... args);
+        R_NODISCARD static pointer<std::thread> reserveThread(functor&& function, argument_types&&... args);
 
-        L_NODISCARD static pointer<std::thread> getThread(std::thread::id id);
+        R_NODISCARD static pointer<std::thread> getThread(std::thread::id id);
 
         static rsl::size_type jobPoolSize() noexcept;
 
@@ -105,15 +105,15 @@ namespace rythe::core::scheduling
         /**@brief Get pointer to a certain process-chain.
          */
         template<rsl::size_type charc>
-        L_NODISCARD static pointer<ProcessChain> getChain(const char(&name)[charc]);
+        R_NODISCARD static pointer<ProcessChain> getChain(const char(&name)[charc]);
 
         /**@brief Get pointer to a certain process-chain.
          */
-        L_NODISCARD static pointer<ProcessChain> getChain(rsl::id_type id);
+        R_NODISCARD static pointer<ProcessChain> getChain(rsl::id_type id);
 
         /**@brief Get pointer to a certain process-chain.
          */
-        L_NODISCARD static pointer<ProcessChain> getChain(rsl::cstring name);
+        R_NODISCARD static pointer<ProcessChain> getChain(rsl::cstring name);
 
         static void subscribeToThreadCreate(const thread_callback_delegate& callback);
 

@@ -1,30 +1,30 @@
 #pragma once
-#include <core/math/math.hpp>
+#include <rsl/math>
 #include <core/ecs/ecs.hpp>
 #include <core/data/mesh.hpp>
-#include <core/logging/logging.hpp>
+#include <rsl/logging>
 
 
 namespace rythe::core
 {
-    struct position : public math::vec3
+    struct position : public rsl::math::float3
     {
-        position() : math::vec3(0, 0, 0) {}
+        position() : rsl::math::float3(0, 0, 0) {}
         position(const position&) = default;
         position(position&&) = default;
-        position(const math::vec3& src) : math::vec3(src) {}
-        position(float x, float y, float z) : math::vec3(x, y, z) {}
-        position(float v) : math::vec3(v) {}
+        position(const rsl::math::float3& src) : rsl::math::float3(src) {}
+        position(float x, float y, float z) : rsl::math::float3(x, y, z) {}
+        position(float v) : rsl::math::float3(v) {}
         position& operator=(const position&) = default;
         position& operator=(position&&) = default;
-        position& operator=(const math::vec3& src)
+        position& operator=(const rsl::math::float3& src)
         {
             x = src.x;
             y = src.y;
             z = src.z;
             return *this;
         }
-        position& operator=(math::vec3&& src)
+        position& operator=(rsl::math::float3&& src)
         {
             x = src.x;
             y = src.y;
@@ -33,16 +33,16 @@ namespace rythe::core
         }
     };
 
-    struct rotation : public math::quat
+    struct rotation : public rsl::math::quat
     {
-        rotation() : math::quat(1, 0, 0, 0) {}
-        rotation(float w, float x, float y, float z) : math::quat(w, x, y, z) {}
+        rotation() : rsl::math::quat(1, 0, 0, 0) {}
+        rotation(float w, float x, float y, float z) : rsl::math::quat(w, x, y, z) {}
         rotation(const rotation&) = default;
         rotation(rotation&&) = default;
-        rotation(const math::quat& src) : math::quat(src) {}
+        rotation(const rsl::math::quat& src) : rsl::math::quat(src) {}
         rotation& operator=(const rotation&) = default;
         rotation& operator=(rotation&&) = default;
-        rotation& operator=(const math::quat& src)
+        rotation& operator=(const rsl::math::quat& src)
         {
             x = src.x;
             y = src.y;
@@ -59,52 +59,54 @@ namespace rythe::core
             return *this;
         }
 
-        L_NODISCARD math::vec3 right() const
+        R_NODISCARD rsl::math::float3 right() const
         {
-            return math::toMat3(*this) * math::vec3::right;
+            return rsl::math::float3x3(*this) * rsl::math::float3::right;
         }
 
-        L_NODISCARD math::vec3 up() const
+        R_NODISCARD rsl::math::float3 up() const
         {
-            return math::toMat3(*this) * math::vec3::up;
+            return rsl::math::float3x3(*this) * rsl::math::float3::up;
         }
 
-        L_NODISCARD math::vec3 forward() const
+        R_NODISCARD rsl::math::float3 forward() const
         {
-            return math::toMat3(*this) * math::vec3::forward;
+            return rsl::math::float3x3(*this) * rsl::math::float3::forward;
         }
 
-        L_NODISCARD math::mat3 matrix() const
+        R_NODISCARD rsl::math::float3x3 matrix() const
         {
-            return math::toMat3(*this);
+            return rsl::math::float3x3(*this);
         }
 
-        L_NODISCARD static rotation lookat(math::vec3 position, math::vec3 center, math::vec3 up = math::vec3::up);
+        R_NODISCARD static rotation lookat(rsl::math::float3 position, rsl::math::float3 center, rsl::math::float3 up = rsl::math::float3::up);
     };
 
-    L_NODISCARD inline rotation rotation::lookat(math::vec3 position, math::vec3 center, math::vec3 up)
+    R_NODISCARD inline rotation rotation::lookat(rsl::math::float3 position, rsl::math::float3 center, rsl::math::float3 up)
     {
-        return math::conjugate(math::normalize(math::toQuat(math::lookAt(position, center, up))));
+        rsl::math::quaternion q;
+        q.look_at(position, center, up);
+        return rsl::math::conjugate(math::normalize(rsl::math::quaternion::look_at(position, center, up)));
     }
 
-    struct scale : public math::vec3
+    struct scale : public rsl::math::float3
     {
-        scale() : math::vec3(1, 1, 1) {}
-        scale(float x, float y, float z) : math::vec3(x, y, z) {}
-        scale(float v) : math::vec3(v) {}
+        scale() : rsl::math::float3(1, 1, 1) {}
+        scale(float x, float y, float z) : rsl::math::float3(x, y, z) {}
+        scale(float v) : rsl::math::float3(v) {}
         scale(const scale&) = default;
         scale(scale&&) = default;
-        scale(const math::vec3& src) : math::vec3(src) {}
+        scale(const rsl::math::float3& src) : rsl::math::float3(src) {}
         scale& operator=(const scale&) = default;
         scale& operator=(scale&&) = default;
-        scale& operator=(const math::vec3& src)
+        scale& operator=(const rsl::math::float3& src)
         {
             x = src.x;
             y = src.y;
             z = src.z;
             return *this;
         }
-        scale& operator=(math::vec3&& src)
+        scale& operator=(rsl::math::float3&& src)
         {
             x = src.x;
             y = src.y;
@@ -119,12 +121,12 @@ namespace rythe::core
         using base = ecs::archetype<position, rotation, scale>;
         using base::archetype;
 
-        L_NODISCARD math::mat4 from_world_matrix()
+        R_NODISCARD rsl::math::float4x4 from_world_matrix()
         {
-            return math::inverse(to_world_matrix());
+            return rsl::math::inverse(to_world_matrix());
         }
 
-        L_NODISCARD math::mat4 to_world_matrix()
+        R_NODISCARD rsl::math::float4x4 to_world_matrix()
         {
             if (owner->parent)
             {
@@ -135,37 +137,37 @@ namespace rythe::core
             return to_parent_matrix();
         }
 
-        L_NODISCARD math::mat4 from_parent_matrix()
+        R_NODISCARD rsl::math::float4x4 from_parent_matrix()
         {
-            return math::inverse(to_parent_matrix());
+            return rsl::math::inverse(to_parent_matrix());
         }
 
-        L_NODISCARD math::mat4 to_parent_matrix()
+        R_NODISCARD rsl::math::float4x4 to_parent_matrix()
         {
             auto [position, rotation, scale] = values();
-            return math::compose(scale, rotation, position);
+            return rsl::math::compose(scale, rotation, position);
         }
 
     };
 
-    struct velocity : public math::vec3
+    struct velocity : public rsl::math::float3
     {
-        velocity() : math::vec3(0, 0, 0) {}
+        velocity() : rsl::math::float3(0, 0, 0) {}
         velocity(const velocity&) = default;
         velocity(velocity&&) = default;
-        velocity(const math::vec3& src) : math::vec3(src) {}
-        velocity(float x, float y, float z) : math::vec3(x, y, z) {}
-        velocity(float v) : math::vec3(v) {}
+        velocity(const rsl::math::float3& src) : rsl::math::float3(src) {}
+        velocity(float x, float y, float z) : rsl::math::float3(x, y, z) {}
+        velocity(float v) : rsl::math::float3(v) {}
         velocity& operator=(const velocity&) = default;
         velocity& operator=(velocity&&) = default;
-        velocity& operator=(const math::vec3& src)
+        velocity& operator=(const rsl::math::float3& src)
         {
             x = src.x;
             y = src.y;
             z = src.z;
             return *this;
         }
-        velocity& operator=(math::vec3&& src)
+        velocity& operator=(rsl::math::float3&& src)
         {
             x = src.x;
             y = src.y;
@@ -198,7 +200,7 @@ namespace std // NOLINT(cert-dcl58-cpp)
     template <::std::size_t I>
     struct tuple_element<I, rythe::core::transform>
     {
-        using type = typename rythe::core::element_at_t<I, rythe::core::position, rythe::core::rotation, rythe::core::scale>;
+        using type = typename rythe::core::rsl::element_at_t<I, rythe::core::position, rythe::core::rotation, rythe::core::scale>;
     };
 
     template<>
@@ -254,7 +256,7 @@ namespace fmt
                 ctx.out(),
 
                 presentation == 'f' ? "{:f}" : "{:e}",
-                static_cast<math::vec3>(p));
+                static_cast<rsl::math::float3>(p));
         }
     };
 
@@ -279,7 +281,7 @@ namespace fmt
                 ctx.out(),
 
                 presentation == 'f' ? "{:f}" : "{:e}",
-                static_cast<math::vec3>(p));
+                static_cast<rsl::math::float3>(p));
         }
     };
 
@@ -329,7 +331,7 @@ namespace fmt
                 ctx.out(),
 
                 presentation == 'f' ? "{:f}" : "{:e}",
-                static_cast<math::vec3>(s));
+                static_cast<rsl::math::float3>(s));
         }
     };
 }

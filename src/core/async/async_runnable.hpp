@@ -2,7 +2,7 @@
 #include <queue>
 #include <memory>
 
-#include <core/containers/delegate.hpp>
+#include <rsl/delegate>
 
 #include <core/async/async_operation.hpp>
 

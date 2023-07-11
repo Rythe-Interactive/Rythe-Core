@@ -6,7 +6,7 @@
 #include <stdexcept>
 #include <rsl/type_util>
 #include <rsl/primitives>
-#include <core/containers/iterator_tricks.hpp>
+#include <rsl/containers>
 
 /**
  * @file sparse_map.hpp
@@ -61,41 +61,41 @@ namespace rythe::core
             reserve(capacity);
         }
 
-        L_NODISCARD dense_value_container& values() noexcept { return m_dense_value; }
-        L_NODISCARD const dense_value_container& values() const noexcept { return m_dense_value; }
+        R_NODISCARD dense_value_container& values() noexcept { return m_dense_value; }
+        R_NODISCARD const dense_value_container& values() const noexcept { return m_dense_value; }
 
-        L_NODISCARD dense_key_container& keys() noexcept { return m_dense_key; }
-        L_NODISCARD const dense_key_container& keys() const noexcept { return m_dense_key; }
+        R_NODISCARD dense_key_container& keys() noexcept { return m_dense_key; }
+        R_NODISCARD const dense_key_container& keys() const noexcept { return m_dense_key; }
 
-        L_NODISCARD iterator begin() noexcept { return iterator(m_dense_key.begin(), m_dense_value.begin()); }
-        L_NODISCARD const_iterator begin() const noexcept { return const_iterator(m_dense_key.cbegin(), m_dense_value.cbegin()); }
-        L_NODISCARD const_iterator cbegin() const noexcept { return const_iterator(m_dense_key.cbegin(), m_dense_value.cbegin()); }
+        R_NODISCARD iterator begin() noexcept { return iterator(m_dense_key.begin(), m_dense_value.begin()); }
+        R_NODISCARD const_iterator begin() const noexcept { return const_iterator(m_dense_key.cbegin(), m_dense_value.cbegin()); }
+        R_NODISCARD const_iterator cbegin() const noexcept { return const_iterator(m_dense_key.cbegin(), m_dense_value.cbegin()); }
 
-        L_NODISCARD iterator end() noexcept { return iterator(m_dense_key.begin() + m_size, m_dense_value.begin() + m_size); }
-        L_NODISCARD const_iterator end() const noexcept { return const_iterator(m_dense_key.cbegin() + m_size, m_dense_value.cbegin() + m_size); }
-        L_NODISCARD const_iterator cend() const noexcept { return const_iterator(m_dense_key.cbegin() + m_size, m_dense_value.cbegin() + m_size); }
+        R_NODISCARD iterator end() noexcept { return iterator(m_dense_key.begin() + m_size, m_dense_value.begin() + m_size); }
+        R_NODISCARD const_iterator end() const noexcept { return const_iterator(m_dense_key.cbegin() + m_size, m_dense_value.cbegin() + m_size); }
+        R_NODISCARD const_iterator cend() const noexcept { return const_iterator(m_dense_key.cbegin() + m_size, m_dense_value.cbegin() + m_size); }
 
         /**@brief Returns the amount of items in the sparse_map.
          * @returns rsl::size_type Current amount of items contained in sparse_map.
          */
-        L_NODISCARD rsl::size_type size() const noexcept { return m_size; }
+        R_NODISCARD rsl::size_type size() const noexcept { return m_size; }
 
         /**@brief Returns the capacity of items the sparse_map could at least store without invalidating the iterators.
          * @returns rsl::size_type Current capacity of the dense container.
          */
-        L_NODISCARD rsl::size_type capacity() const noexcept { return m_capacity; }
+        R_NODISCARD rsl::size_type capacity() const noexcept { return m_capacity; }
 
         /**@brief Returns the maximum number of items the sparse_map could at most store without crashing.
          * @note This value typically reflects the theoretical limit on the size of the container, at most std::numeric_limits<difference_type>::max().
          *       At runtime, the size of the container may be limited to a value smaller than max_size() by the amount of RAM available.
          * @returns rsl::size_type
          */
-        L_NODISCARD rsl::size_type max_size() const noexcept { return m_dense_value.max_size(); }
+        R_NODISCARD rsl::size_type max_size() const noexcept { return m_dense_value.max_size(); }
 
         /**@brief Returns whether the sparse_map is empty.
          * @returns bool True if the sparse_map is empty, otherwise false.
          */
-        L_NODISCARD bool empty() const noexcept { return m_size == 0; }
+        R_NODISCARD bool empty() const noexcept { return m_size == 0; }
 
         /**@brief Clears sparse_map.
          * @note Will not update capacity.
@@ -129,7 +129,7 @@ namespace rythe::core
          * @note Function is only available for compatibility reasons, it is advised to use contains instead.
          * @ref rythe::core::sparse_map::contains
          */
-        L_NODISCARD rsl::size_type count(key_const_reference key) const
+        R_NODISCARD rsl::size_type count(key_const_reference key) const
         {
             return contains(key);
         }
@@ -140,7 +140,7 @@ namespace rythe::core
          * @note Function is only available for compatibility reasons, it is advised to use contains instead.
          * @ref rythe::core::sparse_map::contains
          */
-        L_NODISCARD rsl::size_type count(key_type&& key) const
+        R_NODISCARD rsl::size_type count(key_type&& key) const
         {
             return contains(key);
         }
@@ -151,7 +151,7 @@ namespace rythe::core
          * @param key Key to check for.
          * @returns bool true if the key was found, otherwise false.
          */
-        L_NODISCARD bool contains(key_const_reference key) const
+        R_NODISCARD bool contains(key_const_reference key) const
         {
             if (!m_sparse.count(key))
                 return false;
@@ -164,7 +164,7 @@ namespace rythe::core
          * @param key Key to check for.
          * @returns bool true if the key was found, otherwise false.
          */
-        L_NODISCARD bool contains(key_type&& key) const
+        R_NODISCARD bool contains(key_type&& key) const
         {
             if (!m_sparse.count(key))
                 return false;
@@ -178,7 +178,7 @@ namespace rythe::core
          * @returns bool True if all keys in other are also in this sparse_map, otherwise false.
          */
         template<typename T>
-        L_NODISCARD bool contains(const sparse_map<key_type, T>& other) const
+        R_NODISCARD bool contains(const sparse_map<key_type, T>& other) const
         {
             if (other.m_size == 0)
                 return true;
@@ -198,7 +198,7 @@ namespace rythe::core
          * @param other Other sparse_map to check against.
          * @returns bool True if both maps are the same size, contain the same keys, and all keys refer to the same value, otherwise false.
          */
-        L_NODISCARD bool equals(self_const_reference other) const
+        R_NODISCARD bool equals(self_const_reference other) const
         {
             if (m_size == other.m_size)
             {
@@ -216,7 +216,7 @@ namespace rythe::core
          * @param other Other sparse_map to check against.
          * @returns bool True if both maps are the same size, contain the same keys, and all keys refer to the same value, otherwise false.
          */
-        L_NODISCARD bool operator==(self_const_reference other) const
+        R_NODISCARD bool operator==(self_const_reference other) const
         {
             if (m_size == other.m_size)
             {
@@ -235,7 +235,7 @@ namespace rythe::core
          * @param val Value to find.
          * @returns Iterator to the value if found, otherwise end.
          */
-        L_NODISCARD iterator find(value_const_reference val)
+        R_NODISCARD iterator find(value_const_reference val)
         {
             if (contains(val))
                 return begin() + m_sparse.at(val);
@@ -246,7 +246,7 @@ namespace rythe::core
          * @param val Value to find.
          * @returns Iterator to the value if found, otherwise end.
          */
-        L_NODISCARD const_iterator find(value_const_reference val) const
+        R_NODISCARD const_iterator find(value_const_reference val) const
         {
             if (contains(val))
                 return begin() + m_sparse.at(val);
@@ -397,7 +397,7 @@ namespace rythe::core
 #pragma endregion
 
     private:
-        inline L_ALWAYS_INLINE iterator _itr_at(index_type index) noexcept
+        inline R_ALWAYS_INLINE iterator _itr_at(rsl::index_type index) noexcept
         {
             return iterator(m_dense_key.begin() + index, m_dense_value.begin() + index);
         }

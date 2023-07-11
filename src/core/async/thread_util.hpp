@@ -18,7 +18,7 @@ namespace rythe::core::async
 #pragma pack(pop)
 
 
-    inline void set_thread_name(rsl::uint32_t dwThreadID, const char* threadName)
+    inline void set_thread_name(uint32_t dwThreadID, const char* threadName)
     {
 
         // DWORD dwThreadID = ::GetThreadId( static_cast<HANDLE>( t.native_handle() ) );

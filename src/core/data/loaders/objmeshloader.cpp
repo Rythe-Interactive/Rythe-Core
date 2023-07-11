@@ -11,9 +11,9 @@ namespace rythe::core::detail
     struct vertex_hash
     {
         rsl::id_type hash;
-        vertex_hash(math::vec3 vertex, math::color color, math::vec3 normal, math::vec2 uv)
+        vertex_hash(rsl::math::float3 vertex, math::color color, rsl::math::float3 normal, math::vec2 uv)
         {
-            std::hash<math::vec3> vec3Hasher;
+            std::hash<rsl::math::float3> vec3Hasher;
             std::hash<math::color> colorHasher;
             std::hash<math::vec2> vec2Hasher;
             hash = 0;
@@ -290,15 +290,15 @@ namespace rythe::core
                 const rsl::uint uvIndex = static_cast<rsl::uint>((uvCount + (indexData.texcoord_index * 2)) % uvCount);
 
                 // Extract the actual vertex data. (We flip the X axis to convert it to our left handed coordinate system.)
-                math::vec3 vertex(attributes.vertices[vertexIndex + 0], attributes.vertices[vertexIndex + 1], attributes.vertices[vertexIndex + 2]);
+                rsl::math::float3 vertex(attributes.vertices[vertexIndex + 0], attributes.vertices[vertexIndex + 1], attributes.vertices[vertexIndex + 2]);
 
                 math::color color = math::colors::white;
                 if (vertexIndex + 2 < attributes.colors.size())
                     color = math::color(attributes.colors[vertexIndex + 0], attributes.colors[vertexIndex + 1], attributes.colors[vertexIndex + 2]);
 
-                math::vec3 normal = math::vec3::up;
+                rsl::math::float3 normal = rsl::math::float3::up;
                 if (normalIndex + 2 < attributes.normals.size())
-                    normal = math::vec3(attributes.normals[normalIndex + 0], attributes.normals[normalIndex + 1], attributes.normals[normalIndex + 2]);
+                    normal = rsl::math::float3(attributes.normals[normalIndex + 0], attributes.normals[normalIndex + 1], attributes.normals[normalIndex + 2]);
 
                 math::vec2 uv{};
                 if (uvIndex + 1 < attributes.texcoords.size())

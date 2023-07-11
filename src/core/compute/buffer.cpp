@@ -1,12 +1,12 @@
 #include <core/compute/buffer.hpp>
-#include <core/logging/logging.hpp>
+#include <rsl/logging>
 #include <CL/cl_gl.h>
 
 namespace rythe::core::compute
 {
     Buffer::Buffer(cl_context ctx, void* data, rsl::size_type width, rsl::size_type height, rsl::size_type depth, cl_mem_object_type object_type, cl_image_format* format, buffer_type type, std::string name)
         : m_name(std::move(name))
-        , m_data(static_cast<byte*>(data))
+        , m_data(static_cast<rsl::byte*>(data))
 
     {
         rsl::size_type channelSize;
@@ -91,7 +91,7 @@ namespace rythe::core::compute
         }
     }
 
-    Buffer::Buffer(cl_context ctx, cl_rsl::uint buffer, buffer_type type, bool is_renderbuffer, std::string name)
+    Buffer::Buffer(cl_context ctx, cl_uint buffer, buffer_type type, bool is_renderbuffer, std::string name)
         : m_name(std::move(name))
         , m_data(nullptr)
         , m_size(0)
@@ -120,7 +120,7 @@ namespace rythe::core::compute
         }
     }
 
-    Buffer::Buffer(cl_context ctx, byte* data, rsl::size_type len, buffer_type type, std::string name) : m_name(std::move(name)), m_data(data), m_size(len)
+    Buffer::Buffer(cl_context ctx, rsl::byte* data, rsl::size_type len, buffer_type type, std::string name) : m_name(std::move(name)), m_data(data), m_size(len)
     {
         if (!ctx) return;
         //initialize new ref-counter
@@ -147,7 +147,7 @@ namespace rythe::core::compute
 
     }
 
-    Buffer::Buffer(cl_context ctx, cl_rsl::uint gl_target, cl_rsl::uint gl_texture, cl_rsl::uint miplevel, buffer_type type, std::string name)
+    Buffer::Buffer(cl_context ctx, cl_uint gl_target, cl_uint gl_texture, cl_uint miplevel, buffer_type type, std::string name)
         : m_name(std::move(name))
         , m_data(nullptr)
         , m_size(0)

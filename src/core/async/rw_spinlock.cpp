@@ -4,7 +4,7 @@
 namespace rythe::core::async
 {
     bool rw_spinlock::m_forceRelease = false;
-    std::atomic_rsl::uint rw_spinlock::m_lastId = { 1 };
+    std::atomic_uint rw_spinlock::m_lastId = { 1 };
 
     std::unordered_map<rsl::uint, int>& rw_spinlock::localWriters()
     {
@@ -53,7 +53,7 @@ namespace rythe::core::async
                     break;
                 case wait_priority::real_time:
                 default:
-                    L_PAUSE_INSTRUCTION();
+                    R_PAUSE_INSTRUCTION();
                     break;
                 }
             }
@@ -126,7 +126,7 @@ namespace rythe::core::async
                     break;
                 case wait_priority::real_time:
                 default:
-                    L_PAUSE_INSTRUCTION();
+                    R_PAUSE_INSTRUCTION();
                     break;
                 }
             }

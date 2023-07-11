@@ -1,6 +1,6 @@
 #pragma once
 #include <rsl/primitives>
-#include <core/math/math.hpp>
+#include <rsl/math>
 #include <core/data/image.hpp>
 
 /**
@@ -41,7 +41,7 @@ namespace rythe::core
 
     using material_list = std::vector<material_data>;
 
-    enum struct winding_order : byte
+    enum struct winding_order : rsl::byte
     {
         clockwise,
         counter_clockwise
@@ -63,11 +63,11 @@ namespace rythe::core
      */
     struct mesh
     {
-        std::vector<math::vec3> vertices;
+        std::vector<rsl::math::float3> vertices;
         std::vector<math::color> colors;
-        std::vector<math::vec3> normals;
+        std::vector<rsl::math::float3> normals;
         std::vector<math::vec2> uvs;
-        std::vector<math::vec3> tangents;
+        std::vector<rsl::math::float3> tangents;
         std::vector<rsl::uint> indices;
         material_list materials;
 

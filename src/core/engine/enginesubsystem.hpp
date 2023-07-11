@@ -1,9 +1,9 @@
 #pragma once
 #include <rsl/type_util>
-#include <core/containers/delegate.hpp>
-#include <core/types/meta.hpp>
-#include <core/common/exception.hpp>
-#include <core/logging/logging.hpp>
+#include <rsl/logging>
+#include <rsl/delegate>
+
+#include "core/common/exception.hpp"
 
 namespace rythe::core
 {
@@ -20,14 +20,14 @@ namespace rythe::core
         static bool m_isShutdown;
         static bool m_constructed;
 
-        static multicast_delegate<void()>& shutdownSequence();
+        static rsl::multicast_delegate<void()>& shutdownSequence();
 
         struct data
         {
             union
             {
                 SubSystem inst;
-                byte dummy;
+                rsl::byte dummy;
             };
 
             data() : dummy(0) {}
@@ -44,9 +44,9 @@ namespace rythe::core
         static void reportDependency();
 
     public:
-        L_NODISCARD static SubSystem& getInstance();
+        R_NODISCARD static SubSystem& getInstance();
 
-        L_NODISCARD static bool initialized();
+        R_NODISCARD static bool initialized();
 
         static void init();
 

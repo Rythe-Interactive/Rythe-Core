@@ -27,7 +27,7 @@ namespace rythe::core::filesystem
          * @param opt_root_domain New root domain when not present in path.
          * @return Ok of vector of pair of resolver pointers and paths or Err of fs_error when failure.
          */
-        L_NODISCARD common::result<solution,fs_error> find_solution(const std::string& opt_root_domain ="") const;
+        R_NODISCARD common::result<solution,fs_error> find_solution(const std::string& opt_root_domain ="") const;
 
     private:
         std::string m_path;

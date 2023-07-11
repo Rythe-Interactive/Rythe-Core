@@ -32,17 +32,17 @@ namespace rythe::core::filesystem
 
         ~basic_resolver() = default;
 
-        L_NODISCARD filesystem_resolver* make() override
+        R_NODISCARD filesystem_resolver* make() override
         {
             return new basic_resolver(m_root_path);
         }
 
-        L_NODISCARD bool is_file() const noexcept override
+        R_NODISCARD bool is_file() const noexcept override
         {
             return !is_directory() && is_valid_path();
         }
 
-        L_NODISCARD bool is_directory() const noexcept override
+        R_NODISCARD bool is_directory() const noexcept override
         {
             const auto back = get_target().back();
 
@@ -51,7 +51,7 @@ namespace rythe::core::filesystem
                     && !std::filesystem::is_regular_file(strpath_manip::subdir(m_root_path,get_target()));
         }
 
-        L_NODISCARD bool is_valid_path() const noexcept override
+        R_NODISCARD bool is_valid_path() const noexcept override
         {
             auto full = strpath_manip::subdir(m_root_path,get_target());
 
@@ -73,7 +73,7 @@ namespace rythe::core::filesystem
             return true;
         }
 
-        L_NODISCARD bool writeable() const noexcept override
+        R_NODISCARD bool writeable() const noexcept override
         {
             if(!is_valid_path()) return false;
 
@@ -114,7 +114,7 @@ namespace rythe::core::filesystem
             return true;
         }
 
-        L_NODISCARD bool readable() const noexcept override
+        R_NODISCARD bool readable() const noexcept override
         {
             if(!exists()) return false;
 
@@ -138,22 +138,22 @@ namespace rythe::core::filesystem
             
         }
 
-        L_NODISCARD bool creatable() const noexcept override
+        R_NODISCARD bool creatable() const noexcept override
         {
             return !exists() && writeable();
         }
 
-        L_NODISCARD bool exists() const noexcept override
+        R_NODISCARD bool exists() const noexcept override
         {
             return std::filesystem::exists(strpath_manip::subdir(m_root_path,get_target()));
         }
 
-        L_NODISCARD std::string get_absolute_path() const
+        R_NODISCARD std::string get_absolute_path() const
         {
             return strpath_manip::subdir(m_root_path, get_target());
         }
 
-        L_NODISCARD std::set<std::string> ls() const noexcept override
+        R_NODISCARD std::set<std::string> ls() const noexcept override
         {
             std::set<std::string> entries;
             for (const auto & entry : std::filesystem::directory_iterator(strpath_manip::subdir(m_root_path,get_target())))

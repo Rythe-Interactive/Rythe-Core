@@ -2,7 +2,7 @@
 
 namespace rythe::core::scheduling
 {
-    Process::Process(const std::string& name, rsl::id_type nameHash, time::span interval) : m_name(name), m_nameHash(nameHash)
+    Process::Process(const std::string& name, rsl::id_type nameHash, rsl::span interval) : m_name(name), m_nameHash(nameHash)
     {
         setInterval(interval);
     }
@@ -22,9 +22,9 @@ namespace rythe::core::scheduling
         m_operation = operation;
     }
 
-    void Process::setInterval(time::span interval) noexcept
+    void Process::setInterval(rsl::span interval) noexcept
     {
-        m_fixedTimeStep = interval != time::span::zero();
+        m_fixedTimeStep = interval != rsl::span::zero();
         m_interval = interval;
     }
 
@@ -33,7 +33,7 @@ namespace rythe::core::scheduling
         return m_hooks;
     }
 
-    void Process::execute(time::span deltaTime)
+    void Process::execute(rsl::span deltaTime)
     {
         if (!m_fixedTimeStep)
         {

@@ -17,7 +17,7 @@ namespace rythe::core
 
     template<class SubSystem>
     template<typename... Args>
-    inline L_ALWAYS_INLINE SubSystem& EngineSubSystem<SubSystem>::create(Args&&... args)
+    inline R_ALWAYS_INLINE SubSystem& EngineSubSystem<SubSystem>::create(Args&&... args)
     {
         new(&m_data.inst) SubSystem(std::forward<Args>(args)...);
         m_constructed = true;
@@ -36,20 +36,20 @@ namespace rythe::core
     }
 
     template<class SubSystem>
-    inline multicast_delegate<void()>& EngineSubSystem<SubSystem>::shutdownSequence()
+    inline rsl::multicast_delegate<void()>& EngineSubSystem<SubSystem>::shutdownSequence()
     {
-        static multicast_delegate<void()> m_shutdownSequence;
+        static rsl::multicast_delegate<void()> m_shutdownSequence;
         return m_shutdownSequence;
     }
 
     template<class SubSystem>
-    inline L_ALWAYS_INLINE SubSystem& EngineSubSystem<SubSystem>::getInstance()
+    inline R_ALWAYS_INLINE SubSystem& EngineSubSystem<SubSystem>::getInstance()
     {
         return m_data.inst;
     }
 
     template<class SubSystem>
-    inline L_ALWAYS_INLINE bool EngineSubSystem<SubSystem>::initialized()
+    inline R_ALWAYS_INLINE bool EngineSubSystem<SubSystem>::initialized()
     {
         return m_isInitialized;
     }
@@ -111,7 +111,7 @@ namespace rythe::core
     }
 
     template<class SubSystem>
-    inline L_ALWAYS_INLINE void EngineSubSystem<SubSystem>::restart()
+    inline R_ALWAYS_INLINE void EngineSubSystem<SubSystem>::restart()
     {
         shutdown();
         init();

@@ -20,9 +20,9 @@ namespace rythe::core
                     continue;
 
                 // Get vertices of the triangle.
-                math::vec3 vtx0 = data->vertices[indices[0]];
-                math::vec3 vtx1 = data->vertices[indices[1]];
-                math::vec3 vtx2 = data->vertices[indices[2]];
+                rsl::math::float3 vtx0 = data->vertices[indices[0]];
+                rsl::math::float3 vtx1 = data->vertices[indices[1]];
+                rsl::math::float3 vtx2 = data->vertices[indices[2]];
 
                 // Get UVs of the triangle.
                 math::vec2 uv0 = data->uvs[indices[0]];
@@ -30,8 +30,8 @@ namespace rythe::core
                 math::vec2 uv2 = data->uvs[indices[2]];
 
                 // Get primary edges
-                math::vec3 edge0 = vtx1 - vtx0;
-                math::vec3 edge1 = vtx2 - vtx0;
+                rsl::math::float3 edge0 = vtx1 - vtx0;
+                rsl::math::float3 edge1 = vtx2 - vtx0;
 
                 // Get difference in uv over the two primary edges.
                 math::vec2 deltaUV0 = uv1 - uv0;
@@ -52,13 +52,13 @@ namespace rythe::core
                 // │ Tx Ty Tz │ _ ─────────────── │  dV1 -dV0 │ │ E0x E0y E0z │
                 // │ Bx By Bz │ ─ dU0ΔV1 - dU1ΔV0 │ -dU1  dU0 │ │ E1x E1y E1z │
                 // └          ┘                   └           ┘ └             ┘
-                math::vec3 tangent;
+                rsl::math::float3 tangent;
                 tangent.x = inverseUVDeterminant * ((deltaUV1.y * edge0.x) - (deltaUV0.y * edge1.x));
                 tangent.y = inverseUVDeterminant * ((deltaUV1.y * edge0.y) - (deltaUV0.y * edge1.y));
                 tangent.z = inverseUVDeterminant * ((deltaUV1.y * edge0.z) - (deltaUV0.y * edge1.z));
 
                 // Check if the tangent is valid.
-                if (tangent == math::vec3(0, 0, 0) || tangent != tangent)
+                if (tangent == rsl::math::float3(0, 0, 0) || tangent != tangent)
                     continue;
 
                 // Normalize the tangent.
@@ -72,7 +72,7 @@ namespace rythe::core
 
         // Smooth all tangents.
         for (rsl::size_type i = 0; i < data->tangents.size(); i++)
-            if (data->tangents[i] != math::vec3::zero)
+            if (data->tangents[i] != rsl::math::float3::zero)
                 data->tangents[i] = math::normalize(data->tangents[i]);
     }
 }

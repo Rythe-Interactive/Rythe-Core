@@ -22,14 +22,14 @@
 struct MyRecord
 {
 
-    rsl::uint8_t x, y;
+    uint8_t x, y;
     float z;
     MyRecord()
     {
 
     }
 
-    MyRecord(rsl::uint8_t _x, rsl::uint8_t _y, float _z)
+    MyRecord(uint8_t _x, uint8_t _y, float _z)
     {
         x = _x;
         y = _y;

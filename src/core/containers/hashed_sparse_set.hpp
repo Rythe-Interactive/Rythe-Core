@@ -6,7 +6,7 @@
 #include <stdexcept>
 #include <rsl/type_util>
 #include <rsl/primitives>
-#include <core/containers/iterator_tricks.hpp>
+#include <rsl/containers>
 
 /**
  * @file hashed_sparse_set.hpp
@@ -53,49 +53,49 @@ namespace rythe::core
         rsl::size_type m_capacity = 0;
 
     public:
-        L_NODISCARD dense_container& dense() noexcept { return m_dense; }
-        L_NODISCARD const dense_container& dense() const noexcept { return m_dense; }
+        R_NODISCARD dense_container& dense() noexcept { return m_dense; }
+        R_NODISCARD const dense_container& dense() const noexcept { return m_dense; }
 
-        L_NODISCARD iterator begin() noexcept { return m_dense.begin(); }
-        L_NODISCARD const_iterator begin() const noexcept { return m_dense.cbegin(); }
-        L_NODISCARD const_iterator cbegin() const noexcept { return m_dense.cbegin(); }
+        R_NODISCARD iterator begin() noexcept { return m_dense.begin(); }
+        R_NODISCARD const_iterator begin() const noexcept { return m_dense.cbegin(); }
+        R_NODISCARD const_iterator cbegin() const noexcept { return m_dense.cbegin(); }
 
-        L_NODISCARD iterator end() noexcept { return m_dense.begin() + m_size; }
-        L_NODISCARD const_iterator end() const noexcept { return m_dense.cbegin() + m_size; }
-        L_NODISCARD const_iterator cend() const noexcept { return m_dense.cbegin() + m_size; }
+        R_NODISCARD iterator end() noexcept { return m_dense.begin() + m_size; }
+        R_NODISCARD const_iterator end() const noexcept { return m_dense.cbegin() + m_size; }
+        R_NODISCARD const_iterator cend() const noexcept { return m_dense.cbegin() + m_size; }
 
-        L_NODISCARD reverse_iterator rbegin() noexcept { return m_dense.rbegin() + (m_dense.size() - m_size); }
-        L_NODISCARD const_reverse_iterator rbegin() const noexcept { return m_dense.crbegin() + (m_dense.size() - m_size); }
-        L_NODISCARD const_reverse_iterator crbegin() const noexcept { return m_dense.crbegin() + (m_dense.size() - m_size); }
+        R_NODISCARD reverse_iterator rbegin() noexcept { return m_dense.rbegin() + (m_dense.size() - m_size); }
+        R_NODISCARD const_reverse_iterator rbegin() const noexcept { return m_dense.crbegin() + (m_dense.size() - m_size); }
+        R_NODISCARD const_reverse_iterator crbegin() const noexcept { return m_dense.crbegin() + (m_dense.size() - m_size); }
 
-        L_NODISCARD reverse_iterator rend() noexcept { return m_dense.rend(); }
-        L_NODISCARD const_reverse_iterator rend() const noexcept { return m_dense.crend(); }
-        L_NODISCARD const_reverse_iterator crend() const noexcept { return m_dense.crend(); }
+        R_NODISCARD reverse_iterator rend() noexcept { return m_dense.rend(); }
+        R_NODISCARD const_reverse_iterator rend() const noexcept { return m_dense.crend(); }
+        R_NODISCARD const_reverse_iterator crend() const noexcept { return m_dense.crend(); }
 
-        L_NODISCARD reverse_itr_range reverse_range() noexcept { return pair_range{ rbegin(), rend() }; }
-        L_NODISCARD const_reverse_itr_range reverse_range() const noexcept { return pair_range{ crbegin(), crend() }; }
+        R_NODISCARD reverse_itr_range reverse_range() noexcept { return pair_range{ rbegin(), rend() }; }
+        R_NODISCARD const_reverse_itr_range reverse_range() const noexcept { return pair_range{ crbegin(), crend() }; }
 
         /**@brief Returns the amount of items in the sparse_map.
          * @returns rsl::size_type Current amount of items contained in sparse_map.
          */
-        L_NODISCARD rsl::size_type size() const noexcept { return m_size; }
+        R_NODISCARD rsl::size_type size() const noexcept { return m_size; }
 
         /**@brief Returns the capacity of items the sparse_map could at least store without invalidating the iterators.
          * @returns rsl::size_type Current capacity of the dense container.
          */
-        L_NODISCARD rsl::size_type capacity() const noexcept { return m_capacity; }
+        R_NODISCARD rsl::size_type capacity() const noexcept { return m_capacity; }
 
         /**@brief Returns the maximum number of items the hashed_sparse_set could at most store without crashing.
          * @note This value typically reflects the theoretical limit on the size of the container, at most std::numeric_limits<difference_type>::max().
          *       At runtime, the size of the container may be limited to a value smaller than max_size() by the amount of RAM available.
          * @returns rsl::size_type
          */
-        L_NODISCARD rsl::size_type max_size() const noexcept { return m_dense.max_size(); }
+        R_NODISCARD rsl::size_type max_size() const noexcept { return m_dense.max_size(); }
 
         /**@brief Returns whether the sparse_map is empty.
          * @returns bool True if the sparse_map is empty, otherwise false.
          */
-        L_NODISCARD bool empty() const noexcept { return m_size == 0; }
+        R_NODISCARD bool empty() const noexcept { return m_size == 0; }
 
         /**@brief Clears sparse_map.
          * @note Will not update capacity.
@@ -127,7 +127,7 @@ namespace rythe::core
          * @note Function is only available for compatibility reasons, it is advised to use contains instead.
          * @ref rythe::core::sparse_map::contains
          */
-        L_NODISCARD rsl::size_type count(value_const_reference val) const
+        R_NODISCARD rsl::size_type count(value_const_reference val) const
         {
             return contains(val);
         }
@@ -138,7 +138,7 @@ namespace rythe::core
          * @note Function is only available for compatibility reasons, it is advised to use contains instead.
          * @ref rythe::core::sparse_map::contains
          */
-        L_NODISCARD rsl::size_type count(value_type&& val) const
+        R_NODISCARD rsl::size_type count(value_type&& val) const
         {
             return contains(val);
         }
@@ -149,7 +149,7 @@ namespace rythe::core
          * @param val Value to check for.
          * @returns bool True if the value was found, otherwise false.
          */
-        L_NODISCARD bool contains(value_const_reference val) const
+        R_NODISCARD bool contains(value_const_reference val) const
         {
             if (!m_sparse.count(val))
                 return false;
@@ -162,7 +162,7 @@ namespace rythe::core
          * @param val Value to check for.
          * @returns bool True if the value was found, otherwise false.
          */
-        L_NODISCARD bool contains(value_type&& val) const
+        R_NODISCARD bool contains(value_type&& val) const
         {
             if (!m_sparse.count(val))
                 return false;
@@ -175,7 +175,7 @@ namespace rythe::core
          * @param other Other hashed_sparse_set to check against.
          * @returns bool True if all items in other are also in this hashed_sparse_set, otherwise false.
          */
-        L_NODISCARD bool contains(const hashed_sparse_set<value_type>& other) const
+        R_NODISCARD bool contains(const hashed_sparse_set<value_type>& other) const
         {
             if (other.m_size == 0)
                 return true;
@@ -195,7 +195,7 @@ namespace rythe::core
          * @param other Other hashed_sparse_set to check against.
          * @returns bool True if both sets are the same size and contain the same items, otherwise false.
          */
-        L_NODISCARD bool equals(self_const_reference other) const
+        R_NODISCARD bool equals(self_const_reference other) const
         {
             if (m_size == other.m_size)
             {
@@ -213,7 +213,7 @@ namespace rythe::core
          * @param other Other hashed_sparse_set to check against.
          * @returns bool True if both sets are the same size and contain the same items, otherwise false.
          */
-        L_NODISCARD bool operator==(self_const_reference other) const
+        R_NODISCARD bool operator==(self_const_reference other) const
         {
             if (m_size == other.m_size)
             {
@@ -232,7 +232,7 @@ namespace rythe::core
          * @param val Value to find.
          * @returns Iterator to the value if found, otherwise end.
          */
-        L_NODISCARD iterator find(value_const_reference val)
+        R_NODISCARD iterator find(value_const_reference val)
         {
             if (contains(val))
                 return begin() + m_sparse.at(val);
@@ -243,7 +243,7 @@ namespace rythe::core
          * @param val Value to find.
          * @returns Iterator to the value if found, otherwise end.
          */
-        L_NODISCARD const_iterator find(value_const_reference val) const
+        R_NODISCARD const_iterator find(value_const_reference val) const
         {
             if (contains(val))
                 return begin() + m_sparse.at(val);
@@ -310,7 +310,7 @@ namespace rythe::core
         /**@brief Returns item from dense container.
          * @param index Index of item in dense container.
          */
-        L_NODISCARD value_reference operator[](rsl::size_type&& index)
+        R_NODISCARD value_reference operator[](rsl::size_type&& index)
         {
             if (index < 0 || index > m_size)
                 throw std::out_of_range("hashed_sparse_set subscript out of range");
@@ -320,7 +320,7 @@ namespace rythe::core
         /**@brief Returns item from dense container.
          * @param index Index of item in dense container.
          */
-        L_NODISCARD value_reference operator[](const rsl::size_type& index)
+        R_NODISCARD value_reference operator[](const rsl::size_type& index)
         {
             if (index < 0 || index > m_size)
                 throw std::out_of_range("hashed_sparse_set subscript out of range");
@@ -330,7 +330,7 @@ namespace rythe::core
         /**@brief Returns item from dense container.
          * @param index Index of item in dense container.
          */
-        L_NODISCARD value_const_reference operator[](rsl::size_type&& index) const
+        R_NODISCARD value_const_reference operator[](rsl::size_type&& index) const
         {
             if (index < 0 || index > m_size)
                 throw std::out_of_range("hashed_sparse_set subscript out of range");
@@ -340,7 +340,7 @@ namespace rythe::core
         /**@brief Returns item from dense container.
          * @param index Index of item in dense container.
          */
-        L_NODISCARD value_const_reference operator[](const rsl::size_type& index) const
+        R_NODISCARD value_const_reference operator[](const rsl::size_type& index) const
         {
             if (index < 0 || index > m_size)
                 throw std::out_of_range("hashed_sparse_set subscript out of range");
@@ -352,7 +352,7 @@ namespace rythe::core
         /**@brief Returns item from dense container.
          * @param index Index of item in dense container.
          */
-        L_NODISCARD value_reference at(rsl::size_type&& index)
+        R_NODISCARD value_reference at(rsl::size_type&& index)
         {
             if (index < 0 || index > m_size)
                 throw std::out_of_range("hashed_sparse_set subscript out of range");
@@ -362,7 +362,7 @@ namespace rythe::core
         /**@brief Returns item from dense container.
          * @param index Index of item in dense container.
          */
-        L_NODISCARD value_reference at(const rsl::size_type& index)
+        R_NODISCARD value_reference at(const rsl::size_type& index)
         {
             if (index < 0 || index > m_size)
                 throw std::out_of_range("hashed_sparse_set subscript out of range");
@@ -372,7 +372,7 @@ namespace rythe::core
         /**@brief Returns item from dense container.
          * @param index Index of item in dense container.
          */
-        L_NODISCARD value_const_reference at(rsl::size_type&& index) const
+        R_NODISCARD value_const_reference at(rsl::size_type&& index) const
         {
             if (index < 0 || index > m_size)
                 throw std::out_of_range("hashed_sparse_set subscript out of range");
@@ -382,7 +382,7 @@ namespace rythe::core
         /**@brief Returns item from dense container.
          * @param index Index of item in dense container.
          */
-        L_NODISCARD value_const_reference at(const rsl::size_type& index) const
+        R_NODISCARD value_const_reference at(const rsl::size_type& index) const
         {
             if (index < 0 || index > m_size)
                 throw std::out_of_range("hashed_sparse_set subscript out of range");

@@ -1,8 +1,8 @@
 #pragma once
 #define _CRT_SECURE_NO_WARNINGS       // fopen vs fopen_s
 
-#include <rsl/type_util> // L_NODISCARD
-#include <rsl/primitives>       // byte, byte_vec
+#include <rsl/type_util> // R_NODISCARD
+#include <rsl/primitives>       // rsl::byte, rsl::byte_vec
 #include <core/common/assert.hpp>     // assert_msg
 
 #include <string_view>                // std::string_view
@@ -17,7 +17,7 @@ namespace rythe::core::filesystem {
     /**@brief Check if file exists.
      * @param [in] path The path of the file to check.
      */
-    L_NODISCARD inline bool exists(std::string_view path)
+    R_NODISCARD inline bool exists(std::string_view path)
     {
         FILE* f = fopen(std::string(path).c_str(),"r+b");
 
@@ -34,14 +34,14 @@ namespace rythe::core::filesystem {
      * @param [in] path The path of the file to open.
      * @return A vector of bytes with the contents of the file at path.
      */
-    L_NODISCARD inline byte_vec read_file(std::string_view path)
+    R_NODISCARD inline rsl::byte_vec read_file(std::string_view path)
     {
         std::ifstream file(path.data(), std::ios::ate | std::ios::binary);
 
         assert_msg("could not open file", file.is_open());
 
         size_t fileSize = (size_t)file.tellg();
-        byte_vec buffer(fileSize);
+        rsl::byte_vec buffer(fileSize);
 
         file.seekg(0);
         file.read(reinterpret_cast<char*>(buffer.data()), fileSize);
@@ -56,7 +56,7 @@ namespace rythe::core::filesystem {
      * @param [in] path The path of the file you want to write to.
      * @param [in] container The buffer you want to write to the file.
      */
-    inline void write_file(std::string_view path,const byte_vec& container)
+    inline void write_file(std::string_view path,const rsl::byte_vec& container)
     {
 
         //create managed FILE ptr
@@ -68,7 +68,7 @@ namespace rythe::core::filesystem {
         assert_msg("could not open file",file);
 
         // read data
-        fwrite(container.data(),sizeof(byte),container.size(),file.get());
+        fwrite(container.data(),sizeof(rsl::byte),container.size(),file.get());
 
     }
 
@@ -78,7 +78,7 @@ namespace rythe::core::filesystem {
      */
     namespace literals
     {
-        byte_vec RYTHE_FUNC operator""_readfile(const char* str, std::size_t len);
+        rsl::byte_vec RYTHE_FUNC operator""_readfile(const char* str, std::size_t len);
 
         auto RYTHE_FUNC operator""_writefile(const char* str, std::size_t len);
 

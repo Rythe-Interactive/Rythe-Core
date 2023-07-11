@@ -1,5 +1,5 @@
 #include <core/compute/program.hpp>
-#include <core/logging/logging.hpp>
+#include <rsl/logging>
 
 #include <core/filesystem/resource.hpp>
 #include <core/compute/context.hpp>

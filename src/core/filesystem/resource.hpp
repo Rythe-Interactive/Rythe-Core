@@ -1,6 +1,6 @@
 #pragma once
-#include <rsl/primitives>       // byte_vec
-#include <rsl/type_util> // L_NODISCARD
+#include <rsl/primitives>       // rsl::byte_vec
+#include <rsl/type_util> // R_NODISCARD
 
 #include <string_view>                // std::string_view
 
@@ -22,10 +22,10 @@ namespace rythe::core::filesystem
          */
         explicit basic_resource(std::nullptr_t placeholder) : m_container{}{}
 
-        /**@brief Constructs a basic resource from a rythe::core::byte_vec.
+        /**@brief Constructs a basic resource from a rythe::core::rsl::byte_vec.
          * @param [in] v The resource from which the resource is created (copy operation/move).
          */
-        explicit basic_resource(byte_vec v) : m_container(std::move(v)) {
+        explicit basic_resource(rsl::byte_vec v) : m_container(std::move(v)) {
         }
 
         /**@brief Constructs a basic resource from a std::string
@@ -47,7 +47,7 @@ namespace rythe::core::filesystem
         /**@brief Gets an iterator to the first element of the container.
          * @return iterator to first element
          */
-        L_NODISCARD auto begin() noexcept
+        R_NODISCARD auto begin() noexcept
         {
             return m_container.begin();
         }
@@ -55,7 +55,7 @@ namespace rythe::core::filesystem
         /**@brief Gets an iterator to the first element of the container.
          * @return iterator to first element
          */
-        L_NODISCARD auto begin() const noexcept
+        R_NODISCARD auto begin() const noexcept
         {
             return m_container.begin();
         }
@@ -63,7 +63,7 @@ namespace rythe::core::filesystem
         /**@brief Gets an iterator to the last element + 1 of the container.
          * @return iterator to first element
          */
-        L_NODISCARD auto end() noexcept
+        R_NODISCARD auto end() noexcept
         {
             return m_container.end();
         }
@@ -71,23 +71,23 @@ namespace rythe::core::filesystem
         /**@brief Gets an iterator to the last element + 1 of the container.
          * @return iterator to first element
          */
-        L_NODISCARD auto end() const noexcept
+        R_NODISCARD auto end() const noexcept
         {
             return m_container.end();
         }
 
         /**@brief Gets a pointer to the data of the container.
-         * @return byte* to raw data
+         * @return rsl::byte* to raw data
          */
-        L_NODISCARD auto data() noexcept
+        R_NODISCARD auto data() noexcept
         {
             return m_container.data();
         }
 
         /**@brief Gets a pointer to the data of the container.
-         * @return byte* to raw data
+         * @return rsl::byte* to raw data
          */
-        L_NODISCARD auto data() const noexcept
+        R_NODISCARD auto data() const noexcept
         {
             return m_container.data();
         }
@@ -95,7 +95,7 @@ namespace rythe::core::filesystem
         /**@brief Gets the size of the container.
          * @return size_t to the size of container
          */
-        L_NODISCARD auto size() const noexcept
+        R_NODISCARD auto size() const noexcept
         {
             return m_container.size();
         }
@@ -103,7 +103,7 @@ namespace rythe::core::filesystem
         /**@brief Checks if the container is empty.
          * @return bool, true when empty
          */
-        L_NODISCARD auto empty() const noexcept
+        R_NODISCARD auto empty() const noexcept
         {
             return m_container.empty();
         }
@@ -114,23 +114,23 @@ namespace rythe::core::filesystem
         }
 
         /**@brief Gets the container element
-         * @return rythe::core::byte_vec 
+         * @return rythe::core::rsl::byte_vec 
          */
-        L_NODISCARD byte_vec& get() noexcept
+        R_NODISCARD rsl::byte_vec& get() noexcept
         {
             return m_container;
         }
         
         /**@brief Gets the container element.
-         * @return rythe::core::byte_vec 
+         * @return rythe::core::rsl::byte_vec 
          */
-        L_NODISCARD const byte_vec& get() const noexcept
+        R_NODISCARD const rsl::byte_vec& get() const noexcept
         {
             return m_container;
         }
 
         /**@brief String assignment operator.
-         * @param value The string you want to assign to the byte_vec.
+         * @param value The string you want to assign to the rsl::byte_vec.
          * @return basic_resource& *this
          */
         basic_resource& operator=(const std::string_view& value)
@@ -142,7 +142,7 @@ namespace rythe::core::filesystem
         /**@brief String conversion.
          * @return std::string, The container converted to const char *.
          */
-        L_NODISCARD std::string to_string() const
+        R_NODISCARD std::string to_string() const
         {
             const char* const cstr = reinterpret_cast<const char*>(data());
             return std::string(cstr,size());
@@ -163,7 +163,7 @@ namespace rythe::core::filesystem
          * @return T Created from this resources data.
          */
         template <typename T,class... Args>
-        L_NODISCARD T to(Args&&...args) const;
+        R_NODISCARD T to(Args&&...args) const;
 
         /**@brief Generic conversion from T.
          *
@@ -176,7 +176,7 @@ namespace rythe::core::filesystem
         void from(const T& v);
         
     private:
-        byte_vec m_container;
+        rsl::byte_vec m_container;
     };
 
     #ifndef DOXY_EXCLUDE
@@ -231,7 +231,7 @@ namespace rythe::core::filesystem
 
 
     template <typename T,class... Args>
-    L_NODISCARD T basic_resource::to(Args&&...args) const
+    R_NODISCARD T basic_resource::to(Args&&...args) const
     {
         return std::move(from_resource<T>(*this, std::forward<Args>(args)...));
     }

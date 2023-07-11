@@ -8,11 +8,11 @@
 
 #include <rsl/type_util>
 #include <rsl/primitives>
+#include <rsl/delegate>
 
 #include <rsl/type_util>
 #include <core/async/wait_priority.hpp>
 #include <core/async/spinlock.hpp>
-#include <core/containers/delegate.hpp>
 #include <core/common/result.hpp>
 #include <core/common/exception.hpp>
 
@@ -33,14 +33,14 @@ namespace rythe::core::async
         constexpr async_progress_base() noexcept : m_size(100u * precision_scale<rsl::size_type>), m_progress(0) {}
         constexpr explicit async_progress_base(float size) noexcept : m_size(static_cast<rsl::size_type>(size * precision_scale<float>)), m_progress(0) {}
 
-        L_NODISCARD float size() const noexcept;
-        L_NODISCARD rsl::size_type raw_size() const noexcept;
-        L_NODISCARD rsl::size_type raw_progress() const noexcept;
+        R_NODISCARD float size() const noexcept;
+        R_NODISCARD rsl::size_type raw_size() const noexcept;
+        R_NODISCARD rsl::size_type raw_progress() const noexcept;
 
         void advance_progress(float progress = 1.f) noexcept;
         void reset(float progress = 0.f) noexcept;
-        L_NODISCARD bool is_done() const noexcept;
-        L_NODISCARD float progress() const noexcept;
+        R_NODISCARD bool is_done() const noexcept;
+        R_NODISCARD float progress() const noexcept;
     };
 
     template<typename ReturnType>
@@ -70,7 +70,7 @@ namespace rythe::core::async
             complete_impl();
         }
 
-        L_NODISCARD common::result<std::reference_wrapper<payload_type>> get_result()
+        R_NODISCARD common::result<std::reference_wrapper<payload_type>> get_result()
         {
             std::lock_guard guard(m_payloadLock);
             if (m_payload)
@@ -99,9 +99,9 @@ namespace rythe::core::async
         NO_DTOR_RULE5_NOEXCEPT(async_operation_base);
         virtual ~async_operation_base() = default;
 
-        L_NODISCARD bool is_done() const noexcept;
+        R_NODISCARD bool is_done() const noexcept;
 
-        L_NODISCARD float progress() const noexcept;
+        R_NODISCARD float progress() const noexcept;
 
         virtual void wait(wait_priority priority = wait_priority_normal) const noexcept;
     };
@@ -137,7 +137,7 @@ namespace rythe::core::async
             return m_repeater(std::forward<argument_types>(args)...);
         }
 
-        L_NODISCARD payload& get_result(wait_priority priority = wait_priority_normal)
+        R_NODISCARD payload& get_result(wait_priority priority = wait_priority_normal)
         {
             wait(priority);
             return static_cast<async_progress<payload>*>(m_progress.get())->get_result().value();
@@ -204,7 +204,7 @@ namespace rythe::core::async
             return std::invoke(std::forward<Functor>(func), std::forward<argument_types>(args)...);
         }
 
-        L_NODISCARD payload& get_result(wait_priority priority = wait_priority_normal)
+        R_NODISCARD payload& get_result(wait_priority priority = wait_priority_normal)
         {
             wait(priority);
             return static_cast<async_progress<payload>*>(m_progress.get())->get_result().value();

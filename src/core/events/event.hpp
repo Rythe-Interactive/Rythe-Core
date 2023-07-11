@@ -1,9 +1,10 @@
 #pragma once
-#include <rsl/primitives>
-#include <core/types/type_util.hpp>
-#include <rsl/type_util>
-#include <core/async/ring_sync_lock.hpp>
 #include <unordered_map>
+
+#include <rsl/primitives>
+#include <rsl/type_util>
+
+#include "core/async/ring_sync_lock.hpp"
 
 /**
  * @file event.hpp

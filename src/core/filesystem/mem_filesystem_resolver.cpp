@@ -6,7 +6,7 @@
 
 namespace rythe::core::filesystem
 {
-    mem_filesystem_resolver::mem_filesystem_resolver(std::shared_ptr<const byte_vec> target_data)
+    mem_filesystem_resolver::mem_filesystem_resolver(std::shared_ptr<const rsl::byte_vec> target_data)
         : m_targetData(std::move(target_data))
     {
     }
@@ -29,13 +29,13 @@ namespace rythe::core::filesystem
         return true;
     }
 
-    const byte_vec& mem_filesystem_resolver::get_data() const
+    const rsl::byte_vec& mem_filesystem_resolver::get_data() const
     {
         if(!prewarm()) throw rythe_fs_error("attempting to access data via a purely cached object, which was not cached");
         return *m_data;
     }
 
-    byte_vec& mem_filesystem_resolver::get_data()
+    rsl::byte_vec& mem_filesystem_resolver::get_data()
     {
         if(!prewarm()) throw rythe_fs_error("attempting to access data via a purely cached object, which was not cached");
         return *m_data;

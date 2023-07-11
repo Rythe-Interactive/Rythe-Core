@@ -1,7 +1,7 @@
 #pragma once
 
 #include "detail/cl_include.hpp" // cl_context , cl_mem , cl_mem_flags
-#include <rsl/primitives> // byte, size_t
+#include <rsl/primitives> // rsl::byte, size_t
 
 #include <string> // string
 
@@ -53,10 +53,10 @@ namespace rythe::core::compute {
     public:
 
         Buffer(cl_context ctx, void* data, rsl::size_type width, rsl::size_type height, rsl::size_type depth, cl_mem_object_type object_type, cl_image_format* format, buffer_type type, std::string name);
-        Buffer(cl_context ctx, cl_rsl::uint buffer, buffer_type type, bool is_renderbuffer, std::string name);
-        Buffer(cl_context ctx, cl_rsl::uint gl_target, cl_rsl::uint gl_texture, cl_rsl::uint miplevel, buffer_type type, std::string name);
+        Buffer(cl_context ctx, cl_uint buffer, buffer_type type, bool is_renderbuffer, std::string name);
+        Buffer(cl_context ctx, cl_uint gl_target, cl_uint gl_texture, cl_uint miplevel, buffer_type type, std::string name);
     
-        Buffer(cl_context ctx, byte* data, rsl::size_type len, buffer_type type, std::string name);
+        Buffer(cl_context ctx, rsl::byte* data, rsl::size_type len, buffer_type type, std::string name);
 
         Buffer(Buffer&& b) noexcept;
         Buffer(const Buffer& b);
@@ -98,7 +98,7 @@ namespace rythe::core::compute {
         cl_mem m_memory_object;
         rsl::size_type* m_ref_count;
         cl_mem_flags m_type;
-        byte* m_data;
+        rsl::byte* m_data;
         rsl::size_type m_size;
     };
 }

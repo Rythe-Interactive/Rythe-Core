@@ -7,13 +7,13 @@
 namespace rythe::core
 {
     template<typename SelfType>
-    template <void(SelfType::* func_type)(time::span), rsl::size_type charc>
-    inline L_ALWAYS_INLINE rsl::id_type System<SelfType>::createProcess(const char(&processChainName)[charc], time::span interval)
+    template <void(SelfType::* func_type)(rsl::span), rsl::size_type charc>
+    inline R_ALWAYS_INLINE rsl::id_type System<SelfType>::createProcess(const char(&processChainName)[charc], rsl::span interval)
     {
         std::string name = std::string(processChainName) + nameOfType<SelfType>() + std::to_string(interval) + std::to_string(force_value_cast<ptr_type>(func_type));
         rsl::id_type id = nameHash(name);
         std::unique_ptr<schd::Process> process = std::make_unique<schd::Process>(name, id, interval);
-        process->setOperation(delegate<void(time::span)>::from<SelfType, func_type>(reinterpret_cast<SelfType*>(this)));
+        process->setOperation(delegate<void(rsl::span)>::from<SelfType, func_type>(reinterpret_cast<SelfType*>(this)));
         m_processes.emplace(id, std::move(process));
 
         schd::Scheduler::hookProcess<charc>(processChainName, pointer<schd::Process>{ m_processes[id].get() });
@@ -22,7 +22,7 @@ namespace rythe::core
 
     template<typename SelfType>
     template<typename event_type, void(SelfType::* func_type)(event_type&) CNDOXY(typename)>
-    inline L_ALWAYS_INLINE rsl::id_type System<SelfType>::bindToEvent()
+    inline R_ALWAYS_INLINE rsl::id_type System<SelfType>::bindToEvent()
     {
         rsl::id_type id = combine_hash(event_type::id, force_value_cast<ptr_type>(func_type));
 
@@ -35,21 +35,21 @@ namespace rythe::core
     }
 
     template <typename event_type CNDOXY(typename)>
-    inline L_ALWAYS_INLINE void SystemBase::unbindFromEvent(rsl::id_type bindingId)
+    inline R_ALWAYS_INLINE void SystemBase::unbindFromEvent(rsl::id_type bindingId)
     {
         events::EventBus::unbindFromEvent<event_type>(reinterpret_cast<delegate<void(event_type&)>&>(m_bindings.at(bindingId)));
         m_bindings.erase(bindingId);
     }
 
     template<typename event_type, typename... Args CNDOXY(typename)>
-    inline L_ALWAYS_INLINE void SystemBase::raiseEvent(Args&&... arguments)
+    inline R_ALWAYS_INLINE void SystemBase::raiseEvent(Args&&... arguments)
     {
         events::EventBus::raiseEvent<event_type>(std::forward<Args>(arguments)...);
     }
 
     template<typename SelfType>
     template<typename Func>
-    inline L_ALWAYS_INLINE auto System<SelfType>::queueJobs(rsl::size_type count, Func&& func)
+    inline R_ALWAYS_INLINE auto System<SelfType>::queueJobs(rsl::size_type count, Func&& func)
     {
         if constexpr (std::is_invocable_v<Func, rsl::id_type>)
         {
@@ -66,7 +66,7 @@ namespace rythe::core
 
     template<typename SelfType>
     template<void(SelfType::* func_type)()>
-    inline L_ALWAYS_INLINE auto System<SelfType>::queueJobs(rsl::size_type count)
+    inline R_ALWAYS_INLINE auto System<SelfType>::queueJobs(rsl::size_type count)
     {
         return schd::Scheduler::queueJobs(count, [&]() {
             std::invoke(func_type, this, async::this_job::get_id());
@@ -75,7 +75,7 @@ namespace rythe::core
 
     template<typename SelfType>
     template<void(SelfType::* func_type)(rsl::id_type)>
-    inline L_ALWAYS_INLINE auto System<SelfType>::queueJobs(rsl::size_type count)
+    inline R_ALWAYS_INLINE auto System<SelfType>::queueJobs(rsl::size_type count)
     {
         return schd::Scheduler::queueJobs(count, [&]() {
             std::invoke(func_type, this);

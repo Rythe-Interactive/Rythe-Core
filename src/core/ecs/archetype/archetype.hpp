@@ -6,7 +6,6 @@
 
 #include <rsl/type_util>
 #include <rsl/primitives>
-#include <core/types/meta.hpp>
 
 #include <core/ecs/handles/entity.hpp>
 
@@ -40,7 +39,7 @@ namespace rythe::core::ecs
         friend X& std::get(archetype<Args...>&);
 
         template<rsl::size_type I, typename Arg, typename... Args>
-        friend element_at_t<I, Arg, Args...>& std::get(archetype<Arg, Args...>&);
+        friend rsl::element_at_t<I, Arg, Args...>& std::get(archetype<Arg, Args...>&);
 
     public:
         using handle_group = std::tuple<component<component_type>, component<component_types>...>;
@@ -63,28 +62,28 @@ namespace rythe::core::ecs
         /**@brief Get the handle to one of the components in the archetype.
          */
         template<typename T>
-        L_NODISCARD T& get();
+        R_NODISCARD T& get();
 
-        L_NODISCARD ref_group get();
+        R_NODISCARD ref_group get();
 
         template<rsl::size_type I>
-        L_NODISCARD element_at_t<I, component_type, component_types...>& get();
+        R_NODISCARD rsl::element_at_t<I, component_type, component_types...>& get();
 
-        L_NODISCARD handle_group handles();
-        L_NODISCARD const_handle_group handles() const;
-        L_NODISCARD ref_group values();
+        R_NODISCARD handle_group handles();
+        R_NODISCARD const_handle_group handles() const;
+        R_NODISCARD ref_group values();
 
-        L_NODISCARD bool valid() const;
+        R_NODISCARD bool valid() const;
 
-        L_NODISCARD operator bool() const;
+        R_NODISCARD operator bool() const;
 
         void destroy();
 
-        L_NODISCARD static handle_group get_handles(entity ent);
-        L_NODISCARD static const_handle_group get_const_handles(entity ent);
-        L_NODISCARD static ref_group get(entity ent);
+        R_NODISCARD static handle_group get_handles(entity ent);
+        R_NODISCARD static const_handle_group get_const_handles(entity ent);
+        R_NODISCARD static ref_group get(entity ent);
         static void destroy(entity ent);
-        L_NODISCARD static bool has(entity ent);
+        R_NODISCARD static bool has(entity ent);
 
     private:
         std::variant<handle_group, copy_group> underlying;
@@ -124,11 +123,11 @@ namespace std // NOLINT(cert-dcl58-cpp)
     template <::std::size_t I, class Arg, class... Args>
     struct tuple_element<I, rythe::core::ecs::archetype<Arg, Args...>>
     {
-        using type = typename rythe::core::element_at_t<I, Arg, Args...>;
+        using type = typename rsl::element_at_t<I, Arg, Args...>;
     };
 
     template <::std::size_t I, class Arg, class... Args>
-    rythe::core::element_at_t<I, Arg, Args...>&
+    rsl::element_at_t<I, Arg, Args...>&
         get(rythe::core::ecs::archetype<Arg, Args...>& val)
     {
         return std::get<I>(std::get<0>(val.underlying));

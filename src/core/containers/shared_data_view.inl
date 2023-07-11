@@ -4,11 +4,11 @@
 namespace rythe::core
 {
     template<typename DataType>
-    inline L_ALWAYS_INLINE shared_data_view<DataType>::shared_data_view(std::nullptr_t) noexcept
+    inline R_ALWAYS_INLINE shared_data_view<DataType>::shared_data_view(std::nullptr_t) noexcept
         : shared_data_view(nullptr, 0, 0, false) {}
 
     template<typename DataType>
-    inline shared_data_view<DataType>::shared_data_view(ptr_type ptr, rsl::size_type size, diff_type offset) noexcept
+    inline shared_data_view<DataType>::shared_data_view(ptr_type ptr, rsl::size_type size, rsl::diff_type offset) noexcept
         : m_data(ptr), m_offset(offset), m_size(size) {}
 
     template<typename DataType>
@@ -126,7 +126,7 @@ namespace rythe::core
     }
 
     template<typename DataType>
-    inline diff_type shared_data_view<DataType>::offset() const noexcept
+    inline rsl::diff_type shared_data_view<DataType>::offset() const noexcept
     {
         return m_offset;
     }

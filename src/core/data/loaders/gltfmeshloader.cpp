@@ -21,7 +21,7 @@ namespace rythe::core
             if (handle)
                 return handle;
 
-            byte* imgData = new byte[img.image.size()]; // faux_gltf_image_loader will delete upon destruction.
+            rsl::byte* imgData = new rsl::byte[img.image.size()]; // faux_gltf_image_loader will delete upon destruction.
             memcpy(imgData, img.image.data(), img.image.size());
 
             return assets::AssetCache<image>::createAsLoader<GltfFauxImageLoader>(hash, img.name, "",
@@ -29,7 +29,7 @@ namespace rythe::core
                 math::ivec2(img.width, img.height),
                 img.pixel_type == TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE ? channel_format::eight_bit : img.pixel_type == TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT ? channel_format::sixteen_bit : channel_format::float_hdr,
                 img.component == 1 ? image_components::grey : img.component == 2 ? image_components::grey_alpha : img.component == 3 ? image_components::rgb : image_components::rgba,
-                data_view<byte>{ imgData, img.image.size(), 0 });
+                data_view<rsl::byte>{ imgData, img.image.size(), 0 });
         }
 
         /**
@@ -84,7 +84,7 @@ namespace rythe::core
             }
         }
 
-        static void handleGltfBuffer(const tinygltf::Model& model, const tinygltf::Accessor& accessor, std::vector<math::vec3>& data, const math::mat4 transform, bool normal = false)
+        static void handleGltfBuffer(const tinygltf::Model& model, const tinygltf::Accessor& accessor, std::vector<rsl::math::float3>& data, const math::mat4 transform, bool normal = false)
         {
             const tinygltf::BufferView& bufferView = model.bufferViews.at(static_cast<rsl::size_type>(accessor.bufferView));
             const tinygltf::Buffer& buffer = model.buffers.at(static_cast<rsl::size_type>(bufferView.buffer));
@@ -171,7 +171,7 @@ namespace rythe::core
          * @param buffer - tinygltf::Buffer containing the mesh data
          * @param bufferView - tinygltf::BufferView containing information about the buffer (data size/data offset)
          * @param accessorType - tinygltf accessorType, Vertex color is expected to come in vec3 or vec4 - will be handled by the function
-         * @param componentType - tinygltf componentType, Vertex color is expected to come in float, unsigned byte or unsigned short - will be handled by the function
+         * @param componentType - tinygltf componentType, Vertex color is expected to come in float, unsigned rsl::byte or unsigned short - will be handled by the function
          * @param data - std::vector<color> the destination of the data copy. The vector will be resized to vector.size()+(tinygltf vertex color size)
          */
         static common::result<void, void> handleGltfVertexColor(const tinygltf::Model& model, const tinygltf::Accessor& accessor, int accessorType, int componentType, std::vector<math::color>& data)
@@ -186,7 +186,7 @@ namespace rythe::core
             data.reserve(dataStart + accessor.count);
 
             std::vector<std::string> warnings;
-            //colors in glft are in vec3/vec4 float/unsigned byte/unsigned short
+            //colors in glft are in vec3/vec4 float/unsigned rsl::byte/unsigned short
             for (rsl::size_type i = bufferStart; i < bufferEnd; i += stride)
             {
                 if (accessorType == TINYGLTF_TYPE_VEC3)
@@ -196,10 +196,10 @@ namespace rythe::core
                     {
                     case TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE:
                     {
-                        // Vertex colors in unsigned byte
+                        // Vertex colors in unsigned rsl::byte
                         const float r = static_cast<float>(buffer.data[i]) / 255.f;
-                        const float g = static_cast<float>(buffer.data[i + sizeof(byte)]) / 255.f;
-                        const float b = static_cast<float>(buffer.data[i + 2 * sizeof(byte)]) / 255.f;
+                        const float g = static_cast<float>(buffer.data[i + sizeof(rsl::byte)]) / 255.f;
+                        const float b = static_cast<float>(buffer.data[i + 2 * sizeof(rsl::byte)]) / 255.f;
                         data.emplace_back(r, g, b);
                     }
                     break;
@@ -221,7 +221,7 @@ namespace rythe::core
                     }
                     break;
                     default:
-                        warnings.emplace_back("Vert colors were not stored as UNSIGNED BYTE/SHORT or float, skipping");
+                        warnings.emplace_back("Vert colors were not stored as UNSIGNED rsl::byte/SHORT or float, skipping");
                     }
                 }
                 else if (accessorType == TINYGLTF_TYPE_VEC4)
@@ -231,11 +231,11 @@ namespace rythe::core
                     {
                     case TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE:
                     {
-                        // Vertex colors in unsigned byte
+                        // Vertex colors in unsigned rsl::byte
                         const float r = static_cast<float>(buffer.data[i]) / 255.f;
-                        const float g = static_cast<float>(buffer.data[i + sizeof(byte)]) / 255.f;
-                        const float b = static_cast<float>(buffer.data[i + 2 * sizeof(byte)]) / 255.f;
-                        const float a = static_cast<float>(buffer.data[i + 3 * sizeof(byte)]) / 255.f;
+                        const float g = static_cast<float>(buffer.data[i + sizeof(rsl::byte)]) / 255.f;
+                        const float b = static_cast<float>(buffer.data[i + 2 * sizeof(rsl::byte)]) / 255.f;
+                        const float a = static_cast<float>(buffer.data[i + 3 * sizeof(rsl::byte)]) / 255.f;
                         data.emplace_back(r, g, b, a);
                     }
                     break;
@@ -257,7 +257,7 @@ namespace rythe::core
                     }
                     break;
                     default:
-                        warnings.emplace_back("Vert colors were not stored as UNSIGNED BYTE/SHORT or float, skipping");
+                        warnings.emplace_back("Vert colors were not stored as UNSIGNED rsl::byte/SHORT or float, skipping");
                     }
                 }
                 else
@@ -294,8 +294,8 @@ namespace rythe::core
                         {
                             const rsl::uint16* idx = reinterpret_cast<const rsl::uint16*>(&indexBuffer.data[indexPos]);
                             const float r = static_cast<float>(valueBuffer.data[valuePos]) / 255.f;
-                            const float g = static_cast<float>(valueBuffer.data[valuePos + sizeof(byte)]) / 255.f;
-                            const float b = static_cast<float>(valueBuffer.data[valuePos + 2 * sizeof(byte)]) / 255.f;
+                            const float g = static_cast<float>(valueBuffer.data[valuePos + sizeof(rsl::byte)]) / 255.f;
+                            const float b = static_cast<float>(valueBuffer.data[valuePos + 2 * sizeof(rsl::byte)]) / 255.f;
                             data.at(dataStart + *idx) = math::color(r, g, b);
                         }
                         break;
@@ -322,9 +322,9 @@ namespace rythe::core
                         {
                             const rsl::uint16* idx = reinterpret_cast<const rsl::uint16*>(&indexBuffer.data[indexPos]);
                             const float r = static_cast<float>(valueBuffer.data[valuePos]) / 255.f;
-                            const float g = static_cast<float>(valueBuffer.data[valuePos + sizeof(byte)]) / 255.f;
-                            const float b = static_cast<float>(valueBuffer.data[valuePos + 2 * sizeof(byte)]) / 255.f;
-                            const float a = static_cast<float>(valueBuffer.data[valuePos + 3 * sizeof(byte)]) / 255.f;
+                            const float g = static_cast<float>(valueBuffer.data[valuePos + sizeof(rsl::byte)]) / 255.f;
+                            const float b = static_cast<float>(valueBuffer.data[valuePos + 2 * sizeof(rsl::byte)]) / 255.f;
+                            const float a = static_cast<float>(valueBuffer.data[valuePos + 3 * sizeof(rsl::byte)]) / 255.f;
                             data.at(dataStart + *idx) = math::color(r, g, b, a);
                         }
                         break;
@@ -466,19 +466,19 @@ namespace rythe::core
             }
             else
             {
-                math::vec3 pos{ 0.f, 0.f, 0.f };
+                rsl::math::float3 pos{ 0.f, 0.f, 0.f };
                 math::quat rot{ 1.f, 0.f, 0.f, 0.f };
-                math::vec3 scale{ 1.f, 1.f, 1.f };
+                rsl::math::float3 scale{ 1.f, 1.f, 1.f };
 
                 // Assume Trans x Rotate x Scale order
                 if (node.scale.size() == 3)
-                    scale = math::vec3(static_cast<float>(node.scale[0]), static_cast<float>(node.scale[1]), static_cast<float>(node.scale[2]));
+                    scale = rsl::math::float3(static_cast<float>(node.scale[0]), static_cast<float>(node.scale[1]), static_cast<float>(node.scale[2]));
 
                 if (node.rotation.size() == 4)
                     rot = math::quat(static_cast<float>(node.rotation[3]), static_cast<float>(node.rotation[0]), static_cast<float>(node.rotation[1]), static_cast<float>(node.rotation[2]));
 
                 if (node.translation.size() == 3)
-                    pos = math::vec3(static_cast<float>(node.translation[0]), static_cast<float>(node.translation[1]), static_cast<float>(node.translation[2]));
+                    pos = rsl::math::float3(static_cast<float>(node.translation[0]), static_cast<float>(node.translation[1]), static_cast<float>(node.translation[2]));
 
                 return math::compose(scale, rot, pos);
             }
@@ -544,7 +544,7 @@ namespace rythe::core
                 for (rsl::size_type i = smallestBufferSize; i < vertexCount; ++i)
                 {
                     if (meshData.normals.size() == i)
-                        meshData.normals.push_back(math::vec3::up);
+                        meshData.normals.push_back(rsl::math::float3::up);
 
                     if (meshData.uvs.size() == i)
                         meshData.uvs.push_back(math::vec2(0, 0));

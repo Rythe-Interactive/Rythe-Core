@@ -25,7 +25,8 @@ namespace rythe::core::assets
         const std::string& path() const;
         void destroy();
         asset copy(const std::string& name) const;
-        asset copy(rsl::id_type nameHash, const std::string& name) const;
+        asset copy(rsl::id_type 
+            , const std::string& name) const;
     };
 
     template<typename AssetType>

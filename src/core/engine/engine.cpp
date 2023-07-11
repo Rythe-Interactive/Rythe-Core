@@ -49,15 +49,15 @@ namespace rythe::core
         return combine_hash(baseId++, threadId);
     }
 
-    multicast_delegate<void()>& Engine::initializationSequence()
+    rsl::multicast_delegate<void()>& Engine::initializationSequence()
     {
-        static multicast_delegate<void()> m_initializationSequence;
+        static rsl::multicast_delegate<void()> m_initializationSequence;
         return m_initializationSequence;
     }
 
-    multicast_delegate<void()>& Engine::shutdownSequence()
+    rsl::multicast_delegate<void()>& Engine::shutdownSequence()
     {
-        static multicast_delegate<void()> m_shutdownSequence;
+        static rsl::multicast_delegate<void()> m_shutdownSequence;
         return m_shutdownSequence;
     }
 

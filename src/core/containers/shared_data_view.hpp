@@ -30,7 +30,7 @@ namespace rythe::core
 
         explicit shared_data_view(std::nullptr_t) noexcept;
 
-        shared_data_view(ptr_type ptr, rsl::size_type size, diff_type offset = 0) noexcept;
+        shared_data_view(ptr_type ptr, rsl::size_type size, rsl::diff_type offset = 0) noexcept;
 
         shared_data_view(const shared_data_view& other) noexcept;
 
@@ -40,24 +40,24 @@ namespace rythe::core
 
         shared_data_view& operator=(shared_data_view&& other) noexcept;
 
-        L_NODISCARD operator bool() const noexcept;
+        R_NODISCARD operator bool() const noexcept;
 
-        L_NODISCARD bool operator==(const shared_data_view& other) const noexcept;
-        L_NODISCARD bool operator!=(const shared_data_view& other) const noexcept;
+        R_NODISCARD bool operator==(const shared_data_view& other) const noexcept;
+        R_NODISCARD bool operator!=(const shared_data_view& other) const noexcept;
 
         /**@brief gets reference to the value at index idx
          * checks if the index is valid before returning and throws and std::out_of_range exception if it is not
          * @param idx the index to query
          * @returns reference to the value at idx
          */
-        L_NODISCARD value_type& at(rsl::size_type idx);
+        R_NODISCARD value_type& at(rsl::size_type idx);
 
         /**@brief gets const reference to the value at index idx
          * checks if the index is valid before returning and throws and std::out_of_range exception if it is not
          * @param idx the index to query
          * @returns const reference to the value at idx
          */
-        L_NODISCARD const value_type& at(rsl::size_type idx) const;
+        R_NODISCARD const value_type& at(rsl::size_type idx) const;
 
         /**@brief gets reference to the value at index idx
          * @param idx the index to query
@@ -69,34 +69,34 @@ namespace rythe::core
          * @param idx the index to query
          * @returns const reference to the value at idx
          */
-        L_NODISCARD const value_type& operator[](rsl::size_type idx) const;
+        R_NODISCARD const value_type& operator[](rsl::size_type idx) const;
 
-        L_NODISCARD iterator begin() noexcept;
+        R_NODISCARD iterator begin() noexcept;
 
-        L_NODISCARD iterator end() noexcept;
+        R_NODISCARD iterator end() noexcept;
 
-        L_NODISCARD ptr_type data() noexcept;
+        R_NODISCARD ptr_type data() noexcept;
 
-        L_NODISCARD const_iterator begin() const noexcept;
+        R_NODISCARD const_iterator begin() const noexcept;
 
-        L_NODISCARD const_iterator end() const noexcept;
+        R_NODISCARD const_iterator end() const noexcept;
 
-        L_NODISCARD const_ptr_type data() const noexcept;
+        R_NODISCARD const_ptr_type data() const noexcept;
 
         /**@brief gets the size of the target data in item count.
          */
-        L_NODISCARD rsl::size_type size() const noexcept;
+        R_NODISCARD rsl::size_type size() const noexcept;
 
-        L_NODISCARD diff_type offset() const noexcept;
+        R_NODISCARD rsl::diff_type offset() const noexcept;
 
         /**@brief gets the max size this container could grow to.
          * since the container is non resizable same as size()
          */
-        L_NODISCARD rsl::size_type max_size() const noexcept;
+        R_NODISCARD rsl::size_type max_size() const noexcept;
 
     private:
         std::shared_ptr<ptr_type> m_data;
-        diff_type m_offset;
+        rsl::diff_type m_offset;
         rsl::size_type m_size;
     };
 }

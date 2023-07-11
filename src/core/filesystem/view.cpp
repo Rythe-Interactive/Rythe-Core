@@ -5,7 +5,7 @@
 #include "navigator.hpp"
 #include "provider_registry.hpp"
 #include "detail/strpath_manip.hpp"
-#include <core/logging/logging.hpp>
+#include <rsl/logging>
 
 
 namespace rythe::core::filesystem
@@ -74,12 +74,12 @@ namespace rythe::core::filesystem
         return m_path.substr(0, idx + 1) + strpath_manip::separator() + strpath_manip::separator();
     }
 
-    L_NODISCARD const std::string& view::get_virtual_path() const
+    R_NODISCARD const std::string& view::get_virtual_path() const
     {
         return m_path;
     }
 
-    L_NODISCARD common::result<std::string, fs_error> view::get_extension() const
+    R_NODISCARD common::result<std::string, fs_error> view::get_extension() const
     {
         if (!file_info().is_file) // check if the view is a file.
             return rythe_fs_error("requested file extension on view that isn't a file.");
@@ -89,7 +89,7 @@ namespace rythe::core::filesystem
         return path.extension().string();
     }
 
-    L_NODISCARD common::result<std::string, fs_error> view::get_filename() const
+    R_NODISCARD common::result<std::string, fs_error> view::get_filename() const
     {
         if (!file_info().is_file) // check if the view is a file.
             return rythe_fs_error("requested file name on view that isn't a file.");
@@ -99,7 +99,7 @@ namespace rythe::core::filesystem
         return path.filename().string();
     }
 
-    L_NODISCARD common::result<std::string, fs_error> view::get_filestem() const
+    R_NODISCARD common::result<std::string, fs_error> view::get_filestem() const
     {
         if (!file_info().is_file) // check if the view is a file.
             return rythe_fs_error("requested file name on view that isn't a file.");
@@ -137,7 +137,7 @@ namespace rythe::core::filesystem
         return resolver->get();
     }
 
-    L_NODISCARD common::result<const basic_resource, fs_error> view::get() const
+    R_NODISCARD common::result<const basic_resource, fs_error> view::get() const
     {
         //get solution
         auto result = make_solution();

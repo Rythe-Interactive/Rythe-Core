@@ -22,14 +22,14 @@ namespace rythe::core::compute {
     namespace detail {
         struct buffer_base
         {
-            buffer_base(byte* buffer, rsl::size_type size, std::string n) : container(std::make_pair(buffer, size)), name(std::move(n)) {}
+            buffer_base(rsl::byte* buffer, rsl::size_type size, std::string n) : container(std::make_pair(buffer, size)), name(std::move(n)) {}
             buffer_base(const buffer_base& other) = default;
             buffer_base(buffer_base&& other) noexcept = default;
             buffer_base& operator=(const buffer_base& other) = default;
             buffer_base& operator=(buffer_base&& other) noexcept = default;
             ~buffer_base() = default;
 
-            std::pair<byte*, rsl::size_type> container;
+            std::pair<rsl::byte*, rsl::size_type> container;
             std::string name;
         };
     }
@@ -66,7 +66,7 @@ namespace rythe::core::compute {
         static_assert(is_vector<std::remove_reference_t<T>>::value, "T needs to be a vector");
 
         in(T& vec, std::string name = "") :
-            buffer_base(reinterpret_cast<byte*>(vec.data()),
+            buffer_base(reinterpret_cast<rsl::byte*>(vec.data()),
                 sizeof(typename std::remove_reference_t<T>::value_type)* vec.size(), name) {}
         ~in() = default;
         in(const in& other) = default;
@@ -87,7 +87,7 @@ namespace rythe::core::compute {
         static_assert(is_vector<std::remove_reference_t<T>>::value, "T needs to be a vector");
 
         out(T& vec, std::string name = "") :
-            buffer_base(reinterpret_cast<byte*>(vec.data()),
+            buffer_base(reinterpret_cast<rsl::byte*>(vec.data()),
                 sizeof(typename std::remove_reference_t<T>::value_type)* vec.size(), name) {}
         ~out() = default;
         out(const out& other) = default;
@@ -108,7 +108,7 @@ namespace rythe::core::compute {
         static_assert(is_vector<std::remove_reference_t<T>>::value, "T needs to be a vector");
 
         inout(T& vec, std::string name = "") :
-            buffer_base(reinterpret_cast<byte*>(vec.data()),
+            buffer_base(reinterpret_cast<rsl::byte*>(vec.data()),
                 sizeof(typename std::remove_reference_t<T>::value_type)* vec.size(), name) {}
         ~inout() = default;
         inout(const inout& other) = default;

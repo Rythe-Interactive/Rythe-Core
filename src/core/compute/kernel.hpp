@@ -2,7 +2,7 @@
 #include "detail/cl_include.hpp"
 
 #include <core/compute/buffer.hpp>
-#include <core/logging/logging.hpp>
+#include <rsl/logging>
 #include <variant>
 #include <map>
 
@@ -175,7 +175,7 @@ namespace rythe::core::compute
          * @param buffer The buffer you want to inform the kernel about
          * @param index The index of the Buffer you want to inform the kernel about
          */
-        Kernel& setBuffer(Buffer buffer, cl_rsl::uint index);
+        Kernel& setBuffer(Buffer buffer, cl_uint index);
 
 
         /**
@@ -197,7 +197,7 @@ namespace rythe::core::compute
          * @param index The index of the parameter.
          */
         template <class T>
-        Kernel& setKernelArg(T* value, cl_rsl::uint index)
+        Kernel& setKernelArg(T* value, cl_uint index)
         {
             return setKernelArg(value,sizeof(T),index);
         }
@@ -217,7 +217,7 @@ namespace rythe::core::compute
          * @param size  Sizeof of the parameter.
          * @param index The index of the parameter.
          */
-        Kernel& setKernelArg(void* value, rsl::size_type size, cl_rsl::uint index);
+        Kernel& setKernelArg(void* value, rsl::size_type size, cl_uint index);
 
         /**
          * @brief same as informing the kernel about a buffer and then enqueueing it 
@@ -232,7 +232,7 @@ namespace rythe::core::compute
         /**
          * @brief same as informing the kernel about a buffer and then enqueueing it 
          */
-        Kernel& setAndEnqueueBuffer(Buffer buffer, cl_rsl::uint index, block_mode blocking = block_mode::BLOCKING);
+        Kernel& setAndEnqueueBuffer(Buffer buffer, cl_uint index, block_mode blocking = block_mode::BLOCKING);
 
         /**
          * @brief Dispatches the Kernel to the command-queue
@@ -262,7 +262,7 @@ namespace rythe::core::compute
         size_t* m_refcounter;
 
         buffer_type m_default_mode;
-        std::map<std::string, cl_rsl::uint> m_paramsMap;
+        std::map<std::string, cl_uint> m_paramsMap;
         Program* m_prog;
         cl_kernel m_func;
         cl_command_queue m_queue;

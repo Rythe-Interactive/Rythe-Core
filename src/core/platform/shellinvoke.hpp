@@ -1,8 +1,10 @@
 #pragma once
 #include <rsl/type_util>
 #include <rsl/primitives>
-#include <core/common/string_extra.hpp>
-#include <core/logging/logging.hpp>
+#include <rsl/logging>
+
+#include "core/common/string_extra.hpp"
+
 
 namespace rythe::core
 {
@@ -49,7 +51,7 @@ namespace rythe::core
         si.dwFlags |= STARTF_USESTDHANDLES;
         ZeroMemory(&pi, sizeof(pi));
 
-        log::trace("Executing command: {}", command);
+        rsl::log::trace("Executing command: {}", command);
         auto ret = CreateProcessA(NULL, cmd, NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
 
         CloseHandle(childStdoutWr);
@@ -60,7 +62,7 @@ namespace rythe::core
             CloseHandle(childStdoutRd);
             CloseHandle(childStderrRd);
             delete[] cmd;
-            log::trace("Failed to execute command: {}", command);
+            rsl::log::trace("Failed to execute command: {}", command);
             return false;
         }
 
@@ -94,7 +96,7 @@ namespace rythe::core
         CloseHandle(pi.hThread);
 
         delete[] cmd;
-        log::trace("Successfully executed command: {}", command);
+        rsl::log::trace("Successfully executed command: {}", command);
         return true;
     }
 

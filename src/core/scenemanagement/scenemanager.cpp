@@ -1,6 +1,6 @@
 #include <core/scenemanagement/components/scene.hpp>
 #include <core/serialization/serializationutil.hpp>
-#include <core/logging/logging.hpp>
+#include <rsl/logging>
 #include <core/common/string_extra.hpp>
 
 namespace rythe::core::scenemanagement
@@ -82,7 +82,7 @@ namespace rythe::core::scenemanagement
         return false;
     }
 
-    bool SceneManager::load_scene(L_MAYBEUNUSED const std::string& name)
+    bool SceneManager::load_scene(R_MAYBEUNUSED const std::string& name)
     {
         //std::string filename = name;
         //if (!common::ends_with(filename, ".cornflake")) filename += ".cornflake";
@@ -108,7 +108,7 @@ namespace rythe::core::scenemanagement
         return true;
     }
 
-    bool SceneManager::save_scene(L_MAYBEUNUSED const std::string& name, L_MAYBEUNUSED ecs::entity& ent)
+    bool SceneManager::save_scene(R_MAYBEUNUSED const std::string& name, R_MAYBEUNUSED ecs::entity& ent)
     {
         //std::ofstream outFile("assets/scenes/" + name + ".cornflake");
         //serialization::SerializationUtil::JSONSerialize<ecs::entity>(outFile, ent);

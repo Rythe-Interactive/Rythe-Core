@@ -7,7 +7,7 @@
 namespace rythe::core
 {
     template<rsl::size_type charc>
-    inline L_ALWAYS_INLINE void Module::createProcessChain(const char(&name)[charc]) const
+    inline R_ALWAYS_INLINE void Module::createProcessChain(const char(&name)[charc]) const
     {
         schd::Scheduler::createProcessChain<charc>(name);
     }
@@ -30,14 +30,14 @@ namespace rythe::core
             m_shutdownFuncs.insert_back<SystemType, &SystemType::shutdown>(system);
         }
 
-        if constexpr (has_update_v<SystemType, void(time::span)>)
+        if constexpr (has_update_v<SystemType, void(rsl::span)>)
         {
             system->template createProcess<&SystemType::update>("Update");
         }
     }
 
     template<typename component_type, typename... Args>
-    inline L_ALWAYS_INLINE void Module::registerComponentType(Args&&... args)
+    inline R_ALWAYS_INLINE void Module::registerComponentType(Args&&... args)
     {
         ecs::Registry::registerComponentType<component_type>(std::forward<Args>(args)...);
     }

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <core/containers/pointer.hpp>
-#include <core/containers/delegate.hpp>
+#include <rsl/delegate>
 #include <core/containers/sparse_map.hpp>
 #include <core/time/time.hpp>
 
@@ -12,15 +12,15 @@ namespace rythe::core::scheduling
     class ProcessChain
     {
     public:
-        using chain_callback_type = void(time::span, time::span);
-        using chain_callback_delegate = delegate<chain_callback_type>;
+        using chain_callback_type = void(rsl::span, rsl::span);
+        using chain_callback_delegate = rsl::delegate<chain_callback_type>;
     private:
         std::string m_name;
         rsl::id_type m_nameHash = invalid_id;
         sparse_map<rsl::id_type, pointer<Process>> m_processes;
 
-        multicast_delegate<chain_callback_type> m_onChainStart;
-        multicast_delegate<chain_callback_type> m_onChainEnd;
+        rsl::multicast_delegate<chain_callback_type> m_onChainStart;
+        rsl::multicast_delegate<chain_callback_type> m_onChainEnd;
 
     public:
         ProcessChain() = default;
@@ -61,7 +61,7 @@ namespace rythe::core::scheduling
         /**@brief Runs one iteration of the process-chains program loop without creating a new thread.
          * @note Loops through all hooked processes and executes them until they are all finished.
          */
-        void runInCurrentThread(time::span deltaTime);
+        void runInCurrentThread(rsl::span deltaTime);
     };
 }
 

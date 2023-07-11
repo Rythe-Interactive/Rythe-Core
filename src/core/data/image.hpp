@@ -1,10 +1,13 @@
 #pragma once
 #include <rsl/type_util>
 #include <rsl/primitives>
-#include <core/containers/containers.hpp>
-#include <core/filesystem/filesystem.hpp>
-#include <core/assets/assets.hpp>
-#include <core/math/math.hpp>
+#include <rsl/math>
+#include <rsl/containers>
+
+#include "core/containers/containers.hpp"
+#include "core/filesystem/filesystem.hpp"
+#include "core/assets/assets.hpp"
+
 
 /**
  * @file image.hpp
@@ -40,11 +43,11 @@ namespace rythe::core
      */
     struct image final
     {
-        image(const math::ivec2& res, channel_format format, image_components comp, const data_view<byte>& data);
+        image(const rsl::math::int2& res, channel_format format, image_components comp, const data_view<rsl::byte>& data);
 
         NO_DEF_CTOR_RULE5_NOEXCEPT(image);
 
-        const math::ivec2& resolution() const noexcept;
+        const rsl::math::int2& resolution() const noexcept;
         const channel_format& format() const noexcept;
         const image_components& components() const noexcept;
 
@@ -63,8 +66,8 @@ namespace rythe::core
         /**@brief Convert the binary image representation to a more usable representation if it hasn't been converted before and return the new representation.
          * @return const std::vector<math::color>& List with all the colors in the image.
          */
-        common::result<std::reference_wrapper<const std::vector<math::color>>> read_colors() const;
-        common::result<void> write_colors(const std::vector<math::color>& colors);
+        common::result<std::reference_wrapper<const std::vector<rsl::math::color>>> read_colors() const;
+        common::result<void> write_colors(const std::vector<rsl::math::color>& colors);
 
         /**@brief Get the data size of the binary data.
          */
@@ -72,17 +75,17 @@ namespace rythe::core
 
         bool operator==(const image& other) const noexcept;
 
-        byte* data() noexcept;
+        rsl::byte* data() noexcept;
 
     private:
         common::result<void> _apply_raw_impl() const;
 
-        math::ivec2 m_resolution;
+        rsl::math::int2 m_resolution;
         channel_format m_format;
         image_components m_components;
 
-        mutable data_view<byte> m_data;
-        mutable std::optional<std::vector<math::color>> m_colors = std::nullopt;
+        mutable data_view<rsl::byte> m_data;
+        mutable std::optional<std::vector<rsl::math::color>> m_colors = std::nullopt;
     };
 
     ReportAssetType(image);

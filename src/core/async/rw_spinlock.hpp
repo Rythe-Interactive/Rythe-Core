@@ -39,7 +39,7 @@ namespace rythe::core::async
     {
     private:
         static bool m_forceRelease;
-        static std::atomic_rsl::uint m_lastId;
+        static std::atomic_uint m_lastId;
 
         static std::unordered_map<rsl::uint, int>& localWriters();
         static std::unordered_map<rsl::uint, int>& localReaders();

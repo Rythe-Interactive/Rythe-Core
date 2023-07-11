@@ -38,14 +38,14 @@ namespace rythe::core::ecs
           * @param target Entity ID of the entity to check for.
           * @return True if the specified entity is registered with this pool, false if not.
           */
-        L_NODISCARD virtual bool contains(entity target) const RYTHE_PURE;
+        R_NODISCARD virtual bool contains(entity target) const RYTHE_PURE;
 
         /**@brief Fetch the component attached to a certain entity.
          * @param target Entity ID of the entity the component is attached to.
          * @return Pointer to the component.
          */
-        L_NODISCARD virtual void* get_component(entity target) RYTHE_PURE;
-        L_NODISCARD virtual const void* get_component(entity target) const RYTHE_PURE;
+        R_NODISCARD virtual void* get_component(entity target) RYTHE_PURE;
+        R_NODISCARD virtual const void* get_component(entity target) const RYTHE_PURE;
 
         /**@brief Erase a component attached to a certain entity.
          * @param target Entity ID of the entity the component is attached to.
@@ -85,14 +85,14 @@ namespace rythe::core::ecs
           * @param target Entity ID of the entity to check for.
           * @return True if the specified entity is registered with this pool, false if not.
           */
-        L_NODISCARD virtual bool contains(entity target) const;
+        R_NODISCARD virtual bool contains(entity target) const;
 
         /**@brief Fetch the component attached to a certain entity.
          * @param target Entity ID of the entity the component is attached to.
          * @return Pointer to the component.
          */
-        L_NODISCARD virtual void* get_component(entity target);
-        L_NODISCARD virtual const void* get_component(entity target) const;
+        R_NODISCARD virtual void* get_component(entity target);
+        R_NODISCARD virtual const void* get_component(entity target) const;
 
         /**@brief Erase a component attached to a certain entity.
          * @param target Entity ID of the entity the component is attached to.

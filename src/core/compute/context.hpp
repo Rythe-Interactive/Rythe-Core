@@ -57,14 +57,14 @@ namespace rythe::core::compute
         {
             return Buffer(
                 instance.m_context,
-                reinterpret_cast<byte*>(container.data()), // data as void-ptr
+                reinterpret_cast<rsl::byte*>(container.data()), // data as void-ptr
                 container.size() * sizeof(T),  // size with data as void-ptr
                 type,
                 std::forward<std::string>(name)
             );
         }
 
-        static Buffer createBuffer(byte* data, rsl::size_type size, buffer_type type, std::string name = "")
+        static Buffer createBuffer(rsl::byte* data, rsl::size_type size, buffer_type type, std::string name = "")
         {
             return Buffer(instance.m_context, data, size, type, std::forward<std::string>(name));
         }

@@ -3,7 +3,7 @@
 namespace rythe::core::async
 {
     bool spinlock::m_forceRelease = false;
-    std::atomic_rsl::uint spinlock::m_lastId = { 1 };
+    std::atomic_uint spinlock::m_lastId = { 1 };
     thread_local std::unordered_map<rsl::id_type, rsl::uint> spinlock::m_localState;
 
     void spinlock::force_release(bool release)
@@ -47,13 +47,13 @@ namespace rythe::core::async
             if (!m_lock.exchange(true, std::memory_order_acquire))
                 break;
             while (m_lock.load(std::memory_order_relaxed))
-                L_PAUSE_INSTRUCTION();
+                R_PAUSE_INSTRUCTION();
         }
 
         locks++;
     }
 
-    L_NODISCARD bool spinlock::try_lock() const noexcept
+    R_NODISCARD bool spinlock::try_lock() const noexcept
     {
         if (m_forceRelease)
             return true;
