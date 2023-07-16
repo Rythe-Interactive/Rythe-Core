@@ -14,7 +14,7 @@ namespace rythe::core
                 if (i + 2 > data->indices.size())
                     break;
 
-                math::uvec3 indices{ data->indices[i], data->indices[i + 1], data->indices[i + 2] };
+                math::uint3 indices{ data->indices[i], data->indices[i + 1], data->indices[i + 2] };
 
                 if (indices[0] > data->vertices.size() || indices[1] > data->vertices.size() || indices[2] > data->vertices.size())
                     continue;

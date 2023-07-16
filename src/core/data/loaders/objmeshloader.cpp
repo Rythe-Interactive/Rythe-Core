@@ -17,10 +17,10 @@ namespace rythe::core::detail
             std::hash<math::color> colorHasher;
             std::hash<math::float2> vec2Hasher;
             hash = 0;
-            math::detail::hash_combine(hash, vec3Hasher(vertex));
-            math::detail::hash_combine(hash, colorHasher(color));
-            math::detail::hash_combine(hash, vec3Hasher(normal));
-            math::detail::hash_combine(hash, vec2Hasher(uv));
+            rsl::hash_combine(hash, vec3Hasher(vertex));
+            rsl::hash_combine(hash, colorHasher(color));
+            rsl::hash_combine(hash, vec3Hasher(normal));
+            rsl::hash_combine(hash, vec2Hasher(uv));
         }
 
         bool operator==(const vertex_hash& other) const
@@ -315,9 +315,9 @@ namespace rythe::core
                     vertices.push_back(hash);
 
                     // Append vertex data.
-                    data.vertices.push_back((transform * math::float4(vertex.x, vertex.y, vertex.z, 1.f)).xyz());
+                    data.vertices.push_back((transform * math::float4(vertex.x, vertex.y, vertex.z, 1.f)).xyz);
                     data.colors.push_back(color);
-                    data.normals.push_back((transform * math::float4(normal.x, normal.y, normal.z, 0.f)).xyz());
+                    data.normals.push_back((transform * math::float4(normal.x, normal.y, normal.z, 0.f)).xyz);
 
                     if (!settings.flipVerticalTexcoords)
                         uv.y = 1.f - uv.y;

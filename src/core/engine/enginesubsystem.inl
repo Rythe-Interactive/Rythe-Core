@@ -30,7 +30,7 @@ namespace rythe::core
     {
         static_assert(std::is_base_of_v<EngineSubSystem<T>, T>, "Dependency must be an EngineSubSystem.");
         auto& shutdownSeq = T::shutdownSequence();
-        shutdownSeq.emplace_back(&SubSystem::shutdown);
+        shutdownSeq.push_back<&SubSystem::shutdown>(*reinterpret_cast<SubSystem*>(this));
 
         T::init();
     }
