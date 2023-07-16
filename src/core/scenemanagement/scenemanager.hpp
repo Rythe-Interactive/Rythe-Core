@@ -39,7 +39,7 @@ namespace rythe::core::scenemanagement
                         {
                             auto fileName = file.get_filename().value();
                             log::debug("Added {}",fileName);
-                            sceneNames.emplace(nameHash(fileName), fileName);
+                            sceneNames.emplace(rsl::nameHash(fileName), fileName);
                         }
                     }
                 }

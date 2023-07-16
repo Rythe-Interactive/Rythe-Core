@@ -1,4 +1,4 @@
-#include <core/ecs/registry.hpp>
+#include "core/ecs/registry.hpp"
 #pragma once
 
 namespace rythe::core::ecs
@@ -6,7 +6,7 @@ namespace rythe::core::ecs
     template<typename ComponentType, typename... Args>
     inline R_ALWAYS_INLINE void Registry::registerComponentType(Args&&... args)
     {
-        auto& [typeId, componentType] = *(componentTypes().try_emplace(typeHash<ComponentType>(), std::make_unique<component_type<ComponentType>>(std::forward<Args>(args)...)).first);
+        auto& [typeId, componentType] = *(componentTypes().try_emplace(rsl::typeHash<ComponentType>(), std::make_unique<component_type<ComponentType>>(std::forward<Args>(args)...)).first);
         if (initialized())
         {
             tryEmplaceFamily(typeId, componentType->create_pool());
@@ -23,7 +23,7 @@ namespace rythe::core::ecs
     template<typename ComponentType, typename... Args>
     inline R_ALWAYS_INLINE component_pool<ComponentType>* Registry::getFamily(Args&&... args)
     {
-        rsl::id_type typeId = typeHash<ComponentType>();
+        rsl::id_type typeId = rsl::typeHash<ComponentType>();
         auto& families = getFamilies();
         if (families.count(typeId)) // Check and fetch in order to avoid a possibly unnecessary allocation and deletion.
             return dynamic_cast<component_pool<ComponentType>*>(families.at(typeId).get());
@@ -45,7 +45,7 @@ namespace rythe::core::ecs
         }
         else
         {
-            rsl::id_type typeId = typeHash<ComponentType>();
+            rsl::id_type typeId = rsl::typeHash<ComponentType>();
 
             // Check and emplace component family if it doesn't exist yet.
             static bool checked = false; // Prevent unnecessary unordered_map lookups.
@@ -95,7 +95,7 @@ namespace rythe::core::ecs
         }
         else
         {
-            rsl::id_type typeId = typeHash<ComponentType>();
+            rsl::id_type typeId = rsl::typeHash<ComponentType>();
 
             // Check and emplace component family if it doesn't exist yet.
             static bool checked = false; // Prevent unnecessary unordered_map lookups.
@@ -123,7 +123,7 @@ namespace rythe::core::ecs
         }
         else
         {
-            rsl::id_type typeId = typeHash<ComponentType>();
+            rsl::id_type typeId = rsl::typeHash<ComponentType>();
 
             // Check and emplace component family if it doesn't exist yet.
             static bool checked = false; // Prevent unnecessary unordered_map lookups.
@@ -189,7 +189,7 @@ namespace rythe::core::ecs
         }
         else
         {
-            rsl::id_type typeId = typeHash<ComponentType>();
+            rsl::id_type typeId = rsl::typeHash<ComponentType>();
 
             // Check and emplace component family if it doesn't exist yet.
             static bool checked = false; // Prevent unnecessary unordered_map lookups.
@@ -239,7 +239,7 @@ namespace rythe::core::ecs
         }
         else
         {
-            rsl::id_type typeId = typeHash<ComponentType>();
+            rsl::id_type typeId = rsl::typeHash<ComponentType>();
 
             // Check and emplace component family if it doesn't exist yet.
             static bool checked = false; // Prevent unnecessary unordered_map lookups.
@@ -269,7 +269,7 @@ namespace rythe::core::ecs
         }
         else
         {
-            rsl::id_type typeId = typeHash<ComponentType>();
+            rsl::id_type typeId = rsl::typeHash<ComponentType>();
 
             // Check and emplace component family if it doesn't exist yet.
             static bool checked = false; // Prevent unnecessary unordered_map lookups.

@@ -107,7 +107,7 @@ namespace rythe::core
         static auto queueJobs(rsl::size_type count, Func&& func);
 
     public:
-        System() : SystemBase(make_hash<SelfType>()) {}
+        System() : SystemBase(rsl::make_hash<SelfType>()) {}
 
         virtual ~System() = default;
 

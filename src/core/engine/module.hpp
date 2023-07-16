@@ -52,7 +52,7 @@ namespace rythe::core
 
         /**@brief determines the execution priority of this module
          * @ref RYTHE_IMPURE_RETURN
-         * @returns priority_type signed int8 higher is higher priority and get called first
+         * @returns rsl::priority_type signed int8 higher is higher priority and get called first
          * @note default priority of the engine is 0.
          * @note call order for modules with the same priority is undefined.
          */

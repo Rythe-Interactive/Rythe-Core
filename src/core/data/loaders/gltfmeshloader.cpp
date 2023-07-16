@@ -15,7 +15,7 @@ namespace rythe::core
         {
             std::string name = img.name + img.uri;
 
-            const auto hash = nameHash(name);
+            const auto hash = rsl::nameHash(name);
 
             auto handle = assets::get<image>(hash);
             if (handle)
@@ -26,7 +26,7 @@ namespace rythe::core
 
             return assets::AssetCache<image>::createAsLoader<GltfFauxImageLoader>(hash, img.name, "",
                 // Image constructor parameters.
-                math::ivec2(img.width, img.height),
+                math::int2(img.width, img.height),
                 img.pixel_type == TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE ? channel_format::eight_bit : img.pixel_type == TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT ? channel_format::sixteen_bit : channel_format::float_hdr,
                 img.component == 1 ? image_components::grey : img.component == 2 ? image_components::grey_alpha : img.component == 3 ? image_components::rgb : image_components::rgba,
                 data_view<rsl::byte>{ imgData, img.image.size(), 0 });
@@ -84,7 +84,7 @@ namespace rythe::core
             }
         }
 
-        static void handleGltfBuffer(const tinygltf::Model& model, const tinygltf::Accessor& accessor, std::vector<rsl::math::float3>& data, const math::mat4 transform, bool normal = false)
+        static void handleGltfBuffer(const tinygltf::Model& model, const tinygltf::Accessor& accessor, std::vector<rsl::math::float3>& data, const math::float4x4 transform, bool normal = false)
         {
             const tinygltf::BufferView& bufferView = model.bufferViews.at(static_cast<rsl::size_type>(accessor.bufferView));
             const tinygltf::Buffer& buffer = model.buffers.at(static_cast<rsl::size_type>(bufferView.buffer));
@@ -102,7 +102,7 @@ namespace rythe::core
                     const float* x = reinterpret_cast<const float*>(&buffer.data[i]);
                     const float* y = reinterpret_cast<const float*>(&buffer.data[i + sizeof(float)]);
                     const float* z = reinterpret_cast<const float*>(&buffer.data[i + 2 * sizeof(float)]);
-                    data.push_back(math::normalize((transform * math::vec4(*x, *y, *z, 0.f)).xyz()));
+                    data.push_back(math::normalize((transform * math::float4(*x, *y, *z, 0.f)).xyz));
                 }
             }
             else
@@ -112,7 +112,7 @@ namespace rythe::core
                     const float* x = reinterpret_cast<const float*>(&buffer.data[i]);
                     const float* y = reinterpret_cast<const float*>(&buffer.data[i + sizeof(float)]);
                     const float* z = reinterpret_cast<const float*>(&buffer.data[i + 2 * sizeof(float)]);
-                    data.push_back((transform * math::vec4(*x, *y, *z, 1.f)).xyz());
+                    data.push_back((transform * math::float4(*x, *y, *z, 1.f)).xyz);
                 }
             }
 
@@ -142,7 +142,7 @@ namespace rythe::core
                         const float* x = reinterpret_cast<const float*>(&valueBuffer.data[valuePos]);
                         const float* y = reinterpret_cast<const float*>(&valueBuffer.data[valuePos + sizeof(float)]);
                         const float* z = reinterpret_cast<const float*>(&valueBuffer.data[valuePos + 2 * sizeof(float)]);
-                        data.at(dataStart + *idx) = math::normalize((transform * math::vec4(*x, *y, *z, 0.f)).xyz());
+                        data.at(dataStart + *idx) = math::normalize((transform * math::float4(*x, *y, *z, 0.f)).xyz);
 
                         indexPos += indexStride;
                         valuePos += valueStride;
@@ -156,7 +156,7 @@ namespace rythe::core
                         const float* x = reinterpret_cast<const float*>(&valueBuffer.data[valuePos]);
                         const float* y = reinterpret_cast<const float*>(&valueBuffer.data[valuePos + sizeof(float)]);
                         const float* z = reinterpret_cast<const float*>(&valueBuffer.data[valuePos + 2 * sizeof(float)]);
-                        data.at(dataStart + *idx) = (transform * math::vec4(*x, *y, *z, 1)).xyz();
+                        data.at(dataStart + *idx) = (transform * math::float4(*x, *y, *z, 1)).xyz;
 
                         indexPos += indexStride;
                         valuePos += valueStride;
@@ -452,13 +452,13 @@ namespace rythe::core
             return { common::success, warnings };
         }
 
-        static math::mat4 getGltfNodeTransform(const tinygltf::Node& node)
+        static math::float4x4 getGltfNodeTransform(const tinygltf::Node& node)
         {
             if (node.matrix.size() == 16u)
             {
 
                 // Use matrix attribute
-                return math::mat4(
+                return math::float4x4(
                     static_cast<float>(node.matrix[0]), static_cast<float>(node.matrix[1]), static_cast<float>(node.matrix[2]), static_cast<float>(node.matrix[3]),
                     static_cast<float>(node.matrix[4]), static_cast<float>(node.matrix[5]), static_cast<float>(node.matrix[6]), static_cast<float>(node.matrix[7]),
                     static_cast<float>(node.matrix[8]), static_cast<float>(node.matrix[9]), static_cast<float>(node.matrix[10]), static_cast<float>(node.matrix[11]),
@@ -467,7 +467,7 @@ namespace rythe::core
             else
             {
                 rsl::math::float3 pos{ 0.f, 0.f, 0.f };
-                math::quat rot{ 1.f, 0.f, 0.f, 0.f };
+                rsl::math::quat rot{ 1.f, 0.f, 0.f, 0.f };
                 rsl::math::float3 scale{ 1.f, 1.f, 1.f };
 
                 // Assume Trans x Rotate x Scale order
@@ -475,7 +475,7 @@ namespace rythe::core
                     scale = rsl::math::float3(static_cast<float>(node.scale[0]), static_cast<float>(node.scale[1]), static_cast<float>(node.scale[2]));
 
                 if (node.rotation.size() == 4)
-                    rot = math::quat(static_cast<float>(node.rotation[3]), static_cast<float>(node.rotation[0]), static_cast<float>(node.rotation[1]), static_cast<float>(node.rotation[2]));
+                    rot = rsl::math::quat(static_cast<float>(node.rotation[3]), static_cast<float>(node.rotation[0]), static_cast<float>(node.rotation[1]), static_cast<float>(node.rotation[2]));
 
                 if (node.translation.size() == 3)
                     pos = rsl::math::float3(static_cast<float>(node.translation[0]), static_cast<float>(node.translation[1]), static_cast<float>(node.translation[2]));
@@ -484,7 +484,7 @@ namespace rythe::core
             }
         }
 
-        static common::result<void, void> handleGltfMesh(mesh& meshData, const tinygltf::Model& model, const tinygltf::Mesh& mesh, const math::mat4& transform)
+        static common::result<void, void> handleGltfMesh(mesh& meshData, const tinygltf::Model& model, const tinygltf::Mesh& mesh, const math::float4x4& transform)
         {
             std::vector<std::string> warnings;
 
@@ -547,10 +547,10 @@ namespace rythe::core
                         meshData.normals.push_back(rsl::math::float3::up);
 
                     if (meshData.uvs.size() == i)
-                        meshData.uvs.push_back(math::vec2(0, 0));
+                        meshData.uvs.push_back(math::float2(0, 0));
 
                     if (meshData.colors.size() == i)
-                        meshData.colors.push_back(core::math::colors::white);
+                        meshData.colors.push_back(math::colors::white);
                 }
 
                 // Find the indices of our mesh and copy them into meshData.indices
@@ -584,7 +584,7 @@ namespace rythe::core
             return { common::success, warnings };
         }
 
-        static common::result<void, void> handleGltfNode(mesh& meshData, const tinygltf::Model& model, const tinygltf::Node& node, const math::mat4& parentTransf)
+        static common::result<void, void> handleGltfNode(mesh& meshData, const tinygltf::Model& model, const tinygltf::Node& node, const math::float4x4& parentTransf)
         {
             std::vector<std::string> warnings;
 
@@ -820,11 +820,11 @@ namespace rythe::core
 
         const float percentagePerNode = 10.f / static_cast<float>(model.scenes[sceneToLoad].nodes.size());
 
-        math::mat4 rootMat = settings.transform;
+        math::float4x4 rootMat = settings.transform;
 
         if (!settings.keepNativeCoords)
         {
-            rootMat *= math::mat4{
+            rootMat *= math::float4x4{
                      -1.f, 0.f, 0.f, 0.f,
                      0.f, 1.f, 0.f, 0.f,
                      0.f, 0.f, 1.f, 0.f,

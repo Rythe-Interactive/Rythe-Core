@@ -6,14 +6,14 @@ namespace rythe::core
     template<typename Func>
     inline rsl::byte Engine::subscribeToInit(Func&& func)
     {
-        static_assert(sizeof(func) == sizeof(ptr_type), "Parameter passed to subscribeToInit is not a function.");
-        static std::unordered_set<ptr_type> items;
+        static_assert(sizeof(func) == sizeof(rsl::ptr_type), "Parameter passed to subscribeToInit is not a function.");
+        static std::unordered_set<rsl::ptr_type> items;
 
-        ptr_type item = force_value_cast<ptr_type>(std::forward<Func>(func));
+        rsl::ptr_type item = rsl::force_value_cast<rsl::ptr_type>(std::forward<Func>(func));
         if (!items.count(item))
         {
             items.insert(item);
-            initializationSequence().emplace_back(std::forward<Func>(func));
+            initializationSequence() += std::forward<Func>(func);
         }
         return 0;
     }
@@ -21,14 +21,14 @@ namespace rythe::core
     template<typename Func>
     inline rsl::byte Engine::subscribeToShutdown(Func&& func)
     {
-        static_assert(sizeof(func) == sizeof(ptr_type), "Parameter passed to subscribeToShutdown is not a function.");
-        static std::unordered_set<ptr_type> items;
+        static_assert(sizeof(func) == sizeof(rsl::ptr_type), "Parameter passed to subscribeToShutdown is not a function.");
+        static std::unordered_set<rsl::ptr_type> items;
 
-        ptr_type item = force_value_cast<ptr_type>(std::forward<Func>(func));
+        rsl::ptr_type item = rsl::force_value_cast<rsl::ptr_type>(std::forward<Func>(func));
         if (!items.count(item))
         {
             items.insert(item);
-            shutdownSequence().emplace(shutdownSequence().begin(), func);
+            shutdownSequence() += func;
         }
         return 0;
     }

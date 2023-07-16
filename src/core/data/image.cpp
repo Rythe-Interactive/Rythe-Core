@@ -184,12 +184,12 @@ namespace rythe::core
         return common::success;
     }
 
-    image::image(const math::ivec2& res, channel_format format, image_components comp, const data_view<rsl::byte>& data)
+    image::image(const math::int2& res, channel_format format, image_components comp, const data_view<rsl::byte>& data)
         : m_resolution(res), m_format(format), m_components(comp), m_data(data)
     {
     }
 
-    const math::ivec2& image::resolution() const noexcept
+    const math::int2& image::resolution() const noexcept
     {
         return m_resolution;
     }

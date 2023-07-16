@@ -1,9 +1,8 @@
-#include <core/engine/engine.hpp>
-#include <core/common/hash.hpp>
-#include <core/defaults/coremodule.hpp>
-#include <core/ecs/ecs.hpp>
-#include <core/scheduling/scheduling.hpp>
-#include <core/events/eventbus.hpp>
+#include "core/engine/engine.hpp"
+#include "core/defaults/coremodule.hpp"
+#include "core/ecs/ecs.hpp"
+#include "core/scheduling/scheduling.hpp"
+#include "core/events/eventbus.hpp"
 
 namespace rythe::core
 {
@@ -44,9 +43,9 @@ namespace rythe::core
 
     rsl::id_type Engine::generateId()
     {
-        static rsl::id_type baseId = nameHash("\xabRYTHE ENGINE\xbb\r\n\x13\n");
+        static rsl::id_type baseId = rsl::nameHash("\xabRYTHE ENGINE\xbb\r\n\x13\n");
         rsl::id_type threadId = std::hash<std::thread::id>{}(std::this_thread::get_id());
-        return combine_hash(baseId++, threadId);
+        return rsl::combine_hash(baseId++, threadId);
     }
 
     rsl::multicast_delegate<void()>& Engine::initializationSequence()
@@ -117,7 +116,7 @@ namespace rythe::core
 
         {
             auto& logData = log::impl::get();
-            async::readwrite_guard guard(logData.threadNamesLock);
+            //async::readwrite_guard guard(logData.threadNamesLock);
             logData.threadNames[std::this_thread::get_id()] = "Initialization";
         }
 
@@ -132,7 +131,7 @@ namespace rythe::core
 
         {
             auto& logData = log::impl::get();
-            async::readwrite_guard guard(logData.threadNamesLock);
+            //async::readwrite_guard guard(logData.threadNamesLock);
             logData.threadNames[std::this_thread::get_id()] = "Main thread: " + std::to_string(id.value());
         }
     }

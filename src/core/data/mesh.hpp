@@ -24,14 +24,14 @@ namespace rythe::core
         float alphaCutoff;
         bool doubleSided;
 
-        math::color albedoValue;
+        rsl::math::color albedoValue;
         assets::asset<image> albedoMap;
         float metallicValue;
         assets::asset<image> metallicMap;
         float roughnessValue;
         assets::asset<image> roughnessMap;
         assets::asset<image> metallicRoughnessMap;
-        math::color emissiveValue;
+        rsl::math::color emissiveValue;
         assets::asset<image> emissiveMap;
 
         assets::asset<image> normalMap;
@@ -55,7 +55,7 @@ namespace rythe::core
         std::string name;
         rsl::size_type indexCount;
         rsl::size_type indexOffset;
-        int32 materialIndex;
+        rsl::int32 materialIndex;
     };
 
     /**@class mesh
@@ -64,9 +64,9 @@ namespace rythe::core
     struct mesh
     {
         std::vector<rsl::math::float3> vertices;
-        std::vector<math::color> colors;
+        std::vector<rsl::math::color> colors;
         std::vector<rsl::math::float3> normals;
-        std::vector<math::vec2> uvs;
+        std::vector<rsl::math::int2> uvs;
         std::vector<rsl::math::float3> tangents;
         std::vector<rsl::uint> indices;
         material_list materials;
@@ -89,6 +89,6 @@ namespace rythe::core
         bool keepNativeCoords = false;
         bool flipVerticalTexcoords = true;
         winding_order windingOrder = winding_order::clockwise;
-        math::mat4 transform = math::mat4(1.f);
+        rsl::math::float4x4 transform = rsl::math::float4x4(1.f);
     };
 }

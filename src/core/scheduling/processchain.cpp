@@ -4,7 +4,7 @@
 
 namespace rythe::core::scheduling
 {
-    ProcessChain::ProcessChain(rsl::cstring name) : m_name(name), m_nameHash(nameHash(name))
+    ProcessChain::ProcessChain(rsl::cstring name) : m_name(name), m_nameHash(rsl::nameHash(name))
     {
     }
 

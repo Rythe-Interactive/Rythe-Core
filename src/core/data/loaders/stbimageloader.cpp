@@ -61,7 +61,7 @@ namespace rythe::core
                 false;
         }
 
-        static data_view<rsl::byte> load_8bit(const rsl::byte_vec& data, math::ivec2& size, image_components& components, const import_cfg& settings)
+        static data_view<rsl::byte> load_8bit(const rsl::byte_vec& data, math::int2& size, image_components& components, const import_cfg& settings)
         {
             rsl::byte* resultData = stbi_load_from_memory(
                 data.data(), static_cast<int>(data.size()),
@@ -77,7 +77,7 @@ namespace rythe::core
             return { resultData, dataSize };
         }
 
-        static data_view<rsl::byte> load_16bit(const rsl::byte_vec& data, math::ivec2& size, image_components& components, const import_cfg& settings)
+        static data_view<rsl::byte> load_16bit(const rsl::byte_vec& data, math::int2& size, image_components& components, const import_cfg& settings)
         {
             rsl::uint16* resultData = stbi_load_16_from_memory(
                 data.data(), static_cast<int>(data.size()),
@@ -93,7 +93,7 @@ namespace rythe::core
             return { reinterpret_cast<rsl::byte*>(resultData), dataSize };
         }
 
-        static data_view<rsl::byte> load_hdr(const rsl::byte_vec& data, math::ivec2& size, image_components& components, const import_cfg& settings)
+        static data_view<rsl::byte> load_hdr(const rsl::byte_vec& data, math::int2& size, image_components& components, const import_cfg& settings)
         {
             float* resultData = stbi_loadf_from_memory(
                 data.data(), static_cast<int>(data.size()),
@@ -134,7 +134,7 @@ namespace rythe::core
         // Setup stb_image settings.
         stbi_set_flip_vertically_on_load(settings.flipVertical);
 
-        math::ivec2 size;
+        math::int2 size;
 
         image_components components = image_components::grey;
         channel_format format;

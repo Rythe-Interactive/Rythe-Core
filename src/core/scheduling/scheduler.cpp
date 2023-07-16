@@ -286,7 +286,7 @@ namespace rythe::core::scheduling
 
     pointer<ProcessChain> Scheduler::createProcessChain(rsl::cstring name)
     {
-        rsl::id_type id = nameHash(name);
+        rsl::id_type id = rsl::nameHash(name);
         return { &instance.m_processChains.emplace(id, name, id).first.value() };
     }
 
@@ -299,7 +299,7 @@ namespace rythe::core::scheduling
 
     pointer<ProcessChain> Scheduler::getChain(rsl::cstring name)
     {
-        rsl::id_type id = nameHash(name);
+        rsl::id_type id = rsl::nameHash(name);
         if (instance.m_processChains.contains(id))
             return { &instance.m_processChains.at(id) };
         return { nullptr };
@@ -317,7 +317,7 @@ namespace rythe::core::scheduling
 
     void Scheduler::subscribeToChainStart(rsl::cstring chainName, const chain_callback_delegate& callback)
     {
-        rsl::id_type chainId = nameHash(chainName);
+        rsl::id_type chainId = rsl::nameHash(chainName);
         instance.m_processChains.at(chainId).subscribeToChainStart(callback);
     }
 
@@ -328,7 +328,7 @@ namespace rythe::core::scheduling
 
     void Scheduler::unsubscribeFromChainStart(rsl::cstring chainName, const chain_callback_delegate& callback)
     {
-        rsl::id_type chainId = nameHash(chainName);
+        rsl::id_type chainId = rsl::nameHash(chainName);
         instance.m_processChains.at(chainId).unsubscribeFromChainStart(callback);
     }
 
@@ -339,7 +339,7 @@ namespace rythe::core::scheduling
 
     void Scheduler::subscribeToChainEnd(rsl::cstring chainName, const chain_callback_delegate& callback)
     {
-        rsl::id_type chainId = nameHash(chainName);
+        rsl::id_type chainId = rsl::nameHash(chainName);
         instance.m_processChains.at(chainId).subscribeToChainEnd(callback);
     }
 
@@ -370,13 +370,13 @@ namespace rythe::core::scheduling
 
     void Scheduler::unsubscribeFromChainEnd(rsl::cstring chainName, const chain_callback_delegate& callback)
     {
-        rsl::id_type chainId = nameHash(chainName);
+        rsl::id_type chainId = rsl::nameHash(chainName);
         instance.m_processChains.at(chainId).unsubscribeFromChainEnd(callback);
     }
 
     bool Scheduler::hookProcess(rsl::cstring chainName, Process& process)
     {
-        rsl::id_type chainId = nameHash(chainName);
+        rsl::id_type chainId = rsl::nameHash(chainName);
 
         if (instance.m_processChains.contains(chainId))
         {
@@ -389,7 +389,7 @@ namespace rythe::core::scheduling
 
     bool Scheduler::hookProcess(rsl::cstring chainName, pointer<Process> process)
     {
-        rsl::id_type chainId = nameHash(chainName);
+        rsl::id_type chainId = rsl::nameHash(chainName);
 
         if (instance.m_processChains.contains(chainId))
         {
@@ -402,7 +402,7 @@ namespace rythe::core::scheduling
 
     bool Scheduler::unhookProcess(rsl::cstring chainName, Process& process)
     {
-        rsl::id_type chainId = nameHash(chainName);
+        rsl::id_type chainId = rsl::nameHash(chainName);
 
         if (instance.m_processChains.contains(chainId))
             return instance.m_processChains[chainId].removeProcess(process);
@@ -412,7 +412,7 @@ namespace rythe::core::scheduling
 
     bool Scheduler::unhookProcess(rsl::cstring chainName, pointer<Process> process)
     {
-        rsl::id_type chainId = nameHash(chainName);
+        rsl::id_type chainId = rsl::nameHash(chainName);
 
         if (instance.m_processChains.contains(chainId))
             return instance.m_processChains[chainId].removeProcess(process);

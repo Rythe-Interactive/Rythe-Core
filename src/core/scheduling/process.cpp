@@ -17,7 +17,7 @@ namespace rythe::core::scheduling
         return m_hooks.size();
     }
 
-    void Process::setOperation(delegate<void(time::time_span<fast_time>)>&& operation) noexcept
+    void Process::setOperation(rsl::delegate<void(rsl::time_span<rsl::fast_time>)>&& operation) noexcept
     {
         m_operation = operation;
     }

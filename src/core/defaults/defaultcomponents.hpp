@@ -44,17 +44,17 @@ namespace rythe::core
         rotation& operator=(rotation&&) = default;
         rotation& operator=(const rsl::math::quat& src)
         {
-            x = src.x;
-            y = src.y;
-            z = src.z;
+            i = src.i;
+            j = src.j;
+            k = src.k;
             w = src.w;
             return *this;
         }
-        rotation& operator=(math::quat&& src)
+        rotation& operator=(rsl::math::quat&& src)
         {
-            x = src.x;
-            y = src.y;
-            z = src.z;
+            i = src.i;
+            j = src.j;
+            k = src.k;
             w = src.w;
             return *this;
         }
@@ -84,9 +84,7 @@ namespace rythe::core
 
     R_NODISCARD inline rotation rotation::lookat(rsl::math::float3 position, rsl::math::float3 center, rsl::math::float3 up)
     {
-        rsl::math::quaternion q;
-        q.look_at(position, center, up);
-        return rsl::math::conjugate(math::normalize(rsl::math::quaternion::look_at(position, center, up)));
+        return rsl::math::quat::conjugate(rsl::math::normalize(rsl::math::quat::look_at(position, center, up)));
     }
 
     struct scale : public rsl::math::float3
@@ -200,7 +198,7 @@ namespace std // NOLINT(cert-dcl58-cpp)
     template <::std::size_t I>
     struct tuple_element<I, rythe::core::transform>
     {
-        using type = typename rythe::core::rsl::element_at_t<I, rythe::core::position, rythe::core::rotation, rythe::core::scale>;
+        using type = typename rsl::element_at_t<I, rythe::core::position, rythe::core::rotation, rythe::core::scale>;
     };
 
     template<>
@@ -306,7 +304,7 @@ namespace fmt
                 ctx.out(),
 
                 presentation == 'f' ? "{:f}" : "{:e}",
-                static_cast<math::quat>(r));
+                static_cast<rsl::math::quat>(r));
         }
     };
 

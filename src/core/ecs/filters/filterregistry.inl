@@ -11,7 +11,7 @@ namespace rythe::core::ecs
         auto& lists = entityLists();
 
         for (auto& filter : filters()) // Walk all filters and check if they care about the current component type.
-            if (filter->contains(make_hash<component_type>()) && filter->contains(composition)) // If they do, then check if the current entity falls into that filter.
+            if (filter->contains(rsl::make_hash<component_type>()) && filter->contains(composition)) // If they do, then check if the current entity falls into that filter.
                 lists.at(filter->id()).insert(target); // Insert entity in the entity list of the filter if the entity fits the requirements.
     }
 
@@ -21,20 +21,20 @@ namespace rythe::core::ecs
         auto& lists = entityLists();
 
         for (auto& filter : filters()) // Walk all filters and check if they care about the current component type.
-            if (filter->contains(make_hash<component_type>())) // If they do, then erase the entity from their list if it is in their list.
+            if (filter->contains(rsl::make_hash<component_type>())) // If they do, then erase the entity from their list if it is in their list.
                 lists.at(filter->id()).erase(target); // Will not do anything if the target wasn't in the set.
     }
 
     template<typename component_type>
     inline constexpr rsl::id_type FilterRegistry::generateId() noexcept
     {
-        return make_hash<component_type>();
+        return rsl::make_hash<component_type>();
     }
 
     template<typename component_type0, typename component_type1, typename... component_types>
     inline constexpr rsl::id_type FilterRegistry::generateId() noexcept
     {
-        return combine_hash(make_hash<component_type0>(), generateId<component_type1, component_types...>());
+        return rsl::combine_hash(rsl::make_hash<component_type0>(), generateId<component_type1, component_types...>());
     }
 
     template<typename... component_types>

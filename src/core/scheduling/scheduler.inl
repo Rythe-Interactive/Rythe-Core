@@ -47,14 +47,14 @@ namespace rythe::core::scheduling
     template<rsl::size_type charc>
     inline pointer<ProcessChain> Scheduler::createProcessChain(const char(&name)[charc])
     {
-        rsl::id_type id = nameHash<charc>(name);
+        rsl::id_type id = rsl::nameHash<charc>(name);
         return { &instance.m_processChains.emplace(id, name, id).first.value() };
     }
 
     template<rsl::size_type charc>
     inline pointer<ProcessChain> Scheduler::getChain(const char(&name)[charc])
     {
-        rsl::id_type id = nameHash<charc>(name);
+        rsl::id_type id = rsl::nameHash<charc>(name);
         if (instance.m_processChains.contains(id))
             return { &instance.m_processChains.at(id) };
         return { nullptr };
@@ -63,7 +63,7 @@ namespace rythe::core::scheduling
     template<rsl::size_type charc>
     inline bool Scheduler::hookProcess(const char(&processChainName)[charc], Process& process)
     {
-        rsl::id_type chainId = nameHash<charc>(processChainName);
+        rsl::id_type chainId = rsl::nameHash<charc>(processChainName);
 
         if (instance.m_processChains.contains(chainId))
         {
@@ -77,7 +77,7 @@ namespace rythe::core::scheduling
     template<rsl::size_type charc>
     inline bool Scheduler::hookProcess(const char(&processChainName)[charc], pointer<Process> process)
     {
-        rsl::id_type chainId = nameHash<charc>(processChainName);
+        rsl::id_type chainId = rsl::nameHash<charc>(processChainName);
 
         if (instance.m_processChains.contains(chainId))
         {
@@ -91,7 +91,7 @@ namespace rythe::core::scheduling
     template<rsl::size_type charc>
     inline bool Scheduler::unhookProcess(const char(&chainName)[charc], Process& process)
     {
-        rsl::id_type chainId = nameHash<charc>(chainName);
+        rsl::id_type chainId = rsl::nameHash<charc>(chainName);
 
         if (instance.m_processChains.contains(chainId))
             return instance.m_processChains[chainId].removeProcess(process);
@@ -102,7 +102,7 @@ namespace rythe::core::scheduling
     template<rsl::size_type charc>
     inline bool Scheduler::unhookProcess(const char(&chainName)[charc], pointer<Process> process)
     {
-        rsl::id_type chainId = nameHash<charc>(chainName);
+        rsl::id_type chainId = rsl::nameHash<charc>(chainName);
 
         if (instance.m_processChains.contains(chainId))
             return instance.m_processChains[chainId].removeProcess(process);

@@ -87,7 +87,7 @@ namespace rythe::core::compute
 
         if (ret != CL_SUCCESS)
         {
-            log::error("clCreateImage failed for Buffer: {}", m_name);
+            //log::error("clCreateImage failed for Buffer: {}", m_name);
         }
     }
 
@@ -116,7 +116,7 @@ namespace rythe::core::compute
         }
         if (ret != CL_SUCCESS)
         {
-            log::error("clCreateFromGL(X?+)Buffer failed for Buffer: {}", m_name);
+            //log::error("clCreateFromGL(X?+)Buffer failed for Buffer: {}", m_name);
         }
     }
 
@@ -142,7 +142,7 @@ namespace rythe::core::compute
         m_memory_object = clCreateBuffer(ctx, m_type, m_size, nullptr, &ret);
         if (ret != CL_SUCCESS)
         {
-            log::error("clCreateBuffer failed for Buffer: {}", m_name);
+            //log::error("clCreateBuffer failed for Buffer: {}", m_name);
         }
 
     }
@@ -166,7 +166,7 @@ namespace rythe::core::compute
 
         if (ret != CL_SUCCESS)
         {
-            log::error("clCreateFromGLTexture failed for Buffer: {}", m_name);
+            //log::error("clCreateFromGLTexture failed for Buffer: {}", m_name);
         }
     }
 

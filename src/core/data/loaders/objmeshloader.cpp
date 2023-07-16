@@ -11,11 +11,11 @@ namespace rythe::core::detail
     struct vertex_hash
     {
         rsl::id_type hash;
-        vertex_hash(rsl::math::float3 vertex, math::color color, rsl::math::float3 normal, math::vec2 uv)
+        vertex_hash(rsl::math::float3 vertex, math::color color, rsl::math::float3 normal, math::float2 uv)
         {
             std::hash<rsl::math::float3> vec3Hasher;
             std::hash<math::color> colorHasher;
-            std::hash<math::vec2> vec2Hasher;
+            std::hash<math::float2> vec2Hasher;
             hash = 0;
             math::detail::hash_combine(hash, vec3Hasher(vertex));
             math::detail::hash_combine(hash, colorHasher(color));
@@ -259,7 +259,7 @@ namespace rythe::core
 
         const float percentagePerShape = 10.f / static_cast<float>(shapes.size());
 
-        math::mat4 transform = settings.transform;
+        math::float4x4 transform = settings.transform;
 
         // Iterate submeshes.
         for (auto& shape : shapes)
@@ -300,9 +300,9 @@ namespace rythe::core
                 if (normalIndex + 2 < attributes.normals.size())
                     normal = rsl::math::float3(attributes.normals[normalIndex + 0], attributes.normals[normalIndex + 1], attributes.normals[normalIndex + 2]);
 
-                math::vec2 uv{};
+                math::float2 uv{};
                 if (uvIndex + 1 < attributes.texcoords.size())
-                    uv = math::vec2(attributes.texcoords[uvIndex + 0], attributes.texcoords[uvIndex + 1]);
+                    uv = math::float2(attributes.texcoords[uvIndex + 0], attributes.texcoords[uvIndex + 1]);
 
                 // Create a hash to check for doubles.
                 detail::vertex_hash hash(vertex, color, normal, uv);
@@ -315,9 +315,9 @@ namespace rythe::core
                     vertices.push_back(hash);
 
                     // Append vertex data.
-                    data.vertices.push_back((transform * math::vec4(vertex.x, vertex.y, vertex.z, 1.f)).xyz());
+                    data.vertices.push_back((transform * math::float4(vertex.x, vertex.y, vertex.z, 1.f)).xyz());
                     data.colors.push_back(color);
-                    data.normals.push_back((transform * math::vec4(normal.x, normal.y, normal.z, 0.f)).xyz());
+                    data.normals.push_back((transform * math::float4(normal.x, normal.y, normal.z, 0.f)).xyz());
 
                     if (!settings.flipVerticalTexcoords)
                         uv.y = 1.f - uv.y;

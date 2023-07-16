@@ -34,7 +34,7 @@ namespace rythe::core::filesystem
     struct resource_converter : public detail::resource_converter_base
     {
 
-        virtual rsl::id_type result_type() override { return typeHash<result>(); }
+        virtual rsl::id_type result_type() override { return rsl::typeHash<result>(); }
 
         virtual common::result<result, fs_error> load_default(const basic_resource& resource) RYTHE_PURE;
         virtual common::result<result, fs_error> load(const basic_resource& resource, Settings&&...) RYTHE_PURE;
@@ -76,7 +76,7 @@ namespace rythe::core::filesystem
         template<typename T>
         static void reportConverter(rsl::cstring extension)
         {
-            m_converters[nameHash(extension)].push_back(std::make_unique<T>());
+            m_converters[rsl::nameHash(extension)].push_back(std::make_unique<T>());
         }
 
 
@@ -91,11 +91,11 @@ namespace rythe::core::filesystem
         {
             // Debug log the settings used for loading the files so that you can track down why something got loaded wrong if it did.
             if constexpr (sizeof...(settings) == 0)
-                log::trace("Tried to load asset of type{}", nameOfType<T>());
+                log::trace("Tried to load asset of type{}", rsl::nameOfType<T>());
             else if constexpr (sizeof...(settings) == 1)
-                log::trace("Tried to load asset of type{} with settings of type:{}", nameOfType<T>(), (std::string(nameOfType<Settings>()) + ...));
+                log::trace("Tried to load asset of type{} with settings of type:{}", rsl::nameOfType<T>(), (std::string(rsl::nameOfType<Settings>()) + ...));
             else
-                log::trace("Tried to load asset of type{} with settings of types:{}", nameOfType<T>(), ((std::string(nameOfType<Settings>()) + ", ") + ...));
+                log::trace("Tried to load asset of type{} with settings of types:{}", rsl::nameOfType<T>(), ((std::string(rsl::nameOfType<Settings>()) + ", ") + ...));
 
             // Check if the view is valid to load as a file.
             if (!view.is_valid() || !view.file_info().is_file)
@@ -106,10 +106,10 @@ namespace rythe::core::filesystem
             if (result != common::valid)
                 return result.error();
 
-            for (auto& base : m_converters[nameHash(view.get_extension())])
+            for (auto& base : m_converters[rsl::nameHash(view.get_extension())])
             {
                 // Do a safety check if the cast was valid before we call any functions on it.
-                if (typeHash<T>() == base->result_type())
+                if (rsl::typeHash<T>() == base->result_type())
                 {
                     // Retrieve the correct converter to use.
                     auto* converter = static_cast<resource_converter<T, Settings...>*>(base.get());

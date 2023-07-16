@@ -24,7 +24,7 @@ namespace rythe::core::ecs
          * @tparam component_type Type of the component.
          */
         template<typename component_type>
-        bool contains() { return contains(make_hash<component_type>()); }
+        bool contains() { return contains(rsl::make_hash<component_type>()); }
 
         /**@brief Polymorphically check whether the filter variant contains a certain component type.
          * @param id Local id of the component type.
@@ -46,13 +46,13 @@ namespace rythe::core::ecs
         template<typename component_type>
         constexpr static rsl::id_type generateId() noexcept
         {
-            return make_hash<component_type>();
+            return rsl::make_hash<component_type>();
         }
 
         template<typename component_type0, typename component_type1, typename... component_typeN>
         constexpr static rsl::id_type generateId() noexcept
         {
-            return combine_hash(make_hash<component_type0>(), generateId<component_type1, component_typeN...>());
+            return rsl::combine_hash(rsl::make_hash<component_type0>(), generateId<component_type1, component_typeN...>());
         }
 
     public:
@@ -62,7 +62,7 @@ namespace rythe::core::ecs
 
         /**@brief Array of the individual component type ids.
          */
-        static constexpr std::array<rsl::id_type, sizeof...(component_types)> composition = { make_hash<component_types>()... };
+        static constexpr std::array<rsl::id_type, sizeof...(component_types)> composition = { rsl::make_hash<component_types>()... };
 
         virtual rsl::id_type id();
 

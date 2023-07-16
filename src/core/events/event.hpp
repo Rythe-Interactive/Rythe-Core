@@ -32,7 +32,7 @@ namespace rythe::core::events
     {
         friend  class EventBus;
 
-        inline static const rsl::id_type id = typeHash<Self>();
+        inline static const rsl::id_type id = rsl::typeHash<Self>();
 
         virtual ~event() = default;
     private:

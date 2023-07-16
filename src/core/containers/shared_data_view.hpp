@@ -95,7 +95,7 @@ namespace rythe::core
         R_NODISCARD rsl::size_type max_size() const noexcept;
 
     private:
-        std::shared_ptr<ptr_type> m_data;
+        std::shared_ptr<rsl::ptr_type> m_data;
         rsl::diff_type m_offset;
         rsl::size_type m_size;
     };

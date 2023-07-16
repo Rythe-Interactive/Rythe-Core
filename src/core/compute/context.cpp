@@ -20,12 +20,12 @@ namespace rythe::core::compute {
         //error checking for clGetPlatformIDs
         if (ret != CL_SUCCESS)
         {
-            log::error("clGetPlatformIDs failed: {}", ret == CL_INVALID_VALUE ? "CL_INVALID_VALUE (params are bad)" : "CL_OUT_OF_HOST_MEMORY");
+            ////log::error("clGetPlatformIDs failed: {}", ret == CL_INVALID_VALUE ? "CL_INVALID_VALUE (params are bad)" : "CL_OUT_OF_HOST_MEMORY");
             return;
         }
         else if (ret_num_platforms == 0)
         {
-            log::error("clGetPlatformIDs failed: no platforms available");
+            ////log::error("clGetPlatformIDs failed: no platforms available");
             return;
         }
 
@@ -48,12 +48,12 @@ namespace rythe::core::compute {
             default: break;
             }
 
-            log::error("clGetDeviceIDs failed: {}", error);
+            //log::error("clGetDeviceIDs failed: {}", error);
             return;
         }
         else if (ret_num_devices == 0)
         {
-            log::error("clGetDeviceIDs failed: no devices available");
+            //log::error("clGetDeviceIDs failed: no devices available");
             return;
         }
 
@@ -78,7 +78,7 @@ namespace rythe::core::compute {
             default: break;
             }
 
-            log::error("clCreateContext failed: {}", error);
+            //log::error("clCreateContext failed: {}", error);
             return;
         }
     }
@@ -98,7 +98,7 @@ namespace rythe::core::compute {
                 default: break;
                 }
 
-                log::error("clReleaseContext failed: {}", error);
+                //log::error("clReleaseContext failed: {}", error);
             }
         }
 
@@ -117,7 +117,7 @@ namespace rythe::core::compute {
                 default: break;
                 }
 
-                log::error("clReleaseDevice failed: {}", error);
+                //log::error("clReleaseDevice failed: {}", error);
             }
         }
     }

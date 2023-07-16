@@ -155,7 +155,7 @@ namespace rythe::core::assets
     template<typename LoaderType>
     inline bool AssetCache<AssetType>::hasLoader()
     {
-        return instance.m_loaderIds.find(typeHash<LoaderType>()) != instance.m_loaderIds.end();
+        return instance.m_loaderIds.find(rsl::typeHash<LoaderType>()) != instance.m_loaderIds.end();
     }
 
     template<typename AssetType>
@@ -179,7 +179,7 @@ namespace rythe::core::assets
 
         auto* ptr = new LoaderType(std::forward<Arguments>(args)...);
 
-        instance.m_loaderIds.emplace(typeHash<LoaderType>(), instance.m_loaders.size() + 1);
+        instance.m_loaderIds.emplace(rsl::typeHash<LoaderType>(), instance.m_loaders.size() + 1);
         instance.m_loaders.emplace_back(ptr);
     }
 
@@ -190,7 +190,7 @@ namespace rythe::core::assets
         static_assert(std::is_constructible_v<AssetType, Arguments...>, "Asset type is not constructible with given argument types.");
 
         AssetType* ptr = &instance.m_cache.try_emplace(nameHash, AssetType(std::forward<Arguments>(args)...)).first->second;
-        instance.m_info.try_emplace(nameHash, detail::asset_info{ name, path, instance.m_loaderIds.at(typeHash<LoaderType>()) });
+        instance.m_info.try_emplace(nameHash, detail::asset_info{ name, path, instance.m_loaderIds.at(rsl::typeHash<LoaderType>()) });
         return asset<AssetType>{ ptr, nameHash };
     }
 
@@ -200,7 +200,7 @@ namespace rythe::core::assets
         auto result = file.get_filename();
         if (!result)
             return { rythe_exception_msg(result.error().what()), result.warnings() };
-        return load(nameHash(result.value()), result.value(), file, import_settings<AssetType>{});
+        return load(rsl::nameHash(result.value()), result.value(), file, import_settings<AssetType>{});
     }
 
     template<typename AssetType>
@@ -209,19 +209,19 @@ namespace rythe::core::assets
         auto result = file.get_filename();
         if (!result)
             return { rythe_exception_msg(result.error().what()), result.warnings() };
-        return load(nameHash(result.value()), result.value(), file, settings);
+        return load(rsl::nameHash(result.value()), result.value(), file, settings);
     }
 
     template<typename AssetType>
     inline R_ALWAYS_INLINE common::result<asset<AssetType>> AssetCache<AssetType>::load(const std::string& name, const fs::view& file)
     {
-        return load(nameHash(name), name, file, import_settings<AssetType>{});
+        return load(rsl::nameHash(name), name, file, import_settings<AssetType>{});
     }
 
     template<typename AssetType>
     inline R_ALWAYS_INLINE common::result<asset<AssetType>> AssetCache<AssetType>::load(const std::string& name, const fs::view& file, const AssetCache<AssetType>::import_cfg& settings)
     {
-        return load(nameHash(name), name, file, settings);
+        return load(rsl::nameHash(name), name, file, settings);
     }
 
     template<typename AssetType>
@@ -298,7 +298,7 @@ namespace rythe::core::assets
             return async::async_operation{ progress };
         }
 
-        return loadAsync(nameHash(result.value()), result.value(), file, import_settings<AssetType>{});
+        return loadAsync(rsl::nameHash(result.value()), result.value(), file, import_settings<AssetType>{});
     }
 
     template<typename AssetType>
@@ -314,19 +314,19 @@ namespace rythe::core::assets
             return async::async_operation{ progress };
         }
 
-        return loadAsync(nameHash(result.value()), result.value(), file, settings);
+        return loadAsync(rsl::nameHash(result.value()), result.value(), file, settings);
     }
 
     template<typename AssetType>
     inline R_ALWAYS_INLINE async::async_operation<common::result<asset<AssetType>>> AssetCache<AssetType>::loadAsync(const std::string& name, const fs::view& file)
     {
-        return loadAsync(nameHash(name), name, file, import_settings<AssetType>{});
+        return loadAsync(rsl::nameHash(name), name, file, import_settings<AssetType>{});
     }
 
     template<typename AssetType>
     inline R_ALWAYS_INLINE async::async_operation<common::result<asset<AssetType>>> AssetCache<AssetType>::loadAsync(const std::string& name, const fs::view& file, const AssetCache<AssetType>::import_cfg& settings)
     {
-        return loadAsync(nameHash(name), name, file, settings);
+        return loadAsync(rsl::nameHash(name), name, file, settings);
     }
 
     template<typename AssetType>
@@ -374,7 +374,7 @@ namespace rythe::core::assets
     template<typename AssetType>
     inline R_ALWAYS_INLINE asset<AssetType> AssetCache<AssetType>::create(const std::string& name)
     {
-        return create(nameHash(name), name, std::string(""));
+        return create(rsl::nameHash(name), name, std::string(""));
     }
 
     template<typename AssetType>
@@ -396,7 +396,7 @@ namespace rythe::core::assets
     template<typename AssetType>
     inline R_ALWAYS_INLINE asset<AssetType> AssetCache<AssetType>::create(const std::string& name, const AssetType& src)
     {
-        return create(nameHash(name), name, std::string(""), src);
+        return create(rsl::nameHash(name), name, std::string(""), src);
     }
 
     template<typename AssetType>
@@ -419,7 +419,7 @@ namespace rythe::core::assets
     template<typename... Arguments>
     inline R_ALWAYS_INLINE asset<AssetType> AssetCache<AssetType>::create(const std::string& name, Arguments&&... args)
     {
-        return createWithPath(nameHash(name), name, std::string(""), std::forward<Arguments>(args)...);
+        return createWithPath(rsl::nameHash(name), name, std::string(""), std::forward<Arguments>(args)...);
     }
 
     template<typename AssetType>
@@ -450,7 +450,7 @@ namespace rythe::core::assets
     template<typename AssetType>
     inline bool AssetCache<AssetType>::has(const std::string& name)
     {
-        return instance.m_cache.find(nameHash(name)) != instance.m_cache.end();
+        return instance.m_cache.find(rsl::nameHash(name)) != instance.m_cache.end();
     }
 
     template<typename AssetType>
@@ -462,7 +462,7 @@ namespace rythe::core::assets
     template<typename AssetType>
     inline asset<AssetType> AssetCache<AssetType>::get(const std::string& name)
     {
-        rsl::id_type id = nameHash(name);
+        rsl::id_type id = rsl::nameHash(name);
         if (has(id))
             return { &instance.m_cache.at(id), id };
         return invalid_asset<AssetType>;
@@ -479,7 +479,7 @@ namespace rythe::core::assets
     template<typename AssetType>
     inline void AssetCache<AssetType>::destroy(const std::string& name)
     {
-        rsl::id_type id = nameHash(name);
+        rsl::id_type id = rsl::nameHash(name);
 
         auto& m_info = instance.m_info.at(id);
         if (m_info.assetLoader)

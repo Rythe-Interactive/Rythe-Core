@@ -63,7 +63,7 @@ namespace rythe::core
             m_isShutdown = false;
             m_isInitialized = true;
 
-            log::undecoratedInfo("== Initializing {}", nameOfType<SubSystem>());
+            log::undecoratedInfo("== Initializing {}", rsl::nameOfType<SubSystem>());
 
             if constexpr (has_static_onInit_v<SubSystem, void()>)
             {
@@ -73,12 +73,12 @@ namespace rythe::core
                 {
                     if constexpr (std::is_default_constructible_v<SubSystem>)
                     {
-                        log::warn("Subsystem {} does not create instance in onInit() and is default constructed.", nameOfType<SubSystem>());
+                        log::warn("Subsystem {} does not create instance in onInit() and is default constructed.", rsl::nameOfType<SubSystem>());
                         create();
                     }
                     else
                     {
-                        log::error("Subsystem {} does not create instance in onInit() and is not default constructable.", nameOfType<SubSystem>());
+                        log::error("Subsystem {} does not create instance in onInit() and is not default constructable.", rsl::nameOfType<SubSystem>());
                         throw rythe_exception_msg("Subsystem does not create instance in onInit() and is not default constructable.");
                     }
                 }
@@ -101,7 +101,7 @@ namespace rythe::core
 
             shutdownSequence()();
 
-            log::undecoratedInfo("== Shutting down {}", nameOfType<SubSystem>());
+            log::undecoratedInfo("== Shutting down {}", rsl::nameOfType<SubSystem>());
 
             if constexpr (has_static_onShutdown_v<SubSystem, void()>)
                 SubSystem::onShutdown();

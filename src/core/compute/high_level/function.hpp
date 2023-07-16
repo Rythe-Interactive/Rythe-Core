@@ -4,14 +4,15 @@
 #include <tuple>
 #include <array>
 
-#include <core/common/result.hpp>
 #include <rsl/primitives>
-#include <core/types/meta.hpp>
-#include <core/compute/buffer.hpp>
-#include <core/compute/kernel.hpp>
-#include <core/compute/program.hpp>
-#include <core/common/assert.hpp>
-#include <core/filesystem/resource.hpp>
+#include <rsl/math>
+
+#include "core/common/result.hpp"
+#include "core/compute/buffer.hpp"
+#include "core/compute/kernel.hpp"
+#include "core/compute/program.hpp"
+#include "core/common/assert.hpp"
+#include "core/filesystem/resource.hpp"
 
 namespace rythe::core::compute {
 
@@ -63,7 +64,7 @@ namespace rythe::core::compute {
     template <class T>
     struct in : public in_ident, public detail::buffer_base
     {
-        static_assert(is_vector<std::remove_reference_t<T>>::value, "T needs to be a vector");
+        static_assert(rsl::is_vector<std::remove_reference_t<T>>::value, "T needs to be a vector");
 
         in(T& vec, std::string name = "") :
             buffer_base(reinterpret_cast<rsl::byte*>(vec.data()),
@@ -84,7 +85,7 @@ namespace rythe::core::compute {
     template <class T>
     struct out : public out_ident, public detail::buffer_base
     {
-        static_assert(is_vector<std::remove_reference_t<T>>::value, "T needs to be a vector");
+        static_assert(rsl::is_vector<std::remove_reference_t<T>>::value, "T needs to be a vector");
 
         out(T& vec, std::string name = "") :
             buffer_base(reinterpret_cast<rsl::byte*>(vec.data()),
@@ -105,7 +106,7 @@ namespace rythe::core::compute {
     template <class T>
     struct inout : public inout_ident, public detail::buffer_base
     {
-        static_assert(is_vector<std::remove_reference_t<T>>::value, "T needs to be a vector");
+        static_assert(rsl::is_vector<std::remove_reference_t<T>>::value, "T needs to be a vector");
 
         inout(T& vec, std::string name = "") :
             buffer_base(reinterpret_cast<rsl::byte*>(vec.data()),
@@ -210,7 +211,7 @@ namespace rythe::core::compute {
          * @return Ok() if the kernel succeeded or Err() otherwise
          */
         template <typename... Args>
-        common::result<void, void> operator()(std::variant<rsl::size_type, math::ivec2, math::ivec3> dispatch_size, Args&&... args)
+        common::result<void, void> operator()(std::variant<rsl::size_type, math::int2, math::int3> dispatch_size, Args&&... args)
         {
             dvar dim;
 
@@ -309,11 +310,11 @@ namespace rythe::core::compute {
             static_assert(((
                 std::is_same_v<karg, Args> ||
                 std::is_base_of_v<detail::buffer_base, Args> ||
-                is_vector<std::remove_reference_t<Args>>::value) && ...), "Types passed to operator() must be vector or in,out,inout");
+                rsl::is_vector<std::remove_reference_t<Args>>::value) && ...), "Types passed to operator() must be vector or in,out,inout");
 
 
             //promote vector to in(vector) leave the rest alone
-            std::tuple container = { std::conditional_t<is_vector<std::remove_reference_t<Args>>::value,in<Args>,Args>(args)... };
+            std::tuple container = { std::conditional_t<rsl::is_vector<std::remove_reference_t<Args>>::value,in<Args>,Args>(args)... };
 
             auto kargs = std::apply(
                 [](auto&& ... x)

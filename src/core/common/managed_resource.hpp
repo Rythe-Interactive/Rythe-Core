@@ -46,7 +46,7 @@ namespace rythe::core::common
         template<typename... Args>
         managed_resource(rsl::delegate<void(T&)> destroyFunc, Args&&... args) noexcept(std::is_nothrow_constructible_v<T, Args...>)
             : value(std::forward<Args>(args)...),
-            m_ref_counter(new delegate<void(T&)>(destroyFunc), detail::_managed_resource_del<T>{ &value })
+            m_ref_counter(new rsl::delegate<void(T&)>(destroyFunc), detail::_managed_resource_del<T>{ &value })
         {
         }
 

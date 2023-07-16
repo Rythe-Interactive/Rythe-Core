@@ -20,7 +20,7 @@ namespace rythe::core::scheduling
         AllowPrivateOnInit;
         SubSystemInstance(Clock);
     public:
-        using span_type = time::main_clock::span_type;
+        using span_type = rsl::main_clock::span_type;
         using time_type = span_type::time_type;
         using tick_callback_type = void(span_type);
         using tick_callback_delegate = rsl::delegate<tick_callback_type>;

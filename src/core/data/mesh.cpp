@@ -25,17 +25,17 @@ namespace rythe::core
                 rsl::math::float3 vtx2 = data->vertices[indices[2]];
 
                 // Get UVs of the triangle.
-                math::vec2 uv0 = data->uvs[indices[0]];
-                math::vec2 uv1 = data->uvs[indices[1]];
-                math::vec2 uv2 = data->uvs[indices[2]];
+                math::float2 uv0 = data->uvs[indices[0]];
+                math::float2 uv1 = data->uvs[indices[1]];
+                math::float2 uv2 = data->uvs[indices[2]];
 
                 // Get primary edges
                 rsl::math::float3 edge0 = vtx1 - vtx0;
                 rsl::math::float3 edge1 = vtx2 - vtx0;
 
                 // Get difference in uv over the two primary edges.
-                math::vec2 deltaUV0 = uv1 - uv0;
-                math::vec2 deltaUV1 = uv2 - uv0;
+                math::float2 deltaUV0 = uv1 - uv0;
+                math::float2 deltaUV1 = uv2 - uv0;
 
                 // Get inverse of the determinant of the UV tangent matrix.
                 float inverseUVDeterminant = 1.0f / (deltaUV0.x * deltaUV1.y - deltaUV1.x * deltaUV0.y);

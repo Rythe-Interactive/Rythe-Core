@@ -18,7 +18,7 @@ namespace rythe::core::scenemanagement
     {
         std::string name = SceneManager::sceneNames[id];
         archive(cereal::make_nvp("NAME", name));
-        id = nameHash(name);
+        id = rsl::nameHash(name);
         SceneManager::sceneNames[id] = name;
     }
 }

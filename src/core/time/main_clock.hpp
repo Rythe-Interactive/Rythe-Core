@@ -4,13 +4,12 @@
 #include "core/engine/enginesubsystem.hpp"
 
 
-namespace rythe::core::time
+namespace rsl
 {
-
     using main_clock_time = rsl::time64;
 
     template<>
-    struct rsl::stopwatch<main_clock_time, std::chrono::high_resolution_clock> : public EngineSubSystem<rsl::stopwatch<main_clock_time, std::chrono::high_resolution_clock>>
+    struct stopwatch<main_clock_time, std::chrono::high_resolution_clock> : public rythe::core::EngineSubSystem<stopwatch<main_clock_time, std::chrono::high_resolution_clock>>
     {
     public:
         using time_type = main_clock_time;

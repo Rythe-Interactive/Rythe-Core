@@ -33,7 +33,7 @@ namespace rythe::core
             createProcessChain("Update");
         }
 
-        virtual priority_type priority() override
+        virtual rsl::priority_type priority() override
         {
             return PRIORITY_MAX;
         }

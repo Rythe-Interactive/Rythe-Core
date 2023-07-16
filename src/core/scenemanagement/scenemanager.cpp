@@ -58,9 +58,9 @@ namespace rythe::core::scenemanagement
         if (!get_scene(name))
         {
             scene s;
-            s.id = nameHash(name);
+            s.id = rsl::nameHash(name);
             //sceneNames.emplace(s.id, name);
-            //sceneList.emplace(nameHash(name), sceneEntity);
+            //sceneList.emplace(rsl::nameHash(name), sceneEntity);
         }
         return SceneManager::save_scene(name, sceneEntity);
     }
@@ -70,10 +70,10 @@ namespace rythe::core::scenemanagement
         if (!ent.has_component<scene>())
         {
             scene s;
-            s.id = nameHash(name);
+            s.id = rsl::nameHash(name);
             sceneNames.emplace(s.id, name);
             //auto sceneHandle = ent.add_component<scene>(s);
-            //sceneList.emplace(nameHash(name), sceneHandle);
+            //sceneList.emplace(rsl::nameHash(name), sceneHandle);
             sceneCount++;
             //true if entity does not have the scene component
             return save_scene(name, ent);
@@ -117,11 +117,11 @@ namespace rythe::core::scenemanagement
 
     ecs::component<scene> SceneManager::get_scene(std::string name)
     {
-        return sceneList[nameHash(name)];
+        return sceneList[rsl::nameHash(name)];
     }
 
     ecs::entity SceneManager::get_scene_entity(std::string name)
     {
-        return sceneList[nameHash(name)].owner;
+        return sceneList[rsl::nameHash(name)].owner;
     }
 }

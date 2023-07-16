@@ -2,6 +2,7 @@
 #include <rsl/type_util>
 #include <rsl/logging>
 #include <rsl/delegate>
+#include <rsl/hash>
 
 #include "core/common/exception.hpp"
 
