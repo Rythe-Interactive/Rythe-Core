@@ -1,9 +1,11 @@
-#include "provider_registry.hpp"
 #include <algorithm>
-#include <core/containers/iterator_tricks.hpp>
+#include <rsl/containers>
 #include <rsl/type_util>
-#include <rsl/logging>
-#include <core/filesystem/basic_resolver.hpp>
+
+#include "provider_registry.hpp"
+#include "core/logging/logging.hpp"
+#include "core/filesystem/basic_resolver.hpp"
+
 
 namespace rythe::core::filesystem
 {

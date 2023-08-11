@@ -1,15 +1,16 @@
 #pragma once
 #define _CRT_SECURE_NO_WARNINGS       // fopen vs fopen_s
-
-#include <rsl/type_util> // R_NODISCARD
-#include <rsl/primitives>       // rsl::byte, rsl::byte_vec
-#include <core/common/assert.hpp>     // assert_msg
-
 #include <string_view>                // std::string_view
 #include <memory>                     // std::unique_ptr
 #include <cstdio>                     // fopen, fclose, fseek, ftell, fread, fwrite
 
 #include <fstream>
+
+#include <rsl/type_util> // R_NODISCARD
+#include <rsl/primitives>       // rsl::byte, rsl::byte_vec
+#include "core/common/assert.hpp"     // assert_msg
+
+
 
 namespace rythe::core::filesystem {
 

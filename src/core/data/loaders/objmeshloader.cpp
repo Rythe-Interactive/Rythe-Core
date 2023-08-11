@@ -125,7 +125,7 @@ namespace rythe::core
 
         if (!reader.Warning().empty())
         {
-            auto readerWarnings = common::split_string_at<'\n'>(reader.Warning());
+            auto readerWarnings = rsl::split_string_at<'\n'>(reader.Warning());
             warnings.insert(warnings.end(), readerWarnings.begin(), readerWarnings.end());
         }
 

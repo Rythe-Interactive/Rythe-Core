@@ -1,7 +1,4 @@
 #include <core/filesystem/artifact_cache.hpp>
-#include <algorithm>
-#include <functional>
-#include <core/containers/iterator_tricks.hpp>
 
 namespace rythe::core::filesystem {
     std::shared_ptr<rsl::byte_vec> artifact_cache::get_cache(const std::string& identifier, std::size_t size_hint)

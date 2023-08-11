@@ -5,7 +5,7 @@
 #include <tinygltf/tiny_gltf.h> 
 #endif
 
-#include <core/data/loaders/gltfmeshloader.hpp>
+#include "core/data/loaders/gltfmeshloader.hpp"
 
 namespace rythe::core
 {
@@ -679,7 +679,7 @@ namespace rythe::core
             auto text = result->to_string();
             if (!loader.LoadASCIIFromString(&model, &err, &warn, text.c_str(), static_cast<rsl::uint>(text.size()), baseDir))
             {
-                auto parserWarnings = common::split_string_at<'\n'>(warn);
+                auto parserWarnings = rsl::split_string_at<'\n'>(warn);
                 warnings.insert(warnings.end(), parserWarnings.begin(), parserWarnings.end());
                 return { rythe_exception_msg("Failed to parse GLTF: " + err), warnings };
             }
@@ -688,7 +688,7 @@ namespace rythe::core
         {
             if (!loader.LoadBinaryFromMemory(&model, &err, &warn, result->data(), static_cast<rsl::uint>(result->size()), baseDir))
             {
-                auto parserWarnings = common::split_string_at<'\n'>(warn);
+                auto parserWarnings = rsl::split_string_at<'\n'>(warn);
                 warnings.insert(warnings.end(), parserWarnings.begin(), parserWarnings.end());
                 return { rythe_exception_msg("Failed to parse GLTF: " + err), warnings };
             }
@@ -701,12 +701,12 @@ namespace rythe::core
 
         if (!err.empty())
         {
-            auto parserErrors = common::split_string_at<'\n'>(err);
+            auto parserErrors = rsl::split_string_at<'\n'>(err);
             warnings.insert(warnings.end(), parserErrors.begin(), parserErrors.end());
         }
         if (!warn.empty())
         {
-            auto parserWarnings = common::split_string_at<'\n'>(warn);
+            auto parserWarnings = rsl::split_string_at<'\n'>(warn);
             warnings.insert(warnings.end(), parserWarnings.begin(), parserWarnings.end());
         }
 

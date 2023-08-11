@@ -5,8 +5,10 @@
 #include <iostream>
 #include <optional>
 #include <functional>
+
 #include <rsl/type_util>
-#include <core/common/exception.hpp>
+
+#include "core/common/exception.hpp"
 
 namespace rythe::core::common
 {
@@ -34,10 +36,10 @@ namespace rythe::core::common
         result(const success_type& s, warning_list&& w) : m_success(s), m_succeeded(true), m_warnings(w) {}
         result(const success_type& s, const warning_list& w) : m_success(s), m_succeeded(true), m_warnings(w) {}
 
-        result(error_type&& e) : m_error(e), m_handled(false), m_succeeded(false) {}
-        result(const error_type& e) : m_error(e), m_handled(false), m_succeeded(false) {}
+        result(error_type&& e) : m_error(e), m_succeeded(false), m_handled(false){}
+        result(const error_type& e) : m_error(e),  m_succeeded(false), m_handled(false) {}
         result(error_type&& e, warning_list&& w) : m_error(e), m_handled(false), m_succeeded(false), m_warnings(w) {}
-        result(error_type&& e, const warning_list& w) : m_error(e), m_handled(false), m_succeeded(false), m_warnings(w) {}
+        result(error_type&& e, const warning_list& w) : m_error(e), m_succeeded(false), m_handled(false), m_warnings(w) {}
         result(const error_type& e, warning_list&& w) : m_error(e), m_handled(false), m_succeeded(false), m_warnings(w) {}
         result(const error_type& e, const warning_list& w) : m_error(e), m_handled(false), m_succeeded(false), m_warnings(w) {}
 

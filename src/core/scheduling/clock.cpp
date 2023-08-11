@@ -13,7 +13,7 @@ namespace rythe::core::scheduling
 
     void Clock::onInit()
     {
-        reportDependency<time::main_clock>();
+        reportDependency<rsl::main_clock>();
         create();
     }
 
@@ -29,7 +29,7 @@ namespace rythe::core::scheduling
 
     Clock::span_type Clock::elapsedSinceTickStart() noexcept
     {
-        return (time::mainClock.now() - instance.m_lastTickStart) * instance.m_timeScale;
+        return (rsl::mainClock.now() - instance.m_lastTickStart) * instance.m_timeScale;
     }
 
     Clock::span_type Clock::lastTickDuration() noexcept
@@ -39,7 +39,7 @@ namespace rythe::core::scheduling
 
     Clock::span_type Clock::unscaledElapsedSinceTickStart() noexcept
     {
-        return time::mainClock.now() - instance.m_lastTickStart;
+        return rsl::mainClock.now() - instance.m_lastTickStart;
     }
 
     Clock::span_type Clock::unscaledLastTickDuration() noexcept
@@ -54,7 +54,7 @@ namespace rythe::core::scheduling
 
     void Clock::unsubscribeFromTick(const tick_callback_delegate& func)
     {
-        instance.m_onTick.erase(func);
+        instance.m_onTick.remove(func);
     }
 
     void Clock::setAdvancementProtocol(advancement_protocol protocol) noexcept
@@ -69,7 +69,7 @@ namespace rythe::core::scheduling
 
     void Clock::update()
     {
-        auto loopStart = time::mainClock.now();
+        auto loopStart = rsl::mainClock.now();
         auto elapsedSinceLastTick = loopStart - instance.m_lastTickStart;
 
         if (instance.m_waitBuffer.nanoseconds() > static_cast<span_type::time_type>(0))

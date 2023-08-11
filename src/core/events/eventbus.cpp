@@ -26,7 +26,7 @@ namespace rythe::core::events
 
     void EventBus::unbindFromEvent(rsl::id_type id, const rsl::delegate<void(event_base&)>& callback)
     {
-        instance.m_eventCallbacks.at(id).erase(callback);
+        instance.m_eventCallbacks.at(id).remove(callback);
     }
 
 }

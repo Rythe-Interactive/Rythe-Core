@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <algorithm>
 #include <rsl/type_util>
 
 #define SEP_WINDOWS 1

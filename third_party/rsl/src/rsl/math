@@ -1,0 +1,24 @@
+#pragma once
+
+#include "impl/math/vector/vector.hpp"
+#include "impl/math/quaternion/quaternion.hpp"
+#include "impl/math/matrix/matrix.hpp"
+         
+#include "impl/math/arithmetic/arithmetic.hpp"
+#include "impl/math/basic/basic_funcs.hpp"
+#include "impl/math/exponential/exponential.hpp"
+#include "impl/math/geometric/geometric.hpp"
+#include "impl/math/interpolation/interpolation.hpp"
+#include "impl/math/logic/logic.hpp"
+#include "impl/math/noise/noise.hpp"
+#include "impl/math/random/random.hpp"
+#include "impl/math/trigonometric/trigonometric.hpp"
+#include "impl/math/util/util.hpp"
+         
+#include "impl/math/constants.hpp"
+#include "impl/math/trigonometry.hpp"
+#include "impl/math/color.hpp"
+#include "impl/math/geometry.hpp"
+
+
+namespace math = rsl::math;

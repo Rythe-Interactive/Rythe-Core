@@ -5,6 +5,7 @@
 #include <rsl/hash>
 
 #include "core/common/exception.hpp"
+#include "core/logging/logging.hpp"
 
 namespace rythe::core
 {

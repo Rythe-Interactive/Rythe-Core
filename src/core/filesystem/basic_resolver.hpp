@@ -1,10 +1,13 @@
 #pragma once
-#include <core/filesystem/filesystem_resolver.hpp>
+
 #include <filesystem>
 
+#include <rsl/utilities>
+
+#include "core/filesystem/filesystem_resolver.hpp"
 
 #include "filemanip.hpp"
-#include "core/common/string_extra.hpp"
+
 
 #if !defined (RYTHE_WINDOWS)
 #include <unistd.h>
@@ -44,7 +47,7 @@ namespace rythe::core::filesystem
 
         R_NODISCARD bool is_directory() const noexcept override
         {
-            const auto back = get_target().back();
+            //const auto back = get_target().back();
 
             return (get_target().back() == '\\' || get_target().back() == '/')
                     && is_valid_path()
@@ -121,7 +124,7 @@ namespace rythe::core::filesystem
             const auto full = strpath_manip::subdir(m_root_path,get_target());
 
             #if defined( RYTHE_WINDOWS )
-            const DWORD attr = GetFileAttributesA(full.c_str());
+            //const DWORD attr = GetFileAttributesA(full.c_str());
           
             const HANDLE h = CreateFileA(full.c_str(),GENERIC_READ,NULL,NULL,OPEN_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL);
             if(h == INVALID_HANDLE_VALUE)

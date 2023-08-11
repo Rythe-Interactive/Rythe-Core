@@ -1,6 +1,6 @@
 #include "strpath_manip.hpp"
 
-#include <core/common/string_extra.hpp>
+#include <rsl/utilities>
 
 namespace rythe::core::filesystem
 {
@@ -12,7 +12,7 @@ namespace rythe::core::filesystem
 
     std::string strpath_manip::subdir(const std::string& p, const std::string& sub)
     {
-        return common::rtrim_copy(p,[](char c){ return c == separator() || c == anti_separator(); }) + separator() + sub;
+        return rsl::rtrim_copy(p,[](char c){ return c == separator() || c == anti_separator(); }) + separator() + sub;
     }
 
     std::string strpath_manip::sanitize(const std::string& p, bool fail_on_fs_leave)
@@ -20,7 +20,7 @@ namespace rythe::core::filesystem
         std::vector<std::string> recreation;
 
         //tokenize
-        auto tokens = rythe::core::common::split_string_at<'\\','/'>(p);
+        auto tokens = rsl::split_string_at<'\\','/'>(p);
 
         std::string filesystem;
         for(const auto& token : tokens)
@@ -39,7 +39,7 @@ namespace rythe::core::filesystem
             }
 
             //handle upwards
-            if(common::rtrim_copy(token) == "..")
+            if(rsl::rtrim_copy(token) == "..")
             {
                 if(!recreation.empty() && recreation.back() != "..")
                 {
@@ -54,14 +54,14 @@ namespace rythe::core::filesystem
             }
 
             //handle normal tokens and .
-            else if(common::rtrim_copy(token) != ".")
+            else if(rsl::rtrim_copy(token) != ".")
             {
                 recreation.push_back(token);
             }
         }
 
         //reassemble string
-        return filesystem + rythe::core::common::join_strings_with<std::vector<std::string>,std::string>(recreation,separator());
+        return filesystem + rsl::join_strings_with<std::vector<std::string>,std::string>(recreation,separator());
     }
 
 

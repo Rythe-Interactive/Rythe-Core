@@ -2,6 +2,7 @@
 #include <unordered_map>
 
 #include <rsl/primitives>
+#include <rsl/hash>
 #include <rsl/type_util>
 
 #include "core/async/ring_sync_lock.hpp"

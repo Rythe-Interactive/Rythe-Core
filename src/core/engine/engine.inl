@@ -13,7 +13,7 @@ namespace rythe::core
         if (!items.count(item))
         {
             items.insert(item);
-            initializationSequence() += std::forward<Func>(func);
+            initializationSequence() += func;
         }
         return 0;
     }

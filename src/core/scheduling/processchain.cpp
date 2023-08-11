@@ -24,7 +24,7 @@ namespace rythe::core::scheduling
 
     void ProcessChain::unsubscribeFromChainStart(const chain_callback_delegate& callback)
     {
-        m_onChainStart.erase(callback);
+        m_onChainStart.remove(callback);
     }
 
     void ProcessChain::subscribeToChainEnd(const chain_callback_delegate& callback)
@@ -34,7 +34,7 @@ namespace rythe::core::scheduling
 
     void ProcessChain::unsubscribeFromChainEnd(const chain_callback_delegate& callback)
     {
-        m_onChainEnd.erase(callback);
+        m_onChainEnd.remove(callback);
     }
 
     void ProcessChain::addProcess(Process& process)

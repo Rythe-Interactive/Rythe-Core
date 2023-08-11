@@ -1,10 +1,15 @@
-#include <core/scheduling/scheduler.hpp>
-#include <core/events/events.hpp>
-#include <core/engine/engine.hpp>
+#include "core/scheduling/scheduler.hpp"
+#include "core/events/events.hpp"
+#include "core/engine/engine.hpp"
 
 namespace rythe::core::scheduling
 {
     thread_local Engine* Scheduler::m_currentEngineInstance;
+
+    void exit(events::exit& evnt)
+    {
+
+    }
 
     rsl::multicast_delegate<Scheduler::thread_callback_type>& Scheduler::getOnThreadCreate()
     {
@@ -17,11 +22,14 @@ namespace rythe::core::scheduling
         reportDependency<events::EventBus>();
         reportDependency<Clock>();
 
-        events::EventBus::bindToEvent<events::exit>([](events::exit& evnt)
+        rsl::delegate<void(events::exit)> del;
+
+        del = [](events::exit evnt)
             {
                 instance.m_exitFromEvent.store(true, std::memory_order_release);
                 Scheduler::exit(evnt.exitcode);
-            });
+            };
+        events::EventBus::bindToEvent<events::exit>(del);
 
         create();
     }
@@ -38,14 +46,14 @@ namespace rythe::core::scheduling
         getOnThreadCreate()();
 
         async::set_thread_name(name.c_str());
-        log::info("Thread {} assigned.", std::this_thread::get_id());
+        //log::info("Thread {} assigned.", std::this_thread::get_id());
 
         while (!instance.m_start.load(std::memory_order_relaxed))
             std::this_thread::yield();
 
         log::info("Starting thread.");
 
-        time::timer clock;
+        rsl::timer clock;
         rsl::span timeBuffer;
         rsl::span sleepTime;
 
@@ -106,7 +114,7 @@ namespace rythe::core::scheduling
                 {
                     timeBuffer -= sleepTime;
 
-                    time::timer sleepTimer;
+                    rsl::timer sleepTimer;
                     sleepTimer.start();
                     std::this_thread::sleep_for(std::chrono::nanoseconds(1));
                     sleepTime = sleepTimer.elapsed_time();
@@ -181,7 +189,7 @@ namespace rythe::core::scheduling
 
         {
             auto& logData = log::impl::get();
-            async::readwrite_guard guard(logData.threadNamesLock);
+            //async::readwrite_guard guard(logData.threadNamesLock);
             while ((ptr = createThread(Scheduler::threadMain, std::ref(engine), m_lowPower, name + std::to_string(instance.m_jobPoolSize))) != nullptr)
                 logData.threadNames[ptr->get_id()] = name + std::to_string(instance.m_jobPoolSize++);
 
@@ -190,7 +198,9 @@ namespace rythe::core::scheduling
 
         instance.m_start.store(true, std::memory_order_release);
 
-        Clock::subscribeToTick(doTick);
+        rsl::delegate<void(rsl::main_clock::span_type)> del;
+        del = &doTick;
+        Clock::subscribeToTick(del);
 
         while (!instance.m_exit.load(std::memory_order_relaxed))
         {
@@ -218,7 +228,7 @@ namespace rythe::core::scheduling
                 {
                     bestPollTime = pollTime;
                     bestAvg = avg;
-                    pollTime += (math::linearRand<int8>(0, 1) ? 0.05f : -0.05f);
+                    pollTime += (rsl::math::linear_rand<rsl::int8>(0, 1) ? 0.05f : -0.05f);
                     pollTime = math::mod(pollTime + 1.f, 1.f);
                 }
                 else if (math::close_enough(bestPollTime, pollTime))
@@ -226,7 +236,7 @@ namespace rythe::core::scheduling
                     if (avg < static_cast<rsl::uint>(static_cast<float>(bestAvg) * 0.9f))
                         bestAvg = 0;
 
-                    pollTime += (math::linearRand<int8>(0, 1) ? 0.05f : -0.05f);
+                    pollTime += (rsl::math::linear_rand<rsl::int8>(0, 1) ? 0.05f : -0.05f);
                     pollTime = math::mod(pollTime + 1.f, 1.f);
                 }
                 else
@@ -350,7 +360,7 @@ namespace rythe::core::scheduling
 
     void Scheduler::unsubscribeFromFrameStart(const frame_callback_delegate& callback)
     {
-        instance.m_onFrameStart.erase(callback);
+        instance.m_onFrameStart.remove(callback);
     }
 
     void Scheduler::subscribeToFrameEnd(const frame_callback_delegate& callback)
@@ -360,7 +370,7 @@ namespace rythe::core::scheduling
 
     void Scheduler::unsubscribeFromFrameEnd(const frame_callback_delegate& callback)
     {
-        instance.m_onFrameEnd.erase(callback);
+        instance.m_onFrameEnd.remove(callback);
     }
 
     void Scheduler::unsubscribeFromChainEnd(rsl::id_type chainId, const chain_callback_delegate& callback)

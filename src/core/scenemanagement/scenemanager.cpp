@@ -1,7 +1,7 @@
 #include <core/scenemanagement/components/scene.hpp>
 #include <core/serialization/serializationutil.hpp>
 #include <rsl/logging>
-#include <core/common/string_extra.hpp>
+#include <rsl/utilities>
 
 namespace rythe::core::scenemanagement
 {

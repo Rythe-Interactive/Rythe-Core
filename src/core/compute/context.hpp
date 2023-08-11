@@ -1,10 +1,13 @@
 #pragma once
-
-#include <core/engine/enginesubsystem.hpp>
-#include <core/compute/program.hpp> // Kernel, Buffer
-#include <core/filesystem/resource.hpp> // basic_resource
 #include <utility>
-#include <core/data/image.hpp>
+
+#include <rsl/logging>
+
+#include "core/engine/enginesubsystem.hpp"
+#include "core/compute/program.hpp" // Kernel, Buffer
+#include "core/filesystem/resource.hpp" // basic_resource
+#include "core/data/image.hpp"
+
 
 /**
  * @file context.hpp
@@ -84,7 +87,7 @@ namespace rythe::core::compute
             case channel_format::depth_stencil:
             default:
             {
-                log::warn("Buffer::createImage invalid Image format!");
+                rsl::log::warn("Buffer::createImage invalid Image format!");
                 fmt.image_channel_data_type = CL_UNORM_INT8;
             }
             }
@@ -100,7 +103,7 @@ namespace rythe::core::compute
             case image_components::stencil:
             default:
             {
-                log::warn("Buffer::createImage invalid Image Components!");
+                rsl::log::warn("Buffer::createImage invalid Image Components!");
                 fmt.image_channel_order = CL_RGBA;
             }
             }

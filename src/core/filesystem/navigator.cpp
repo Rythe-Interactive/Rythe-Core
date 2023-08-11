@@ -1,6 +1,6 @@
 #include "navigator.hpp"
 #include "detail/strpath_manip.hpp"
-#include <core/common/string_extra.hpp>
+#include <rsl/utilities>
 #include <core/filesystem/provider_registry.hpp>
 
 namespace rythe::core::filesystem {
@@ -44,7 +44,7 @@ namespace rythe::core::filesystem {
 
         solution steps{};
 
-        auto tokens = common::split_string_at<'\\','/'>(to_process);
+        auto tokens = rsl::split_string_at<'\\','/'>(to_process);
 
         std::string previous_domain = root_domain;
         std::string domain = root_domain;

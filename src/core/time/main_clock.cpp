@@ -1,6 +1,6 @@
-#include <core/time/main_clock.hpp>
+#include "core/time/main_clock.hpp"
 
 namespace rythe::core::time
 {
-    const main_clock& mainClock = main_clock::getInstance();
+    const rsl::main_clock& mainClock = rsl::main_clock::getInstance();
 }

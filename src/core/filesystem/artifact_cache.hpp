@@ -2,7 +2,12 @@
 #include <atomic>
 #include <memory>
 #include <unordered_map>
+#include <algorithm>
+#include <functional>
+
+#include <rsl/containers>
 #include <rsl/primitives>
+
 #include <core/async/rw_spinlock.hpp>
 
 namespace rythe::core::filesystem

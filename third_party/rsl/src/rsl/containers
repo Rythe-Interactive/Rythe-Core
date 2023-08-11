@@ -1,0 +1,5 @@
+#pragma once
+
+#include "buffered_string"
+#include "delegate"
+#include "impl/containers/iterator_tricks.hpp"

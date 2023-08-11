@@ -3,7 +3,7 @@
 #include <rsl/primitives>
 #include <rsl/logging>
 
-#include "core/common/string_extra.hpp"
+#include <rsl/utilities>
 
 
 namespace rythe::core
