@@ -6,7 +6,7 @@
 	url = https://github.com/Rythe-Interactive/tinygltf.git
 [submodule "third_party/cereal"]
 	path = third_party/cereal
-	url = https://github.com/USCiLab/cereal.git
+	url = https://github.com/Rythe-Interactive/cereal.git
 [submodule "third_party/argh"]
 	path = third_party/argh
 	url = https://github.com/adishavit/argh.git
