@@ -1,5 +1,0 @@
-#pragma once
-
-#include "impl/containers/delegate_base.hpp"
-#include "impl/containers/delegate.hpp"
-#include "impl/containers/multicast_delegate.hpp"
