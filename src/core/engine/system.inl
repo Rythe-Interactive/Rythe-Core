@@ -28,7 +28,7 @@ namespace rythe::core
     {
         rsl::id_type id = rsl::combine_hash(event_type::id, rsl::force_value_cast<rsl::ptr_type>(func_type));
 
-        auto temp = rsl::delegate<void(event_type&)>::create<SelfType, func_type>(*reinterpret_cast<SelfType*>(this));
+        auto temp = rsl::delegate<void(event_type&)>::template create<SelfType, func_type>(*reinterpret_cast<SelfType*>(this));
         auto& del = m_bindings.try_emplace(id, reinterpret_cast<rsl::delegate<void(events::event_base&)>&&>(std::move(temp))).first->second;
 
         events::EventBus::bindToEvent<event_type>(reinterpret_cast<rsl::delegate<void(event_type&)>&>(del));

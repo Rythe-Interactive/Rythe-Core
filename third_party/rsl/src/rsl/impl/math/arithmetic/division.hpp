@@ -1,6 +1,7 @@
 #pragma once
 #include "../../util/primitives.hpp"
 #include "../vector/vector.hpp"
+#include "../quaternion/quaternion.hpp"
 #include "../util/type_util.hpp"
 
 namespace rsl::math

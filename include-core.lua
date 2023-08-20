@@ -25,8 +25,14 @@ print("including core")
 includedirs {
     "$(SolutionDir)rythe/engine/core/src",
     "$(SolutionDir)rythe/engine/core/third_party/",
-    "$(SolutionDir)rythe/engine/core/third_party/rsl/src/"
+    "$(SolutionDir)rythe/engine/core/third_party/rsl/src/",
+    "third_party/*/src",
+    "third_party/*/include",
+    "third_party/"
 }
 dependson { "core" }
+defines {"_CRT_SECURE_NO_WARNINGS"}
 filter "kind:not StaticLib"
     links { "core", "OpenCL", "stdc++" }
+
+filter {}

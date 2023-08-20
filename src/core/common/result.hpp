@@ -51,7 +51,7 @@ namespace rythe::core::common
                 new (&m_error) error_type(src.m_error);
         }
 
-        result(result&& src) : m_handled(src.m_handled), m_succeeded(src.m_succeeded), m_warnings(std::move(src.m_warnings))
+        result(result&& src) :  m_succeeded(src.m_succeeded), m_handled(src.m_handled), m_warnings(std::move(src.m_warnings))
         {
             src.mark_handled();
             if (src.m_succeeded)

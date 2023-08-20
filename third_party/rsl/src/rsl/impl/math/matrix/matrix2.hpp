@@ -71,8 +71,14 @@ namespace rsl::math
 
         constexpr matrix& operator=(const matrix&) noexcept = default;
 
-        [[nodiscard]] constexpr row_type& operator[](size_type i) noexcept;
-        [[nodiscard]] constexpr const row_type& operator[](size_type i) const noexcept;
+        [[nodiscard]] constexpr row_type& operator[](size_type i) noexcept
+        {
+            rsl_assert_msg((i >= 0) && (i < row_count), "matrix subscript out of range"); return rows[i];
+        }
+        [[nodiscard]] constexpr const row_type& operator[](size_type i) const noexcept
+        {
+            rsl_assert_msg((i >= 0) && (i < row_count), "matrix subscript out of range"); return rows[i];
+        }
     };
 
     using float2x2 = matrix<float32, 2, 2>;

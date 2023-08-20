@@ -13,6 +13,11 @@ namespace rsl {
         std::cout << "function\n";
     }
 
+    static void event(unsigned int& id)
+    {
+        std::cout << "ID:" << id << std::endl;
+    }
+
     struct Object {
         std::vector<int> ints;
 
@@ -67,6 +72,17 @@ namespace rsl {
         }
 
         del();
+
+        //delegate<void(unsigned int&)> del2; 
+        //void(*method)(unsigned int&);
+        //method = &event;
+
+        //{
+        //    del2 = method;
+        //}
+
+        //unsigned int id = 0;
+        //del2(id);
 
         {
             del = []() {

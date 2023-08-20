@@ -29,6 +29,7 @@ includedirs {
     "third_party/",
     "third_party/*",
     "third_party/*/src/",
+    "third_party/*/include/",
     "src/"
 }    
 

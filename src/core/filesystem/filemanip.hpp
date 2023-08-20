@@ -1,8 +1,8 @@
 #pragma once
-#define _CRT_SECURE_NO_WARNINGS       // fopen vs fopen_s
+//#define _CRT_SECURE_NO_WARNINGS       // fopen vs fopen_s
+#include <cstdio>                     // fopen, fclose, fseek, ftell, fread, fwrite
 #include <string_view>                // std::string_view
 #include <memory>                     // std::unique_ptr
-#include <cstdio>                     // fopen, fclose, fseek, ftell, fread, fwrite
 
 #include <fstream>
 
