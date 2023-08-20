@@ -52,7 +52,6 @@ namespace rythe::core::common
         {
             rsl::delegate<void(T&)> del;
             del = destroyFunc;
-            //del.template create<void(*)(T&)>(destroyFunc);
             m_ref_counter = std::make_shared<rsl::delegate<void(T&)>>(del, detail::_managed_resource_del<T>{ &value });
         }
 
