@@ -48,11 +48,11 @@ namespace rythe::core::common
 
         template<typename... Args>
         managed_resource(void(*destroyFunc)(T&), Args&&... args) noexcept(std::is_nothrow_constructible_v<T, Args...>)
-            : value(std::forward<Args>(args)...)
+            : value(std::forward<Args>(args)...), m_ref_counter(std::make_shared<rsl::delegate<void(T&)>>(new rsl::delegate<void(T&)>(destroyFunc), detail::_managed_resource_del<T>{ &value }))
         {
-            rsl::delegate<void(T&)> del;
-            del = destroyFunc;
-            m_ref_counter = std::make_shared<rsl::delegate<void(T&)>>(del, detail::_managed_resource_del<T>{ &value });
+            //rsl::delegate<void(T&)> del;
+            //del = destroyFunc;
+            //m_ref_counter = std::make_shared<rsl::delegate<void(T&)>>(del,detail::_managed_resource_del<T>{ &value });
         }
 
         template<typename... Args>

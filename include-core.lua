@@ -25,7 +25,7 @@ print("including core")
 includedirs {
     "$(SolutionDir)rythe/engine/core/src",
     "$(SolutionDir)rythe/engine/core/third_party/",
-    "$(SolutionDir)rythe/engine/core/third_party/rsl/src/",
+    "$(SolutionDir)rythe/engine/core/third_party/rythe-standard-library/src/",
     "third_party/*/src",
     "third_party/*/include",
     "third_party/"
