@@ -3,7 +3,7 @@
 	url = https://github.com/gabime/spdlog.git
 [submodule "third_party/tinygltf"]
 	path = third_party/tinygltf
-	url = https://github.com/syoyo/tinygltf.git
+	url = https://github.com/Rythe-Interactive/tinygltf.git
 [submodule "third_party/cereal"]
 	path = third_party/cereal
 	url = https://github.com/USCiLab/cereal.git
