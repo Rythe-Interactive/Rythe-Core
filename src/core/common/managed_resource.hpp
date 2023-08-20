@@ -50,7 +50,9 @@ namespace rythe::core::common
         managed_resource(void(*destroyFunc)(T&), Args&&... args) noexcept(std::is_nothrow_constructible_v<T, Args...>)
             : value(std::forward<Args>(args)...)
         {
-            auto del = rsl::delegate<void(T&)>::template create<destroyFunc>(destroyFunc);
+            rsl::delegate<void(T&)> del;
+            del = destroyFunc;
+            //del.template create<void(*)(T&)>(destroyFunc);
             m_ref_counter = std::make_shared<rsl::delegate<void(T&)>>(del, detail::_managed_resource_del<T>{ &value });
         }
 
