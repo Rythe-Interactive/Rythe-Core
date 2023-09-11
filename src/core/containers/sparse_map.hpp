@@ -43,8 +43,8 @@ namespace rythe::core
         using dense_value_container = dense_type<value_type>;
         using dense_key_container = dense_type<key_type>;
 
-        using iterator = core::key_value_pair_iterator<typename dense_key_container::iterator, typename dense_value_container::iterator>;
-        using const_iterator = core::key_value_pair_iterator<typename dense_key_container::const_iterator, typename dense_value_container::const_iterator>;
+        using iterator = rsl::key_value_pair_iterator<typename dense_key_container::iterator, typename dense_value_container::iterator>;
+        using const_iterator = rsl::key_value_pair_iterator<typename dense_key_container::const_iterator, typename dense_value_container::const_iterator>;
 
     private:
         dense_value_container m_dense_value;

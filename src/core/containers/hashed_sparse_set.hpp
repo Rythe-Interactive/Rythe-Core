@@ -42,8 +42,8 @@ namespace rythe::core
 
         using reverse_iterator = typename dense_container::reverse_iterator;
         using const_reverse_iterator = typename dense_container::const_reverse_iterator;
-        using reverse_itr_range = pair_range<reverse_iterator>;
-        using const_reverse_itr_range = pair_range<const_reverse_iterator>;
+        using reverse_itr_range = rsl::pair_range<reverse_iterator>;
+        using const_reverse_itr_range = rsl::pair_range<const_reverse_iterator>;
 
     private:
         dense_container m_dense;
@@ -72,8 +72,8 @@ namespace rythe::core
         R_NODISCARD const_reverse_iterator rend() const noexcept { return m_dense.crend(); }
         R_NODISCARD const_reverse_iterator crend() const noexcept { return m_dense.crend(); }
 
-        R_NODISCARD reverse_itr_range reverse_range() noexcept { return pair_range{ rbegin(), rend() }; }
-        R_NODISCARD const_reverse_itr_range reverse_range() const noexcept { return pair_range{ crbegin(), crend() }; }
+        R_NODISCARD reverse_itr_range reverse_range() noexcept { return rsl::pair_range{ rbegin(), rend() }; }
+        R_NODISCARD const_reverse_itr_range reverse_range() const noexcept { return rsl::pair_range{ crbegin(), crend() }; }
 
         /**@brief Returns the amount of items in the sparse_map.
          * @returns rsl::size_type Current amount of items contained in sparse_map.
