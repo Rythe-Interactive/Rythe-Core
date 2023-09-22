@@ -1,6 +1,6 @@
 #pragma once
 
-#include "detail/cl_include.hpp" // cl_context , cl_mem , cl_mem_flags
+#include <cl_platform.h>// cl_context , cl_mem , cl_mem_flags
 #include <rsl/primitives> // rsl::byte, size_t
 
 #include <string> // string

@@ -1,12 +1,12 @@
 #pragma once
-#include <core/engine/module.hpp>
-#include <core/engine/module.inl>
-#include <core/data/loaders/objmeshloader.hpp>
-#include <core/data/loaders/gltfmeshloader.hpp>
-#include <core/data/loaders/stbimageloader.hpp>
-#include <core/filesystem/provider_registry.hpp>
-#include <core/filesystem/basic_resolver.hpp>
-#include <core/compute/context.hpp>
+#include "core/engine/module.hpp"
+#include "core/engine/module.inl"
+#include "core/data/loaders/objmeshloader.hpp"
+#include "core/data/loaders/gltfmeshloader.hpp"
+#include "core/data/loaders/stbimageloader.hpp"
+#include "core/filesystem/provider_registry.hpp"
+#include "core/filesystem/basic_resolver.hpp"
+//#include <core/compute/context.hpp>
 
 /**
  * @file coremodule.hpp

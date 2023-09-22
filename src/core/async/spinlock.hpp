@@ -5,8 +5,6 @@
 #include <rsl/type_util>
 #include <rsl/logging>
 
-#include "core/common/assert.hpp"
-
 /**@file spinlock.hpp
  */
 
