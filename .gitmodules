@@ -25,3 +25,6 @@
 [submodule "third_party/rythe-standard-library"]
 	path = third_party/rythe-standard-library
 	url = https://github.com/Rythe-Interactive/Rythe-Standard-Library.git
+[submodule "third_party/impossibly-fast-delegates"]
+	path = third_party/impossibly-fast-delegates
+	url = https://github.com/Offirmo/impossibly-fast-delegates.git
