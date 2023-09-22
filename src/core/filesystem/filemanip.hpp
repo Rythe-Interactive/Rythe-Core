@@ -8,7 +8,7 @@
 
 #include <rsl/type_util> // R_NODISCARD
 #include <rsl/primitives>       // rsl::byte, rsl::byte_vec
-#include "core/common/assert.hpp"     // assert_msg
+#include <rsl/utilities>     // rsl_assert_msg
 
 
 
@@ -39,7 +39,7 @@ namespace rythe::core::filesystem {
     {
         std::ifstream file(path.data(), std::ios::ate | std::ios::binary);
 
-        assert_msg("could not open file", file.is_open());
+        rsl_assert_msg("could not open file", file.is_open());
 
         size_t fileSize = (size_t)file.tellg();
         rsl::byte_vec buffer(fileSize);
@@ -66,7 +66,7 @@ namespace rythe::core::filesystem {
             fclose
         );
 
-        assert_msg("could not open file",file);
+        rsl_assert_msg("could not open file",file);
 
         // read data
         fwrite(container.data(),sizeof(rsl::byte),container.size(),file.get());

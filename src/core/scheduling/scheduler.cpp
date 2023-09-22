@@ -22,9 +22,9 @@ namespace rythe::core::scheduling
         reportDependency<events::EventBus>();
         reportDependency<Clock>();
 
-        rsl::delegate<void(events::exit)> del;
+        rsl::delegate<void(events::exit&)> del;
 
-        del = [](events::exit evnt)
+        del = [](events::exit& evnt)
             {
                 instance.m_exitFromEvent.store(true, std::memory_order_release);
                 Scheduler::exit(evnt.exitcode);

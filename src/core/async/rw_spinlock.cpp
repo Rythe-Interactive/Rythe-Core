@@ -1,5 +1,6 @@
-#include <core/async/rw_spinlock.hpp>
 #include <sstream>
+
+#include "core/async/rw_spinlock.hpp"
 
 namespace rythe::core::async
 {
@@ -231,7 +232,7 @@ namespace rythe::core::async
         if (m_forceRelease)
             return;
 
-        assert_msg("Attempted to move a rw_spinlock that was locked.", source.m_lockState.load(std::memory_order_relaxed) == static_cast<int>(lock_state::idle));
+        rsl_assert_msg(source.m_lockState.load(std::memory_order_relaxed) == static_cast<int>(lock_state::idle), "Attempted to move a rw_spinlock that was locked.");
         m_id = source.m_id;
     }
 
@@ -240,7 +241,7 @@ namespace rythe::core::async
         if (m_forceRelease)
             return *this;
 
-        assert_msg("Attempted to move a rw_spinlock that was locked.", source.m_lockState.load(std::memory_order_relaxed) == static_cast<int>(lock_state::idle));
+        rsl_assert_msg(source.m_lockState.load(std::memory_order_relaxed) == static_cast<int>(lock_state::idle), "Attempted to move a rw_spinlock that was locked.");
         m_id = source.m_id;
         return *this;
     }

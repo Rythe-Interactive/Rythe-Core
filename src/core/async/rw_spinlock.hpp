@@ -5,11 +5,12 @@
 #include <array>
 #include <thread>
 #include <functional>
+
 #include <rsl/primitives>
 #include <rsl/type_util>
-#include <core/containers/sparse_set.hpp>
-#include <core/common/assert.hpp>
-#include <core/async/wait_priority.hpp>
+#include <rsl/containers>
+
+#include "core/async/wait_priority.hpp"
 
 /**
  * @file rw_spinlock.hpp
