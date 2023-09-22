@@ -16,7 +16,7 @@ namespace rythe::core::ecs
 
         component_type_base(std::string_view name, rsl::id_type id) : componentName(name), typeId(id) {}
 
-        virtual std::unique_ptr<component_pool_base> create_pool() RYTHE_PURE;
+        virtual std::unique_ptr<component_pool_base> create_pool() = 0;
     };
 
     template<typename ComponentType>

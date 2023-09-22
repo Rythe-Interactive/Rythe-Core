@@ -22,7 +22,7 @@ namespace rythe::core::events
 
         /**@brief Get's the type id of an event. (only available in event_base)
          */
-        virtual rsl::id_type get_id() RYTHE_PURE;
+        virtual rsl::id_type get_id() = 0;
     };
 
     /**@class event

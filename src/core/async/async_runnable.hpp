@@ -15,7 +15,7 @@ namespace rythe::core::async
         async_runnable_base() = default;
         async_runnable_base(const std::shared_ptr<async_progress_base>& progress) : m_progress(progress) {}
 
-        virtual void execute() RYTHE_PURE;
+        virtual void execute() = 0;
 
         virtual ~async_runnable_base() = default;
     };
