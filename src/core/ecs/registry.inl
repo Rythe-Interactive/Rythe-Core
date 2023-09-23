@@ -4,7 +4,7 @@
 namespace rythe::core::ecs
 {
     template<typename ComponentType, typename... Args>
-    inline R_ALWAYS_INLINE void Registry::registerComponentType(Args&&... args)
+    inline rythe_always_inline void Registry::registerComponentType(Args&&... args)
     {
         auto& [typeId, componentType] = *(componentTypes().try_emplace(rsl::typeHash<ComponentType>(), std::make_unique<component_type<ComponentType>>(std::forward<Args>(args)...)).first);
         if (initialized())
@@ -14,14 +14,14 @@ namespace rythe::core::ecs
     }
 
     template<typename ComponentType0, typename ComponentType1, typename... ComponentTypes, typename... Args>
-    inline R_ALWAYS_INLINE void Registry::registerComponentType(Args&&... args)
+    inline rythe_always_inline void Registry::registerComponentType(Args&&... args)
     {
         registerComponentType<ComponentType0>(std::forward<Args>(args)...);
         registerComponentType<ComponentType1, ComponentTypes...>(std::forward<Args>(args)...);
     }
 
     template<typename ComponentType, typename... Args>
-    inline R_ALWAYS_INLINE component_pool<ComponentType>* Registry::getFamily(Args&&... args)
+    inline rythe_always_inline component_pool<ComponentType>* Registry::getFamily(Args&&... args)
     {
         rsl::id_type typeId = rsl::typeHash<ComponentType>();
         auto& families = getFamilies();
@@ -37,7 +37,7 @@ namespace rythe::core::ecs
     }
 
     template<typename ComponentType>
-    inline R_ALWAYS_INLINE component_ref_t<ComponentType> Registry::createComponent(entity target)
+    inline rythe_always_inline component_ref_t<ComponentType> Registry::createComponent(entity target)
     {
         if constexpr (is_archetype_v<ComponentType>)
         {
@@ -67,7 +67,7 @@ namespace rythe::core::ecs
     namespace detail
     {
         template<typename ComponentType>
-        inline R_ALWAYS_INLINE auto _create_component_ref(entity target)
+        inline rythe_always_inline auto _create_component_ref(entity target)
         {
             if constexpr (is_archetype_v<ComponentType>)
             {
@@ -81,13 +81,13 @@ namespace rythe::core::ecs
     }
 
     template<typename ComponentType0, typename ComponentType1, typename... ComponentTypeN>
-    inline R_ALWAYS_INLINE component_ref_tuple<ComponentType0, ComponentType1, ComponentTypeN...> Registry::createComponent(entity target)
+    inline rythe_always_inline component_ref_tuple<ComponentType0, ComponentType1, ComponentTypeN...> Registry::createComponent(entity target)
     {
         return std::make_tuple(detail::_create_component_ref<ComponentType0>(target), detail::_create_component_ref<ComponentType1>(target), detail::_create_component_ref<ComponentTypeN>(target)...);
     }
 
     template<typename ComponentType>
-    inline R_ALWAYS_INLINE component_ref_t<ComponentType> Registry::createComponent(entity target, ComponentType&& value)
+    inline rythe_always_inline component_ref_t<ComponentType> Registry::createComponent(entity target, ComponentType&& value)
     {
         if constexpr (is_archetype_v<ComponentType>)
         {
@@ -115,7 +115,7 @@ namespace rythe::core::ecs
     }
 
     template<typename ComponentType>
-    inline R_ALWAYS_INLINE component_ref_t<ComponentType> Registry::createComponent(entity target, const ComponentType& value)
+    inline rythe_always_inline component_ref_t<ComponentType> Registry::createComponent(entity target, const ComponentType& value)
     {
         if constexpr (is_archetype_v<ComponentType>)
         {
@@ -143,7 +143,7 @@ namespace rythe::core::ecs
     }
 
     template<typename archetype_type, typename ComponentType0, typename ComponentType1, typename... ComponentTypeN>
-    inline R_ALWAYS_INLINE typename archetype_type::ref_group Registry::createComponent(entity target, ComponentType0&& value0, ComponentType1&& value1, ComponentTypeN&&... valueN)
+    inline rythe_always_inline typename archetype_type::ref_group Registry::createComponent(entity target, ComponentType0&& value0, ComponentType1&& value1, ComponentTypeN&&... valueN)
     {
         return archetype_type::create(target, std::forward<ComponentType0>(value0), std::forward<ComponentType1>(value1), std::forward<ComponentTypeN>(valueN)...);
     }
@@ -151,7 +151,7 @@ namespace rythe::core::ecs
     namespace detail
     {
         template<typename ComponentType>
-        inline R_ALWAYS_INLINE auto _create_component_ref(entity target, ComponentType&& value)
+        inline rythe_always_inline auto _create_component_ref(entity target, ComponentType&& value)
         {
             if constexpr (is_archetype_v<ComponentType>)
             {
@@ -165,7 +165,7 @@ namespace rythe::core::ecs
     }
 
     template<typename ComponentType0, typename ComponentType1, typename... ComponentTypeN>
-    inline R_ALWAYS_INLINE component_ref_tuple<ComponentType0, ComponentType1, ComponentTypeN...> Registry::createComponent(entity target, ComponentType0&& value0, ComponentType1&& value1, ComponentTypeN&&... valueN)
+    inline rythe_always_inline component_ref_tuple<ComponentType0, ComponentType1, ComponentTypeN...> Registry::createComponent(entity target, ComponentType0&& value0, ComponentType1&& value1, ComponentTypeN&&... valueN)
     {
         return std::make_tuple(detail::_create_component_ref(target, std::forward<ComponentType0>(value0)),
             detail::_create_component_ref(target, std::forward<ComponentType1>(value1)),
@@ -173,7 +173,7 @@ namespace rythe::core::ecs
     }
 
     template<typename ComponentType0, typename ComponentType1, typename... ComponentTypeN>
-    inline R_ALWAYS_INLINE component_ref_tuple<ComponentType0, ComponentType1, ComponentTypeN...> Registry::createComponent(entity target, const ComponentType0& value0, const ComponentType1& value1, const ComponentTypeN&... valueN)
+    inline rythe_always_inline component_ref_tuple<ComponentType0, ComponentType1, ComponentTypeN...> Registry::createComponent(entity target, const ComponentType0& value0, const ComponentType1& value1, const ComponentTypeN&... valueN)
     {
         return std::make_tuple(detail::_create_component_ref(target, value0),
             detail::_create_component_ref(target, value1),
@@ -181,7 +181,7 @@ namespace rythe::core::ecs
     }
 
     template<typename ComponentType>
-    inline R_ALWAYS_INLINE void Registry::destroyComponent(entity target)
+    inline rythe_always_inline void Registry::destroyComponent(entity target)
     {
         if constexpr (is_archetype_v<ComponentType>)
         {
@@ -211,13 +211,13 @@ namespace rythe::core::ecs
     namespace detail
     {
         template<typename ComponentType>
-        inline R_ALWAYS_INLINE void _destroy_comp_impl(entity target)
+        inline rythe_always_inline void _destroy_comp_impl(entity target)
         {
             Registry::destroyComponent<ComponentType>(target);
         }
 
         template<typename ComponentType0, typename ComponentType1,  typename... ComponentTypeN>
-        inline R_ALWAYS_INLINE void _destroy_comp_impl(entity target)
+        inline rythe_always_inline void _destroy_comp_impl(entity target)
         {
             Registry::destroyComponent<ComponentType0>(target);
             _destroy_comp_impl<ComponentType1, ComponentTypeN...>(target);
@@ -225,13 +225,13 @@ namespace rythe::core::ecs
     }
 
     template<typename ComponentType0, typename ComponentType1, typename... ComponentTypeN>
-    inline R_ALWAYS_INLINE void Registry::destroyComponent(entity target)
+    inline rythe_always_inline void Registry::destroyComponent(entity target)
     {
         detail::_destroy_comp_impl<ComponentType0, ComponentType1, ComponentTypeN...>(target);
     }
 
     template<typename ComponentType>
-    inline R_ALWAYS_INLINE bool Registry::hasComponent(entity target)
+    inline rythe_always_inline bool Registry::hasComponent(entity target)
     {
         if constexpr (is_archetype_v<ComponentType>)
         {
@@ -254,14 +254,14 @@ namespace rythe::core::ecs
     }
 
     template<typename ComponentType0, typename ComponentType1, typename... ComponentTypeN>
-    inline R_ALWAYS_INLINE bool Registry::hasComponent(entity target)
+    inline rythe_always_inline bool Registry::hasComponent(entity target)
     {
         return (hasComponent<ComponentType0>(target) && hasComponent<ComponentType1>(target) && (hasComponent<ComponentTypeN>(target) && ...));
     }
 
 
     template<typename ComponentType>
-    inline R_ALWAYS_INLINE component_ref_t<ComponentType> Registry::getComponent(entity target)
+    inline rythe_always_inline component_ref_t<ComponentType> Registry::getComponent(entity target)
     {
         if constexpr (is_archetype_v<ComponentType>)
         {
@@ -287,7 +287,7 @@ namespace rythe::core::ecs
     namespace detail
     {
         template<typename ComponentType>
-        inline R_ALWAYS_INLINE auto _get_component_ref(entity target)
+        inline rythe_always_inline auto _get_component_ref(entity target)
         {
             if constexpr (is_archetype_v<ComponentType>)
             {
@@ -301,7 +301,7 @@ namespace rythe::core::ecs
     }
 
     template<typename ComponentType0, typename ComponentType1, typename... ComponentTypeN>
-    inline R_ALWAYS_INLINE component_ref_tuple<ComponentType0, ComponentType1, ComponentTypeN... > getComponent(entity target)
+    inline rythe_always_inline component_ref_tuple<ComponentType0, ComponentType1, ComponentTypeN... > getComponent(entity target)
     {
         return std::make_tuple(detail::_get_component_ref<ComponentType0>(target), detail::_get_component_ref<ComponentType1>(target), detail::_get_component_ref<ComponentTypeN>(target)...);
     }

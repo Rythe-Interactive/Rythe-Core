@@ -14,19 +14,19 @@ namespace rythe::core::events
     }
 
     template<typename event_type CNDOXY(typename)>
-    inline R_ALWAYS_INLINE void EventBus::bindToEvent(const rsl::delegate<void(event_type&)>& callback)
+    inline rythe_always_inline void EventBus::bindToEvent(const rsl::delegate<void(event_type&)>& callback)
     {
         instance.m_eventCallbacks.try_emplace(event_type::id).first->second.push_back(reinterpret_cast<const rsl::delegate<void(event_base&)>&>(callback));
     }
 
     template<typename event_type CNDOXY(typename)>
-    inline R_ALWAYS_INLINE void EventBus::bindToEvent(rsl::delegate<void(event_type&)>&& callback)
+    inline rythe_always_inline void EventBus::bindToEvent(rsl::delegate<void(event_type&)>&& callback)
     {
         instance.m_eventCallbacks.try_emplace(event_type::id).first->second.push_back(reinterpret_cast<rsl::delegate<void(event_base&)>&&>(callback));
     }
 
     template<typename event_type CNDOXY(typename)>
-    inline R_ALWAYS_INLINE void EventBus::unbindFromEvent(const rsl::delegate<void(event_type&)>& callback)
+    inline rythe_always_inline void EventBus::unbindFromEvent(const rsl::delegate<void(event_type&)>& callback)
     {
         instance.m_eventCallbacks.at(event_type::id).erase(reinterpret_cast<const rsl::delegate<void(event_base&)>&>(callback));
     }

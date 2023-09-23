@@ -4,7 +4,7 @@
 namespace rythe::core
 {
     template<typename DataType>
-    inline R_ALWAYS_INLINE shared_data_view<DataType>::shared_data_view(std::nullptr_t) noexcept
+    inline rythe_always_inline shared_data_view<DataType>::shared_data_view(std::nullptr_t) noexcept
         : shared_data_view(nullptr, 0, 0, false) {}
 
     template<typename DataType>

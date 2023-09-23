@@ -4,19 +4,19 @@
 namespace rythe::core::ecs
 {
     template<typename... component_types>
-    inline R_ALWAYS_INLINE rsl::id_type filter_info<component_types...>::id()
+    inline rythe_always_inline rsl::id_type filter_info<component_types...>::id()
     {
         return filter_id;
     }
 
     template<typename... component_types>
-    inline R_ALWAYS_INLINE bool filter_info<component_types...>::contains(rsl::id_type id) noexcept
+    inline rythe_always_inline bool filter_info<component_types...>::contains(rsl::id_type id) noexcept
     {
         return contains_direct(id);
     }
 
     template<typename... component_types>
-    inline R_ALWAYS_INLINE bool filter_info<component_types...>::contains(const std::unordered_set<rsl::id_type>& comp)
+    inline rythe_always_inline bool filter_info<component_types...>::contains(const std::unordered_set<rsl::id_type>& comp)
     {
         if (!comp.size())
             return false;

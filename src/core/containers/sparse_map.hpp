@@ -397,7 +397,7 @@ namespace rythe::core
 #pragma endregion
 
     private:
-        inline R_ALWAYS_INLINE iterator _itr_at(rsl::index_type index) noexcept
+        inline rythe_always_inline iterator _itr_at(rsl::index_type index) noexcept
         {
             return iterator(m_dense_key.begin() + index, m_dense_value.begin() + index);
         }
