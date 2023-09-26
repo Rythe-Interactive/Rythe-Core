@@ -50,7 +50,7 @@ namespace rythe::core::filesystem
          *
          *  @ref filesystem_provider::make
          */
-        R_NODISCARD virtual mem_filesystem_resolver* make_higher() RYTHE_PURE;
+        R_NODISCARD virtual mem_filesystem_resolver* make_higher() = 0;
 
 
     protected:
@@ -69,7 +69,7 @@ namespace rythe::core::filesystem
          * @param [in] in The array with compressed data.
          * @param [out] out The array where to put uncompressed data.
          */
-        virtual void build_memory_representation(std::shared_ptr<const rsl::byte_vec> in, std::shared_ptr<rsl::byte_vec> out) const RYTHE_PURE;
+        virtual void build_memory_representation(std::shared_ptr<const rsl::byte_vec> in, std::shared_ptr<rsl::byte_vec> out) const = 0;
 
         /**@brief Should build the representation on how the data is saved to disk,
          *        when the filesystem is readonly this does not apply.

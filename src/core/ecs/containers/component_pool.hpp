@@ -22,35 +22,35 @@ namespace rythe::core::ecs
     {
         /**@brief Increase the capacity of the component pool to a value that's greater or equal to the passed amount. If amount is greater than the current capacity, new storage is allocated, otherwise the function does nothing.
          */
-        virtual void reserve(rsl::size_type amount) RYTHE_PURE;
+        virtual void reserve(rsl::size_type amount) = 0;
 
         /**@brief Erases all components from the pool.
          */
-        virtual void clear() RYTHE_PURE;
+        virtual void clear() = 0;
 
         /**@brief Creates a component attached to a certain entity.
          * @param target Entity ID to create the component for.
          * @return Pointer to the created component.
          */
-        virtual void* create_component(entity target) RYTHE_PURE;
+        virtual void* create_component(entity target) = 0;
 
          /**@brief Check if a certain entity has the type of component managed by this pool.
           * @param target Entity ID of the entity to check for.
           * @return True if the specified entity is registered with this pool, false if not.
           */
-        R_NODISCARD virtual bool contains(entity target) const RYTHE_PURE;
+        R_NODISCARD virtual bool contains(entity target) const = 0;
 
         /**@brief Fetch the component attached to a certain entity.
          * @param target Entity ID of the entity the component is attached to.
          * @return Pointer to the component.
          */
-        R_NODISCARD virtual void* get_component(entity target) RYTHE_PURE;
-        R_NODISCARD virtual const void* get_component(entity target) const RYTHE_PURE;
+        R_NODISCARD virtual void* get_component(entity target) = 0;
+        R_NODISCARD virtual const void* get_component(entity target) const = 0;
 
         /**@brief Erase a component attached to a certain entity.
          * @param target Entity ID of the entity the component is attached to.
          */
-        virtual void destroy_component(entity target) RYTHE_PURE;
+        virtual void destroy_component(entity target) = 0;
 
         virtual ~component_pool_base() = default;
     };

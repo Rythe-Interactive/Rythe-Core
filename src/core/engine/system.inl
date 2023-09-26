@@ -8,7 +8,7 @@ namespace rythe::core
 {
     template<typename SelfType>
     template <void(SelfType::* func_type)(rsl::span), rsl::size_type charc>
-    inline R_ALWAYS_INLINE rsl::id_type System<SelfType>::createProcess(const char(&processChainName)[charc], rsl::span interval)
+    inline rythe_always_inline rsl::id_type System<SelfType>::createProcess(const char(&processChainName)[charc], rsl::span interval)
     {
         std::string name = std::string(processChainName) + rsl::nameOfType<SelfType>() + std::to_string(interval) + std::to_string(rsl::force_value_cast<rsl::ptr_type>(func_type));
         rsl::id_type id = rsl::nameHash(name);
@@ -24,7 +24,7 @@ namespace rythe::core
 
     template<typename SelfType>
     template<typename event_type, void(SelfType::* func_type)(event_type&) CNDOXY(typename)>
-    inline R_ALWAYS_INLINE rsl::id_type System<SelfType>::bindToEvent()
+    inline rythe_always_inline rsl::id_type System<SelfType>::bindToEvent()
     {
         rsl::id_type id = rsl::combine_hash(event_type::id, rsl::force_value_cast<rsl::ptr_type>(func_type));
 
@@ -37,21 +37,21 @@ namespace rythe::core
     }
 
     template <typename event_type CNDOXY(typename)>
-    inline R_ALWAYS_INLINE void SystemBase::unbindFromEvent(rsl::id_type bindingId)
+    inline rythe_always_inline void SystemBase::unbindFromEvent(rsl::id_type bindingId)
     {
         events::EventBus::unbindFromEvent<event_type>(reinterpret_cast<rsl::delegate<void(event_type&)>&>(m_bindings.at(bindingId)));
         m_bindings.erase(bindingId);
     }
 
     template<typename event_type, typename... Args CNDOXY(typename)>
-    inline R_ALWAYS_INLINE void SystemBase::raiseEvent(Args&&... arguments)
+    inline rythe_always_inline void SystemBase::raiseEvent(Args&&... arguments)
     {
         events::EventBus::raiseEvent<event_type>(std::forward<Args>(arguments)...);
     }
 
     template<typename SelfType>
     template<typename Func>
-    inline R_ALWAYS_INLINE auto System<SelfType>::queueJobs(rsl::size_type count, Func&& func)
+    inline rythe_always_inline auto System<SelfType>::queueJobs(rsl::size_type count, Func&& func)
     {
         if constexpr (std::is_invocable_v<Func, rsl::id_type>)
         {
@@ -68,7 +68,7 @@ namespace rythe::core
 
     template<typename SelfType>
     template<void(SelfType::* func_type)()>
-    inline R_ALWAYS_INLINE auto System<SelfType>::queueJobs(rsl::size_type count)
+    inline rythe_always_inline auto System<SelfType>::queueJobs(rsl::size_type count)
     {
         return schd::Scheduler::queueJobs(count, [&]() {
             std::invoke(func_type, this, async::this_job::get_id());
@@ -77,7 +77,7 @@ namespace rythe::core
 
     template<typename SelfType>
     template<void(SelfType::* func_type)(rsl::id_type)>
-    inline R_ALWAYS_INLINE auto System<SelfType>::queueJobs(rsl::size_type count)
+    inline rythe_always_inline auto System<SelfType>::queueJobs(rsl::size_type count)
     {
         return schd::Scheduler::queueJobs(count, [&]() {
             std::invoke(func_type, this);

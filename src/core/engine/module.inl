@@ -7,7 +7,7 @@
 namespace rythe::core
 {
     template<rsl::size_type charc>
-    inline R_ALWAYS_INLINE void Module::createProcessChain(const char(&name)[charc]) const
+    inline rythe_always_inline void Module::createProcessChain(const char(&name)[charc]) const
     {
         schd::Scheduler::createProcessChain<charc>(name);
     }
@@ -37,7 +37,7 @@ namespace rythe::core
     }
 
     template<typename component_type, typename... Args>
-    inline R_ALWAYS_INLINE void Module::registerComponentType(Args&&... args)
+    inline rythe_always_inline void Module::registerComponentType(Args&&... args)
     {
         ecs::Registry::registerComponentType<component_type>(std::forward<Args>(args)...);
     }

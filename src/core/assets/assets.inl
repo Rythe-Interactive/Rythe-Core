@@ -28,7 +28,7 @@ namespace rythe::core::assets
     }
 
     template<typename AssetType>
-    inline R_ALWAYS_INLINE const detail::asset_info& AssetCache<AssetType>::info(rsl::id_type nameHash)
+    inline rythe_always_inline const detail::asset_info& AssetCache<AssetType>::info(rsl::id_type nameHash)
     {
         return instance.m_info.at(nameHash);
     }
@@ -146,7 +146,7 @@ namespace rythe::core::assets
     }
 
     template<typename AssetType>
-    inline R_ALWAYS_INLINE bool AssetCache<AssetType>::hasLoaders() noexcept
+    inline rythe_always_inline bool AssetCache<AssetType>::hasLoaders() noexcept
     {
         return !instance.m_loaders.empty();
     }
@@ -159,7 +159,7 @@ namespace rythe::core::assets
     }
 
     template<typename AssetType>
-    inline R_ALWAYS_INLINE void AssetCache<AssetType>::addLoader(std::unique_ptr<AssetLoader<AssetType>>&& loader)
+    inline rythe_always_inline void AssetCache<AssetType>::addLoader(std::unique_ptr<AssetLoader<AssetType>>&& loader)
     {
         if (!base::initialized())
             throw rythe_exception_msg("Asset was not marked as asset, and cache is thus not yet initialized.");
@@ -213,19 +213,19 @@ namespace rythe::core::assets
     }
 
     template<typename AssetType>
-    inline R_ALWAYS_INLINE common::result<asset<AssetType>> AssetCache<AssetType>::load(const std::string& name, const fs::view& file)
+    inline rythe_always_inline common::result<asset<AssetType>> AssetCache<AssetType>::load(const std::string& name, const fs::view& file)
     {
         return load(rsl::nameHash(name), name, file, import_settings<AssetType>{});
     }
 
     template<typename AssetType>
-    inline R_ALWAYS_INLINE common::result<asset<AssetType>> AssetCache<AssetType>::load(const std::string& name, const fs::view& file, const AssetCache<AssetType>::import_cfg& settings)
+    inline rythe_always_inline common::result<asset<AssetType>> AssetCache<AssetType>::load(const std::string& name, const fs::view& file, const AssetCache<AssetType>::import_cfg& settings)
     {
         return load(rsl::nameHash(name), name, file, settings);
     }
 
     template<typename AssetType>
-    inline R_ALWAYS_INLINE common::result<asset<AssetType>> AssetCache<AssetType>::load(rsl::id_type nameHash, const std::string& name, const fs::view& file)
+    inline rythe_always_inline common::result<asset<AssetType>> AssetCache<AssetType>::load(rsl::id_type nameHash, const std::string& name, const fs::view& file)
     {
         return load(nameHash, name, file, import_settings<AssetType>{});
     }
@@ -318,19 +318,19 @@ namespace rythe::core::assets
     }
 
     template<typename AssetType>
-    inline R_ALWAYS_INLINE async::async_operation<common::result<asset<AssetType>>> AssetCache<AssetType>::loadAsync(const std::string& name, const fs::view& file)
+    inline rythe_always_inline async::async_operation<common::result<asset<AssetType>>> AssetCache<AssetType>::loadAsync(const std::string& name, const fs::view& file)
     {
         return loadAsync(rsl::nameHash(name), name, file, import_settings<AssetType>{});
     }
 
     template<typename AssetType>
-    inline R_ALWAYS_INLINE async::async_operation<common::result<asset<AssetType>>> AssetCache<AssetType>::loadAsync(const std::string& name, const fs::view& file, const AssetCache<AssetType>::import_cfg& settings)
+    inline rythe_always_inline async::async_operation<common::result<asset<AssetType>>> AssetCache<AssetType>::loadAsync(const std::string& name, const fs::view& file, const AssetCache<AssetType>::import_cfg& settings)
     {
         return loadAsync(rsl::nameHash(name), name, file, settings);
     }
 
     template<typename AssetType>
-    inline R_ALWAYS_INLINE async::async_operation<common::result<asset<AssetType>>> AssetCache<AssetType>::loadAsync(rsl::id_type nameHash, const std::string& name, const fs::view& file)
+    inline rythe_always_inline async::async_operation<common::result<asset<AssetType>>> AssetCache<AssetType>::loadAsync(rsl::id_type nameHash, const std::string& name, const fs::view& file)
     {
         return loadAsync(nameHash, name, file, import_settings<AssetType>{});
     }
@@ -372,13 +372,13 @@ namespace rythe::core::assets
     }
 
     template<typename AssetType>
-    inline R_ALWAYS_INLINE asset<AssetType> AssetCache<AssetType>::create(const std::string& name)
+    inline rythe_always_inline asset<AssetType> AssetCache<AssetType>::create(const std::string& name)
     {
         return create(rsl::nameHash(name), name, std::string(""));
     }
 
     template<typename AssetType>
-    inline R_ALWAYS_INLINE asset<AssetType> AssetCache<AssetType>::create(rsl::id_type nameHash, const std::string& name)
+    inline rythe_always_inline asset<AssetType> AssetCache<AssetType>::create(rsl::id_type nameHash, const std::string& name)
     {
         return create(nameHash, name, std::string(""));
     }
@@ -394,13 +394,13 @@ namespace rythe::core::assets
     }
 
     template<typename AssetType>
-    inline R_ALWAYS_INLINE asset<AssetType> AssetCache<AssetType>::create(const std::string& name, const AssetType& src)
+    inline rythe_always_inline asset<AssetType> AssetCache<AssetType>::create(const std::string& name, const AssetType& src)
     {
         return create(rsl::nameHash(name), name, std::string(""), src);
     }
 
     template<typename AssetType>
-    inline R_ALWAYS_INLINE asset<AssetType> AssetCache<AssetType>::create(rsl::id_type nameHash, const std::string& name, const AssetType& src)
+    inline rythe_always_inline asset<AssetType> AssetCache<AssetType>::create(rsl::id_type nameHash, const std::string& name, const AssetType& src)
     {
         return create(nameHash, name, std::string(""), src);
     }
@@ -417,14 +417,14 @@ namespace rythe::core::assets
 
     template<typename AssetType>
     template<typename... Arguments>
-    inline R_ALWAYS_INLINE asset<AssetType> AssetCache<AssetType>::create(const std::string& name, Arguments&&... args)
+    inline rythe_always_inline asset<AssetType> AssetCache<AssetType>::create(const std::string& name, Arguments&&... args)
     {
         return createWithPath(rsl::nameHash(name), name, std::string(""), std::forward<Arguments>(args)...);
     }
 
     template<typename AssetType>
     template<typename... Arguments>
-    inline R_ALWAYS_INLINE asset<AssetType> AssetCache<AssetType>::create(rsl::id_type nameHash, const std::string& name, Arguments&&... args)
+    inline rythe_always_inline asset<AssetType> AssetCache<AssetType>::create(rsl::id_type nameHash, const std::string& name, Arguments&&... args)
     {
         return createWithPath(nameHash, name, std::string(""), std::forward<Arguments>(args)...);
     }
@@ -442,7 +442,7 @@ namespace rythe::core::assets
 
     template<typename AssetType>
     template<typename... Args>
-    inline R_ALWAYS_INLINE asset<AssetType> AssetLoader<AssetType>::create(rsl::id_type nameHash, Args&&...args) const
+    inline rythe_always_inline asset<AssetType> AssetLoader<AssetType>::create(rsl::id_type nameHash, Args&&...args) const
     {
         return AssetCache<AssetType>::createInternal(nameHash, std::forward<Args>(args)...);
     }
@@ -512,37 +512,37 @@ namespace rythe::core::assets
     }
 
     template<typename AssetType>
-    inline R_ALWAYS_INLINE rsl::id_type asset<AssetType>::id() const noexcept
+    inline rythe_always_inline rsl::id_type asset<AssetType>::id() const noexcept
     {
         return m_id;
     }
 
     template<typename AssetType>
-    inline R_ALWAYS_INLINE const std::string& asset<AssetType>::name() const
+    inline rythe_always_inline const std::string& asset<AssetType>::name() const
     {
         return AssetCache<AssetType>::info(m_id).name;
     }
 
     template<typename AssetType>
-    inline R_ALWAYS_INLINE const std::string& asset<AssetType>::path() const
+    inline rythe_always_inline const std::string& asset<AssetType>::path() const
     {
         return AssetCache<AssetType>::info(m_id).path;
     }
 
     template<typename AssetType>
-    inline R_ALWAYS_INLINE void asset<AssetType>::destroy()
+    inline rythe_always_inline void asset<AssetType>::destroy()
     {
         AssetCache<AssetType>::destoy(m_id);
     }
 
     template<typename AssetType>
-    inline R_ALWAYS_INLINE asset<AssetType> asset<AssetType>::copy(const std::string& name) const
+    inline rythe_always_inline asset<AssetType> asset<AssetType>::copy(const std::string& name) const
     {
         return AssetCache<AssetType>::create(name, *this->ptr);
     }
 
     template<typename AssetType>
-    inline R_ALWAYS_INLINE asset<AssetType> asset<AssetType>::copy(rsl::id_type nameHash, const std::string& name) const
+    inline rythe_always_inline asset<AssetType> asset<AssetType>::copy(rsl::id_type nameHash, const std::string& name) const
     {
         return AssetCache<AssetType>::create(nameHash, name, *this->ptr);
     }

@@ -4,11 +4,11 @@
 namespace rythe::core
 {
     template<typename DataType>
-    inline R_ALWAYS_INLINE data_view<DataType>::data_view() noexcept
+    inline rythe_always_inline data_view<DataType>::data_view() noexcept
         : data_view(nullptr, 0, 0) {}
 
     template<typename DataType>
-    inline R_ALWAYS_INLINE data_view<DataType>::data_view(std::nullptr_t) noexcept
+    inline rythe_always_inline data_view<DataType>::data_view(std::nullptr_t) noexcept
         : data_view(nullptr, 0, 0) {}
 
     template<typename DataType>
@@ -80,7 +80,7 @@ namespace rythe::core
     }
 
     template<typename DataType>
-    inline R_ALWAYS_INLINE bool data_view<DataType>::operator!=(const data_view& other) const noexcept
+    inline rythe_always_inline bool data_view<DataType>::operator!=(const data_view& other) const noexcept
     {
         return !operator==(other);
     }
@@ -100,13 +100,13 @@ namespace rythe::core
     }
 
     template<typename DataType>
-    inline R_ALWAYS_INLINE DataType& data_view<DataType>::operator[](rsl::size_type idx)
+    inline rythe_always_inline DataType& data_view<DataType>::operator[](rsl::size_type idx)
     {
         return at(idx);
     }
 
     template<typename DataType>
-    inline R_ALWAYS_INLINE const DataType& data_view<DataType>::operator[](rsl::size_type idx) const
+    inline rythe_always_inline const DataType& data_view<DataType>::operator[](rsl::size_type idx) const
     {
         return at(idx);
     }
@@ -124,7 +124,7 @@ namespace rythe::core
     }
 
     template<typename DataType>
-    inline R_ALWAYS_INLINE DataType* data_view<DataType>::data() noexcept
+    inline rythe_always_inline DataType* data_view<DataType>::data() noexcept
     {
         return begin();
     }
@@ -142,13 +142,13 @@ namespace rythe::core
     }
 
     template<typename DataType>
-    inline R_ALWAYS_INLINE const DataType* data_view<DataType>::data() const noexcept
+    inline rythe_always_inline const DataType* data_view<DataType>::data() const noexcept
     {
         return begin();
     }
 
     template<typename DataType>
-    inline R_ALWAYS_INLINE rsl::size_type data_view<DataType>::size() const noexcept
+    inline rythe_always_inline rsl::size_type data_view<DataType>::size() const noexcept
     {
         return m_size;
     }
@@ -160,7 +160,7 @@ namespace rythe::core
     }
 
     template<typename DataType>
-    inline R_ALWAYS_INLINE rsl::size_type data_view<DataType>::max_size() const noexcept
+    inline rythe_always_inline rsl::size_type data_view<DataType>::max_size() const noexcept
     {
         return m_size;
     }

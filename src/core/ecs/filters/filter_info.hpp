@@ -18,7 +18,7 @@ namespace rythe::core::ecs
     {
         /**@brief Get variant id through polymorphism.
          */
-        virtual rsl::id_type id() RYTHE_PURE;
+        virtual rsl::id_type id() = 0;
 
         /**@brief Check if the filter variant contains a component type.
          * @tparam component_type Type of the component.
@@ -29,12 +29,12 @@ namespace rythe::core::ecs
         /**@brief Polymorphically check whether the filter variant contains a certain component type.
          * @param id Local id of the component type.
          */
-        virtual bool contains(rsl::id_type id) RYTHE_PURE;
+        virtual bool contains(rsl::id_type id) = 0;
 
         /**@brief Polymorphically check whether the filter variant overlaps a certain combination of component types.
          * @param components Unordered set of component type ids.
          */
-        virtual bool contains(const std::unordered_set<rsl::id_type>& components) RYTHE_PURE;
+        virtual bool contains(const std::unordered_set<rsl::id_type>& components) = 0;
 
         virtual ~filter_info_base() = default;
     };

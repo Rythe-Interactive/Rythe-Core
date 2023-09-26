@@ -20,7 +20,7 @@ namespace rythe::core::filesystem
          */
         struct resource_converter_base
         {
-            virtual rsl::id_type result_type() RYTHE_PURE;
+            virtual rsl::id_type result_type() = 0;
         };
 
     }
@@ -36,8 +36,8 @@ namespace rythe::core::filesystem
 
         virtual rsl::id_type result_type() override { return rsl::typeHash<result>(); }
 
-        virtual common::result<result, fs_error> load_default(const basic_resource& resource) RYTHE_PURE;
-        virtual common::result<result, fs_error> load(const basic_resource& resource, Settings&&...) RYTHE_PURE;
+        virtual common::result<result, fs_error> load_default(const basic_resource& resource) = 0;
+        virtual common::result<result, fs_error> load(const basic_resource& resource, Settings&&...) = 0;
 
     };
 

@@ -48,7 +48,7 @@ namespace rythe::core
         void registerComponentType(Args&&... args);
 
     public:
-        virtual void setup() RYTHE_PURE;
+        virtual void setup() = 0;
 
         /**@brief determines the execution priority of this module
          * @ref RYTHE_IMPURE_RETURN

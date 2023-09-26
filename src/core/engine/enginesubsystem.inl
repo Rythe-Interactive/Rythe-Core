@@ -17,7 +17,7 @@ namespace rythe::core
 
     template<class SubSystem>
     template<typename... Args>
-    inline R_ALWAYS_INLINE SubSystem& EngineSubSystem<SubSystem>::create(Args&&... args)
+    inline rythe_always_inline SubSystem& EngineSubSystem<SubSystem>::create(Args&&... args)
     {
         new(&m_data.inst) SubSystem(std::forward<Args>(args)...);
         m_constructed = true;
@@ -43,13 +43,13 @@ namespace rythe::core
     }
 
     template<class SubSystem>
-    inline R_ALWAYS_INLINE SubSystem& EngineSubSystem<SubSystem>::getInstance()
+    inline rythe_always_inline SubSystem& EngineSubSystem<SubSystem>::getInstance()
     {
         return m_data.inst;
     }
 
     template<class SubSystem>
-    inline R_ALWAYS_INLINE bool EngineSubSystem<SubSystem>::initialized()
+    inline rythe_always_inline bool EngineSubSystem<SubSystem>::initialized()
     {
         return m_isInitialized;
     }
@@ -111,7 +111,7 @@ namespace rythe::core
     }
 
     template<class SubSystem>
-    inline R_ALWAYS_INLINE void EngineSubSystem<SubSystem>::restart()
+    inline rythe_always_inline void EngineSubSystem<SubSystem>::restart()
     {
         shutdown();
         init();
