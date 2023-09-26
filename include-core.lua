@@ -26,6 +26,7 @@ includedirs {
     "$(SolutionDir)rythe/engine/core/src",
     "$(SolutionDir)rythe/engine/core/third_party/",
     "$(SolutionDir)rythe/engine/core/third_party/rythe-standard-library/src/",
+    "src/",
     "third_party/*/src",
     "third_party/*/include",
     "third_party/"

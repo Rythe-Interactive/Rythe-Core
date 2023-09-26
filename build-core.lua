@@ -41,4 +41,12 @@ files {
     "src/%{prj.name}/**.cpp"
 }
 
+removefiles {
+    "src/%{prj.name}/compute/**.h",
+    "src/%{prj.name}/compute/**.hpp",
+    "src/%{prj.name}/compute/**.inl",
+    "src/%{prj.name}/compute/**.c",
+    "src/%{prj.name}/compute/**.cpp"
+}
+
 dofile "rythe/engine/core/include-core.lua"
