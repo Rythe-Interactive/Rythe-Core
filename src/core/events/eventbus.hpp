@@ -30,7 +30,7 @@ namespace rythe::core::events
          * @tparam event_type Event type to raise.
          * @param arguments Arguments to pass to the constructor of the event.
          */
-        template<typename event_type, typename... Args CNDOXY(typename = rsl::inherits_from<event_type, event<event_type>>)>
+        template<typename event_type, typename... Args ,typename = rsl::inherits_from<event_type, event<event_type>>>
         static void raiseEvent(Args&&... arguments);
 
         /**@brief Non-templated raise event function. Inserts event into bus and notifies all subscribers.
@@ -47,7 +47,7 @@ namespace rythe::core::events
         /**@brief Link a callback to an event type in order to get notified whenever one gets raised.
          * @tparam event_type Event type to subscribe to.
          */
-        template<typename event_type CNDOXY(typename = rsl::inherits_from<event_type, event<event_type>>)>
+        template<typename event_type, typename = rsl::inherits_from<event_type, event<event_type>>>
         static void bindToEvent(const rsl::delegate<void(event_type&)>& callback);
 
         /**@brief Non-templated function to link a callback to an event type in order to get notified whenever one gets raised.
@@ -59,7 +59,7 @@ namespace rythe::core::events
         /**@brief Link a callback to an event type in order to get notified whenever one gets raised.
          * @tparam event_type Event type to subscribe to.
          */
-        template<typename event_type CNDOXY(typename = rsl::inherits_from<event_type, event<event_type>>)>
+        template<typename event_type, typename = rsl::inherits_from<event_type, event<event_type>>>
         static void bindToEvent(rsl::delegate<void(event_type&)>&& callback);
 
         /**@brief Non-templated function to link a callback to an event type in order to get notified whenever one gets raised.
@@ -71,7 +71,7 @@ namespace rythe::core::events
         /**@brief Link a callback to an event type in order to get notified whenever one gets raised.
          * @tparam event_type Event type to subscribe to.
          */
-        template<typename event_type CNDOXY(typename = rsl::inherits_from<event_type, event<event_type>>)>
+        template<typename event_type, typename = rsl::inherits_from<event_type, event<event_type>>>
         static void unbindFromEvent(const rsl::delegate<void(event_type&)>& callback);
 
         /**@brief Non-templated function to link a callback to an event type in order to get notified whenever one gets raised.

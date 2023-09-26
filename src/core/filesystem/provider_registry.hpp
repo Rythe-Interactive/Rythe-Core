@@ -37,8 +37,8 @@ namespace rythe::core::filesystem{
          *  
          */
         template <typename Resolver,
-                  typename ... Args
-            CNDOXY(typename = typename std::enable_if<std::is_base_of<filesystem_resolver_common_base,Resolver>::value>::type)>
+                  typename ... Args,
+            typename = typename std::enable_if<std::is_base_of<filesystem_resolver_common_base,Resolver>::value>::type>
         static void domain_create_resolver(domain d,Args&&... args)
         {
             return domain_add_resolver(d,new Resolver(std::forward<Args>(args)...));

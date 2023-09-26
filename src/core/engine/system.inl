@@ -23,7 +23,7 @@ namespace rythe::core
     }
 
     template<typename SelfType>
-    template<typename event_type, void(SelfType::* func_type)(event_type&) CNDOXY(typename)>
+    template<typename event_type, void(SelfType::* func_type)(event_type&), typename>
     inline rythe_always_inline rsl::id_type System<SelfType>::bindToEvent()
     {
         rsl::id_type id = rsl::combine_hash(event_type::id, rsl::force_value_cast<rsl::ptr_type>(func_type));
@@ -36,14 +36,14 @@ namespace rythe::core
         return id;
     }
 
-    template <typename event_type CNDOXY(typename)>
+    template <typename event_type, typename>
     inline rythe_always_inline void SystemBase::unbindFromEvent(rsl::id_type bindingId)
     {
         events::EventBus::unbindFromEvent<event_type>(reinterpret_cast<rsl::delegate<void(event_type&)>&>(m_bindings.at(bindingId)));
         m_bindings.erase(bindingId);
     }
 
-    template<typename event_type, typename... Args CNDOXY(typename)>
+    template<typename event_type, typename... Args, typename>
     inline rythe_always_inline void SystemBase::raiseEvent(Args&&... arguments)
     {
         events::EventBus::raiseEvent<event_type>(std::forward<Args>(arguments)...);

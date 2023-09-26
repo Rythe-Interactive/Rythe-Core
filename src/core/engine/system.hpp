@@ -6,7 +6,7 @@
 #include <rsl/time>
 
 #include "core/events/event.hpp"
-#include "core/time/time.hpp"
+//#include "core/time/time.hpp"
 #include "core/scheduling/process.hpp"
 #include "core/ecs/handles/entity.hpp"
 #include "core/ecs/prototypes/entity_prototype.hpp"
@@ -33,7 +33,7 @@ namespace rythe::core
 
         void destroyProcess(rsl::id_type procId);
 
-        template <typename event_type CNDOXY(typename = rsl::inherits_from<event_type, events::event<event_type>>)>
+        template <typename event_type , typename = rsl::inherits_from<event_type, events::event<event_type>>>
         void unbindFromEvent(rsl::id_type bindingId);
 
         /**@brief Creates empty entity with the world as its parent.
@@ -67,7 +67,7 @@ namespace rythe::core
          * @tparam event_type Event type to raise.
          * @param arguments Arguments to pass to the constructor of the event.
          */
-        template<typename event_type, typename... Args CNDOXY(typename = rsl::inherits_from<event_type, events::event<event_type>>)>
+        template<typename event_type, typename... Args, typename = rsl::inherits_from<event_type, events::event<event_type>>>
         static void raiseEvent(Args&&... arguments);
 
         /**@brief Non-templated raise event function. Inserts event into bus and notifies all subscribers.
@@ -94,7 +94,7 @@ namespace rythe::core
          * @tparam event_type Event type to subscribe to.
          * @tparam func_type Function to bind to the event.
          */
-        template <typename event_type, void(SelfType::* func_type)(event_type&) CNDOXY(typename = rsl::inherits_from<event_type, events::event<event_type>>)>
+        template <typename event_type, void(SelfType::* func_type)(event_type&), typename = rsl::inherits_from<event_type, events::event<event_type>>>
         rsl::id_type bindToEvent();
 
         template<void(SelfType::* func_type)()>

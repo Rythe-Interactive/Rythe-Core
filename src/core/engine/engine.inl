@@ -41,7 +41,7 @@ namespace rythe::core
         return 0;
     }
 
-    template <typename ModuleType, typename... Args CNDOXY(rsl::inherits_from<ModuleType, Module>)>
+    template <typename ModuleType, typename... Args , rsl::inherits_from<ModuleType, Module>>
     inline void Engine::reportModule(Args && ...args)
     {
         std::unique_ptr<Module> module = std::make_unique<ModuleType>(std::forward<Args>(args)...);

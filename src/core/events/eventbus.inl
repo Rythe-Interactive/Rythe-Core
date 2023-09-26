@@ -3,7 +3,7 @@
 
 namespace rythe::core::events
 {
-    template<typename event_type, typename... Args CNDOXY(typename)>
+    template<typename event_type, typename... Args, typename>
     inline void EventBus::raiseEvent(Args&&... arguments)
     {
         if (instance.m_eventCallbacks.count(event_type::id))
@@ -13,19 +13,19 @@ namespace rythe::core::events
         }
     }
 
-    template<typename event_type CNDOXY(typename)>
+    template<typename event_type, typename>
     inline rythe_always_inline void EventBus::bindToEvent(const rsl::delegate<void(event_type&)>& callback)
     {
         instance.m_eventCallbacks.try_emplace(event_type::id).first->second.push_back(reinterpret_cast<const rsl::delegate<void(event_base&)>&>(callback));
     }
 
-    template<typename event_type CNDOXY(typename)>
+    template<typename event_type ,typename>
     inline rythe_always_inline void EventBus::bindToEvent(rsl::delegate<void(event_type&)>&& callback)
     {
         instance.m_eventCallbacks.try_emplace(event_type::id).first->second.push_back(reinterpret_cast<rsl::delegate<void(event_base&)>&&>(callback));
     }
 
-    template<typename event_type CNDOXY(typename)>
+    template<typename event_type ,typename>
     inline rythe_always_inline void EventBus::unbindFromEvent(const rsl::delegate<void(event_type&)>& callback)
     {
         instance.m_eventCallbacks.at(event_type::id).erase(reinterpret_cast<const rsl::delegate<void(event_base&)>&>(callback));

@@ -67,9 +67,9 @@ namespace std
         {
             std::size_t hash = 0;
 
-            rsl::math::detail::hash_combine(hash,
+            rsl::math::detail::combine_hash(hash,
                 std::hash<rythe::core::rsl::id_type>{}(handle.owner->id));
-            rsl::math::detail::hash_combine(hash,
+            rsl::math::detail::combine_hash(hash,
                 rythe::core::rsl::typeHash<component_type>());
 
             return hash;

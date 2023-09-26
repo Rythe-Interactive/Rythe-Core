@@ -26,8 +26,8 @@ namespace rythe::core::ecs
     template<typename component_type>
     constexpr bool maybe_component_v = maybe_component<component_type>::value;
 
-    HAS_FUNC(init);
-    HAS_FUNC(destroy);
+    RYTHE_HAS_FUNC(init);
+    RYTHE_HAS_FUNC(destroy);
 
     namespace detail
     {

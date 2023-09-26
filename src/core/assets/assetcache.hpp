@@ -120,4 +120,4 @@ namespace rythe::core::assets
     };
 }
 
-#define ReportAssetType(Type) ANON_VAR(rsl::byte, CONCAT(_reportAsset_, Type)) = rythe::core::assets::AssetCache< Type >::reportAssetToEngine();
+#define ReportAssetType(Type) RYTHE_ANON_VAR(rsl::byte, RYTHE_CONCAT(_reportAsset_, Type)) = rythe::core::assets::AssetCache< Type >::reportAssetToEngine();

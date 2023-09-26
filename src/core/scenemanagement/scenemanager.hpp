@@ -38,7 +38,7 @@ namespace rythe::core::scenemanagement
                         if (file.get_extension().value() == ".cornflake")
                         {
                             auto fileName = file.get_filename().value();
-                            log::debug("Added {}",fileName);
+                            rsl::log::debug("Added {}",fileName);
                             sceneNames.emplace(rsl::nameHash(fileName), fileName);
                         }
                     }

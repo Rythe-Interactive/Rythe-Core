@@ -121,7 +121,7 @@ namespace rythe::core
          * @param args The arguments you want to pass to the module constructor.
          * @ref rythe::core::Module
          */
-        template <typename ModuleType, typename... Args CNDOXY(rsl::inherits_from<ModuleType, Module> = 0)>
+        template <typename ModuleType, typename... Args, rsl::inherits_from<ModuleType, Module> = 0>
         void reportModule(Args&&...args);
 
         void initialize();
@@ -136,10 +136,10 @@ namespace rythe::core
         void shutdown();
     };
 
-#define OnEngineInit(Type, Func) ANON_VAR(rsl::byte, CONCAT(_onInit_, Type)) = rythe::core::Engine::subscribeToInit(Func);
-#define OnEngineShutdown(Type, Func) ANON_VAR(rsl::byte, CONCAT(_onShutdown_, Type)) = rythe::core::Engine::subscribeToShutdown(Func);
+#define OnEngineInit(Type, Func) RYTHE_ANON_VAR(rsl::byte, RYTHE_CONCAT(_onInit_, Type)) = rythe::core::Engine::subscribeToInit(Func);
+#define OnEngineShutdown(Type, Func) RYTHE_ANON_VAR(rsl::byte, RYTHE_CONCAT(_onShutdown_, Type)) = rythe::core::Engine::subscribeToShutdown(Func);
 
-#define ReportSubSystem(Type) ANON_VAR(rsl::byte, CONCAT(_reportSubSystem_, Type)) = rythe::core::Engine::reportSubSystem<Type>();
+#define ReportSubSystem(Type) RYTHE_ANON_VAR(rsl::byte, RYTHE_CONCAT(_reportSubSystem_, Type)) = rythe::core::Engine::reportSubSystem<Type>();
 
 }
 

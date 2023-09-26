@@ -4,13 +4,14 @@
 #include <rsl/delegate>
 #include <rsl/hash>
 
+
 #include "core/common/exception.hpp"
 #include "core/logging/logging.hpp"
 
 namespace rythe::core
 {
-    HAS_FUNC(onInit);
-    HAS_FUNC(onShutdown);
+    RYTHE_HAS_FUNC(onInit);
+    RYTHE_HAS_FUNC(onShutdown);
 
     template<class SubSystem>
     class EngineSubSystem

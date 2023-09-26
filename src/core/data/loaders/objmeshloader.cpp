@@ -17,10 +17,10 @@ namespace rythe::core::detail
             std::hash<math::color> colorHasher;
             std::hash<math::float2> vec2Hasher;
             hash = 0;
-            rsl::hash_combine(hash, vec3Hasher(vertex));
-            rsl::hash_combine(hash, colorHasher(color));
-            rsl::hash_combine(hash, vec3Hasher(normal));
-            rsl::hash_combine(hash, vec2Hasher(uv));
+            rsl::combine_hash(hash, vec3Hasher(vertex));
+            rsl::combine_hash(hash, colorHasher(color));
+            rsl::combine_hash(hash, vec3Hasher(normal));
+            rsl::combine_hash(hash, vec2Hasher(uv));
         }
 
         bool operator==(const vertex_hash& other) const
