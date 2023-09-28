@@ -39,7 +39,7 @@ namespace rythe::core::async
 
         /**@brief Tries to lock the spinlock, returns if the spinlock is not available.
          */
-        R_NODISCARD bool try_lock() const noexcept;
+        [[nodiscard]] bool try_lock() const noexcept;
 
         /**@brief Unlocks the spinlock.
          */

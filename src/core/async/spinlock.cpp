@@ -53,7 +53,7 @@ namespace rythe::core::async
         locks++;
     }
 
-    R_NODISCARD bool spinlock::try_lock() const noexcept
+    [[nodiscard]] bool spinlock::try_lock() const noexcept
     {
         if (m_forceRelease)
             return true;

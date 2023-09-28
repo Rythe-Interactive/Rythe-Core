@@ -38,7 +38,7 @@ namespace rythe::core::filesystem
             m_targetData = target_data;
         }
 
-        R_NODISCARD filesystem_resolver* make() final override
+        [[nodiscard]] filesystem_resolver* make() final override
         {
             mem_filesystem_resolver* x = make_higher();
             x->set_disk_data(m_targetData);
@@ -50,7 +50,7 @@ namespace rythe::core::filesystem
          *
          *  @ref filesystem_provider::make
          */
-        R_NODISCARD virtual mem_filesystem_resolver* make_higher() = 0;
+        [[nodiscard]] virtual mem_filesystem_resolver* make_higher() = 0;
 
 
     protected:
@@ -58,8 +58,8 @@ namespace rythe::core::filesystem
         /**@brief Returns the fast memory representation of the provider.
          *        Created by build_memory_representation.
          */
-        R_NODISCARD const rsl::byte_vec& get_data() const;
-        R_NODISCARD rsl::byte_vec& get_data();
+        [[nodiscard]] const rsl::byte_vec& get_data() const;
+        [[nodiscard]] rsl::byte_vec& get_data();
 
 
         /**@brief Should build a fast memory representation of the virtual filesystem.
@@ -77,12 +77,12 @@ namespace rythe::core::filesystem
          * @param [in] in The array with decompressed  data.
          * @param [out] out The array where to put compressed data.
          */
-        virtual void build_disk_representation(R_MAYBEUNUSED std::shared_ptr<const rsl::byte_vec> in, R_MAYBEUNUSED std::shared_ptr<rsl::byte_vec> out) const RYTHE_IMPURE;
+        virtual void build_disk_representation([[maybe_unused]] std::shared_ptr<const rsl::byte_vec> in, [[maybe_unused]] std::shared_ptr<rsl::byte_vec> out) const {};
 
         /**@brief A hint to how big the fast memory representation is going to be.
          * @param [in] in The array with the compressed data.
          */
-        virtual std::size_t size_hint(R_MAYBEUNUSED std::shared_ptr<const rsl::byte_vec> in) const RYTHE_IMPURE_RETURN(0);
+        virtual std::size_t size_hint([[maybe_unused]] std::shared_ptr<const rsl::byte_vec> in) const { return 0; }
 
 
     private:

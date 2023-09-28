@@ -32,24 +32,24 @@ namespace rythe::core::ecs
         component& operator=(const component_type& src);
         component& operator=(component_type&& src);
 
-        R_NODISCARD operator component_type& ();
-        R_NODISCARD operator const component_type& () const;
+        [[nodiscard]] operator component_type& ();
+        [[nodiscard]] operator const component_type& () const;
 
-        R_NODISCARD bool valid() const noexcept;
-        R_NODISCARD operator bool() const noexcept;
+        [[nodiscard]] bool valid() const noexcept;
+        [[nodiscard]] operator bool() const noexcept;
 
-        R_NODISCARD component_type& operator*();
-        R_NODISCARD const component_type& operator*() const;
+        [[nodiscard]] component_type& operator*();
+        [[nodiscard]] const component_type& operator*() const;
 
-        R_NODISCARD component_type* operator->();
-        R_NODISCARD const component_type* operator->() const;
+        [[nodiscard]] component_type* operator->();
+        [[nodiscard]] const component_type* operator->() const;
 
         bool operator==(const component& other) const noexcept;
 
         /**@brief Gets a reference to the component the handle references.
          */
-        R_NODISCARD component_type& get();
-        R_NODISCARD const component_type& get() const;
+        [[nodiscard]] component_type& get();
+        [[nodiscard]] const component_type& get() const;
 
         /**@brief Destroys the component the handle references.
          */

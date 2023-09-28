@@ -38,14 +38,14 @@ namespace rythe::core::ecs
           * @param target Entity ID of the entity to check for.
           * @return True if the specified entity is registered with this pool, false if not.
           */
-        R_NODISCARD virtual bool contains(entity target) const = 0;
+        [[nodiscard]] virtual bool contains(entity target) const = 0;
 
         /**@brief Fetch the component attached to a certain entity.
          * @param target Entity ID of the entity the component is attached to.
          * @return Pointer to the component.
          */
-        R_NODISCARD virtual void* get_component(entity target) = 0;
-        R_NODISCARD virtual const void* get_component(entity target) const = 0;
+        [[nodiscard]] virtual void* get_component(entity target) = 0;
+        [[nodiscard]] virtual const void* get_component(entity target) const = 0;
 
         /**@brief Erase a component attached to a certain entity.
          * @param target Entity ID of the entity the component is attached to.
@@ -85,14 +85,14 @@ namespace rythe::core::ecs
           * @param target Entity ID of the entity to check for.
           * @return True if the specified entity is registered with this pool, false if not.
           */
-        R_NODISCARD virtual bool contains(entity target) const;
+        [[nodiscard]] virtual bool contains(entity target) const;
 
         /**@brief Fetch the component attached to a certain entity.
          * @param target Entity ID of the entity the component is attached to.
          * @return Pointer to the component.
          */
-        R_NODISCARD virtual void* get_component(entity target);
-        R_NODISCARD virtual const void* get_component(entity target) const;
+        [[nodiscard]] virtual void* get_component(entity target);
+        [[nodiscard]] virtual const void* get_component(entity target) const;
 
         /**@brief Erase a component attached to a certain entity.
          * @param target Entity ID of the entity the component is attached to.

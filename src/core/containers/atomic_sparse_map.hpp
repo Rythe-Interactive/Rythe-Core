@@ -61,40 +61,40 @@ namespace rythe::core
         std::atomic<rsl::size_type> m_capacity = 0;
 
     public:
-        R_NODISCARD async::rw_spinlock& get_lock() const { return m_container_lock; }
-        R_NODISCARD dense_value_container& values() { return m_dense_value; }
-        R_NODISCARD const dense_value_container& values() const { return m_dense_value; }
+        [[nodiscard]] async::rw_spinlock& get_lock() const { return m_container_lock; }
+        [[nodiscard]] dense_value_container& values() { return m_dense_value; }
+        [[nodiscard]] const dense_value_container& values() const { return m_dense_value; }
 
-        R_NODISCARD dense_key_container& keys() { return m_dense_key; }
-        R_NODISCARD const dense_key_container& keys() const { return m_dense_key; }
+        [[nodiscard]] dense_key_container& keys() { return m_dense_key; }
+        [[nodiscard]] const dense_key_container& keys() const { return m_dense_key; }
 
-        R_NODISCARD iterator begin()
+        [[nodiscard]] iterator begin()
         {
             async::readonly_guard lock(m_container_lock);
             return iterator(m_dense_key.begin(), m_dense_value.begin());
         }
-        R_NODISCARD const_iterator begin() const
+        [[nodiscard]] const_iterator begin() const
         {
             async::readonly_guard lock(m_container_lock);
             return const_iterator(m_dense_key.cbegin(), m_dense_value.cbegin());
         }
-        R_NODISCARD const_iterator cbegin() const
+        [[nodiscard]] const_iterator cbegin() const
         {
             async::readonly_guard lock(m_container_lock);
             return const_iterator(m_dense_key.cbegin(), m_dense_value.cbegin());
         }
 
-        R_NODISCARD iterator end()
+        [[nodiscard]] iterator end()
         {
             async::readonly_guard lock(m_container_lock);
             return iterator(m_dense_key.begin() + m_size, m_dense_value.begin() + m_size);
         }
-        R_NODISCARD const_iterator end() const
+        [[nodiscard]] const_iterator end() const
         {
             async::readonly_guard lock(m_container_lock);
             return const_iterator(m_dense_key.cbegin() + m_size, m_dense_value.cbegin() + m_size);
         }
-        R_NODISCARD const_iterator cend() const
+        [[nodiscard]] const_iterator cend() const
         {
             async::readonly_guard lock(m_container_lock);
             return const_iterator(m_dense_key.cbegin() + m_size, m_dense_value.cbegin() + m_size);
@@ -104,24 +104,24 @@ namespace rythe::core
         /**@brief Returns the amount of items in the sparse_map.
          * @returns rsl::size_type Current amount of items contained in sparse_map.
          */
-        R_NODISCARD inline rsl::size_type size(std::memory_order order = std::memory_order_acquire) const noexcept { return m_size.load(order); }
+        [[nodiscard]] inline rsl::size_type size(std::memory_order order = std::memory_order_acquire) const noexcept { return m_size.load(order); }
 
         /**@brief Returns the capacity of items the sparse_map could at least store without invalidating the iterators.
          * @returns rsl::size_type Current capacity of the dense container.
          */
-        R_NODISCARD inline rsl::size_type capacity(std::memory_order order = std::memory_order_acquire) const noexcept { return m_capacity.load(order); }
+        [[nodiscard]] inline rsl::size_type capacity(std::memory_order order = std::memory_order_acquire) const noexcept { return m_capacity.load(order); }
 
         /**@brief Returns the maximum number of items the atomic_sparse_map could at most store without crashing.
          * @note This value typically reflects the theoretical limit on the size of the container, at most std::numeric_limits<difference_type>::max().
          *       At runtime, the size of the container may be limited to a value smaller than max_size() by the amount of RAM available.
          * @returns rsl::size_type
          */
-        R_NODISCARD rsl::size_type max_size() const noexcept { async::readonly_guard lock(m_container_lock); return m_dense_value.max_size(); }
+        [[nodiscard]] rsl::size_type max_size() const noexcept { async::readonly_guard lock(m_container_lock); return m_dense_value.max_size(); }
 
         /**@brief Returns whether the sparse_map is empty.
          * @returns bool True if the sparse_map is empty, otherwise false.
          */
-        R_NODISCARD inline bool empty(std::memory_order order = std::memory_order_acquire) const noexcept { return m_size.load(order) == 0; }
+        [[nodiscard]] inline bool empty(std::memory_order order = std::memory_order_acquire) const noexcept { return m_size.load(order) == 0; }
 
         /**@brief Clears sparse_map.
          * @note Will not update capacity.
@@ -150,7 +150,7 @@ namespace rythe::core
          * @note Function is only available for compatibility reasons, it is advised to use contains instead.
          * @ref rythe::core::sparse_map::contains
          */
-        R_NODISCARD inline rsl::size_type count(key_const_reference key) const
+        [[nodiscard]] inline rsl::size_type count(key_const_reference key) const
         {
             return contains(key);
         }
@@ -161,7 +161,7 @@ namespace rythe::core
          * @note Function is only available for compatibility reasons, it is advised to use contains instead.
          * @ref rythe::core::sparse_map::contains
          */
-        R_NODISCARD inline rsl::size_type count(key_type&& key) const
+        [[nodiscard]] inline rsl::size_type count(key_type&& key) const
         {
             return contains(key);
         }
@@ -172,7 +172,7 @@ namespace rythe::core
          * @param key Key to check for.
          * @returns bool true if the key was found, otherwise false.
          */
-        R_NODISCARD inline bool contains(key_const_reference key)
+        [[nodiscard]] inline bool contains(key_const_reference key)
         {
             async::readonly_guard lock(m_container_lock);
             return m_sparse[key] >= 0 && m_sparse[key] < m_size && m_dense_key[m_sparse[key]] == key;
@@ -182,7 +182,7 @@ namespace rythe::core
          * @param key Key to check for.
          * @returns bool true if the key was found, otherwise false.
          */
-        R_NODISCARD inline bool contains(key_type&& key)
+        [[nodiscard]] inline bool contains(key_type&& key)
         {
             async::readonly_guard lock(m_container_lock);
             return m_sparse[key] >= 0 && m_sparse[key] < m_size && m_dense_key[m_sparse[key]] == key;
@@ -192,7 +192,7 @@ namespace rythe::core
          * @param key Key to check for.
          * @returns bool true if the key was found, otherwise false.
          */
-        R_NODISCARD inline bool contains(key_const_reference key) const
+        [[nodiscard]] inline bool contains(key_const_reference key) const
         {
             async::readonly_guard lock(m_container_lock);
             return m_sparse.count(key) && m_sparse.at(key) >= 0 && m_sparse.at(key) < m_size && m_dense_key[m_sparse.at(key)] == key;
@@ -202,7 +202,7 @@ namespace rythe::core
          * @param key Key to check for.
          * @returns bool true if the key was found, otherwise false.
          */
-        R_NODISCARD inline bool contains(key_type&& key) const
+        [[nodiscard]] inline bool contains(key_type&& key) const
         {
             async::readonly_guard lock(m_container_lock);
             return m_sparse.count(key) && m_sparse.at(key) >= 0 && m_sparse.at(key) < m_size && m_dense_key[m_sparse.at(key)] == key;
@@ -214,7 +214,7 @@ namespace rythe::core
          * @param val Value to find.
          * @returns Iterator to the value if found, otherwise end.
          */
-        R_NODISCARD inline iterator find(value_const_reference val)
+        [[nodiscard]] inline iterator find(value_const_reference val)
         {
             async::readonly_guard lock(m_container_lock);
             return std::find(begin(), end(), val);
@@ -224,7 +224,7 @@ namespace rythe::core
          * @param val Value to find.
          * @returns Iterator to the value if found, otherwise end.
          */
-        R_NODISCARD inline const_iterator find(value_const_reference val) const
+        [[nodiscard]] inline const_iterator find(value_const_reference val) const
         {
             async::readonly_guard lock(m_container_lock);
             return std::find(begin(), end(), val);

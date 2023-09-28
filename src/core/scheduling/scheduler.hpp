@@ -67,7 +67,7 @@ namespace rythe::core::scheduling
         static void threadMain(Engine& engine, bool lowPower, std::string name);
 
         template<typename Function, typename... Args >
-        R_NODISCARD static pointer<std::thread> createThread(Function&& function, Args&&... args);
+        [[nodiscard]] static pointer<std::thread> createThread(Function&& function, Args&&... args);
 
         static void tryCompleteJobPool();
 
@@ -79,9 +79,9 @@ namespace rythe::core::scheduling
         static pointer<Engine> currentEngineInstance();
 
         template<typename functor, typename... argument_types>
-        R_NODISCARD static pointer<std::thread> reserveThread(functor&& function, argument_types&&... args);
+        [[nodiscard]] static pointer<std::thread> reserveThread(functor&& function, argument_types&&... args);
 
-        R_NODISCARD static pointer<std::thread> getThread(std::thread::id id);
+        [[nodiscard]] static pointer<std::thread> getThread(std::thread::id id);
 
         static rsl::size_type jobPoolSize() noexcept;
 
@@ -106,15 +106,15 @@ namespace rythe::core::scheduling
         /**@brief Get pointer to a certain process-chain.
          */
         template<rsl::size_type charc>
-        R_NODISCARD static pointer<ProcessChain> getChain(const char(&name)[charc]);
+        [[nodiscard]] static pointer<ProcessChain> getChain(const char(&name)[charc]);
 
         /**@brief Get pointer to a certain process-chain.
          */
-        R_NODISCARD static pointer<ProcessChain> getChain(rsl::id_type id);
+        [[nodiscard]] static pointer<ProcessChain> getChain(rsl::id_type id);
 
         /**@brief Get pointer to a certain process-chain.
          */
-        R_NODISCARD static pointer<ProcessChain> getChain(rsl::cstring name);
+        [[nodiscard]] static pointer<ProcessChain> getChain(rsl::cstring name);
 
         static void subscribeToThreadCreate(const thread_callback_delegate& callback);
 

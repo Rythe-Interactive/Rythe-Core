@@ -1,6 +1,6 @@
 #pragma once
 #include <rsl/primitives>       // rsl::byte_vec
-#include <rsl/type_util> // R_NODISCARD
+#include <rsl/type_util> // [[nodiscard]]
 
 #include <string_view>                // std::string_view
 
@@ -47,7 +47,7 @@ namespace rythe::core::filesystem
         /**@brief Gets an iterator to the first element of the container.
          * @return iterator to first element
          */
-        R_NODISCARD auto begin() noexcept
+        [[nodiscard]] auto begin() noexcept
         {
             return m_container.begin();
         }
@@ -55,7 +55,7 @@ namespace rythe::core::filesystem
         /**@brief Gets an iterator to the first element of the container.
          * @return iterator to first element
          */
-        R_NODISCARD auto begin() const noexcept
+        [[nodiscard]] auto begin() const noexcept
         {
             return m_container.begin();
         }
@@ -63,7 +63,7 @@ namespace rythe::core::filesystem
         /**@brief Gets an iterator to the last element + 1 of the container.
          * @return iterator to first element
          */
-        R_NODISCARD auto end() noexcept
+        [[nodiscard]] auto end() noexcept
         {
             return m_container.end();
         }
@@ -71,7 +71,7 @@ namespace rythe::core::filesystem
         /**@brief Gets an iterator to the last element + 1 of the container.
          * @return iterator to first element
          */
-        R_NODISCARD auto end() const noexcept
+        [[nodiscard]] auto end() const noexcept
         {
             return m_container.end();
         }
@@ -79,7 +79,7 @@ namespace rythe::core::filesystem
         /**@brief Gets a pointer to the data of the container.
          * @return rsl::byte* to raw data
          */
-        R_NODISCARD auto data() noexcept
+        [[nodiscard]] auto data() noexcept
         {
             return m_container.data();
         }
@@ -87,7 +87,7 @@ namespace rythe::core::filesystem
         /**@brief Gets a pointer to the data of the container.
          * @return rsl::byte* to raw data
          */
-        R_NODISCARD auto data() const noexcept
+        [[nodiscard]] auto data() const noexcept
         {
             return m_container.data();
         }
@@ -95,7 +95,7 @@ namespace rythe::core::filesystem
         /**@brief Gets the size of the container.
          * @return size_t to the size of container
          */
-        R_NODISCARD auto size() const noexcept
+        [[nodiscard]] auto size() const noexcept
         {
             return m_container.size();
         }
@@ -103,7 +103,7 @@ namespace rythe::core::filesystem
         /**@brief Checks if the container is empty.
          * @return bool, true when empty
          */
-        R_NODISCARD auto empty() const noexcept
+        [[nodiscard]] auto empty() const noexcept
         {
             return m_container.empty();
         }
@@ -116,7 +116,7 @@ namespace rythe::core::filesystem
         /**@brief Gets the container element
          * @return rythe::core::rsl::byte_vec 
          */
-        R_NODISCARD rsl::byte_vec& get() noexcept
+        [[nodiscard]] rsl::byte_vec& get() noexcept
         {
             return m_container;
         }
@@ -124,7 +124,7 @@ namespace rythe::core::filesystem
         /**@brief Gets the container element.
          * @return rythe::core::rsl::byte_vec 
          */
-        R_NODISCARD const rsl::byte_vec& get() const noexcept
+        [[nodiscard]] const rsl::byte_vec& get() const noexcept
         {
             return m_container;
         }
@@ -142,7 +142,7 @@ namespace rythe::core::filesystem
         /**@brief String conversion.
          * @return std::string, The container converted to const char *.
          */
-        R_NODISCARD std::string to_string() const
+        [[nodiscard]] std::string to_string() const
         {
             const char* const cstr = reinterpret_cast<const char*>(data());
             return std::string(cstr,size());
@@ -163,7 +163,7 @@ namespace rythe::core::filesystem
          * @return T Created from this resources data.
          */
         template <typename T,class... Args>
-        R_NODISCARD T to(Args&&...args) const;
+        [[nodiscard]] T to(Args&&...args) const;
 
         /**@brief Generic conversion from T.
          *
@@ -231,7 +231,7 @@ namespace rythe::core::filesystem
 
 
     template <typename T,class... Args>
-    R_NODISCARD T basic_resource::to(Args&&...args) const
+    [[nodiscard]] T basic_resource::to(Args&&...args) const
     {
         return std::move(from_resource<T>(*this, std::forward<Args>(args)...));
     }

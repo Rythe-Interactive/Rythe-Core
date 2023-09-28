@@ -22,7 +22,7 @@ extern void reportModules(rythe::core::Engine* engine);
 
 namespace rythe::core
 {
-    R_MAYBEUNUSED static void enterRealtimePriority()
+    [[maybe_unused]] static void enterRealtimePriority()
     {
 #if defined(RYTHE_WINDOWS)
         if (!SetPriorityClass(GetCurrentProcess(), REALTIME_PRIORITY_CLASS))

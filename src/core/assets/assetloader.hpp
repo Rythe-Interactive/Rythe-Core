@@ -26,12 +26,12 @@ namespace rythe::core::assets
     public:
         virtual bool canLoad(const fs::view& file) = 0;
         virtual common::result<asset_ptr> load(rsl::id_type nameHash, const fs::view& file, const import_cfg& settings) = 0;
-        virtual common::result<asset_ptr> loadAsync(rsl::id_type nameHash, const fs::view& file, const import_cfg& settings, R_MAYBEUNUSED progress_type& progress)
+        virtual common::result<asset_ptr> loadAsync(rsl::id_type nameHash, const fs::view& file, const import_cfg& settings, [[maybe_unused]] progress_type& progress)
         {
             return load(nameHash, file, settings);
         }
 
-        virtual void free(AssetType& asset) RYTHE_IMPURE;
+        virtual void free(AssetType& asset) {}
 
         virtual ~AssetLoader() = default;
     };

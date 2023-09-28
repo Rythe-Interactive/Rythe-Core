@@ -6,7 +6,7 @@
 namespace rythe::core::async
 {
     template <class LockType>
-    class R_NODISCARD lock_guard { // class with destructor that unlocks a mutex
+    class [[nodiscard]] lock_guard { // class with destructor that unlocks a mutex
     public:
         using mutex_type = LockType;
         using lock_type = LockType;

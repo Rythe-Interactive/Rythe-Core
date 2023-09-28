@@ -32,69 +32,69 @@ namespace rythe::core::filesystem
         /** @brief Checks the view for validity.
          *  @note No deep check!
          */
-        R_NODISCARD operator bool() const;
+        [[nodiscard]] operator bool() const;
 
         /** @brief Checks the view for validity
          *  @param deep_check Also checks if the provided path can be resolved
          *         instead of doing just a basic sanity check.
          */
-        R_NODISCARD bool is_valid( bool deep_check = false) const;
+        [[nodiscard]] bool is_valid( bool deep_check = false) const;
 
         /** @brief Gets the traits of the file pointed to.
          */
-        R_NODISCARD file_traits file_info() const;
+        [[nodiscard]] file_traits file_info() const;
 
         /** @brief Gets the traits of the top most filesystem pointed to.
          */
-        R_NODISCARD filesystem_traits filesystem_info() const;
+        [[nodiscard]] filesystem_traits filesystem_info() const;
 
         /** @brief Gets the root domain.
          */
-        R_NODISCARD std::string get_domain() const;
+        [[nodiscard]] std::string get_domain() const;
 
         /**@brief Gets full virtual path.
          */
-        R_NODISCARD const std::string& get_virtual_path() const;
+        [[nodiscard]] const std::string& get_virtual_path() const;
 
         /**@brief Gets file extension if applicable.
          *  @note You can use rythe::common::valid to check for validity.
          */
-        R_NODISCARD common::result<std::string, fs_error> get_extension() const;
+        [[nodiscard]] common::result<std::string, fs_error> get_extension() const;
 
         /**@brief Gets file name if applicable.
          *  @note You can use rythe::common::valid to check for validity.
          */
-        R_NODISCARD common::result<std::string, fs_error> get_filename() const;
+        [[nodiscard]] common::result<std::string, fs_error> get_filename() const;
 
         /**@brief Gets file name if applicable.
          *  @note You can use rythe::common::valid to check for validity.
          */
-        R_NODISCARD common::result<std::string, fs_error> get_filestem() const;
+        [[nodiscard]] common::result<std::string, fs_error> get_filestem() const;
 
         /** @brief Gets the contents of the resource pointed to.
          *  @note You can use rythe::common::valid to check for validity.
          */
-        R_NODISCARD common::result<basic_resource,fs_error> get();
-        R_NODISCARD common::result<const basic_resource,fs_error> get() const;
+        [[nodiscard]] common::result<basic_resource,fs_error> get();
+        [[nodiscard]] common::result<const basic_resource,fs_error> get() const;
 
 
         /** @brief Sets the contents of the resource pointed to.
          *  @note When setting was not possible has_err() will be true and get_err().what() will contain information on what went wrong.
          */
-        R_NODISCARD common::result<void,fs_error> set(const basic_resource& resource);
+        [[nodiscard]] common::result<void,fs_error> set(const basic_resource& resource);
 
         /** @brief Gets the parent folder of the file/folder and creates a new view from it.
          */
-        R_NODISCARD view parent() const;
+        [[nodiscard]] view parent() const;
 
         /** @brief Creates a new view from a sub path (by first joining them together and then sanitizing the input)
          **/
-        R_NODISCARD virtual view find(std::string_view identifier) const;
+        [[nodiscard]] virtual view find(std::string_view identifier) const;
 
 
         /** @brief alternative syntax for find
          */
-        R_NODISCARD view operator[](std::string_view identifier) const;
+        [[nodiscard]] view operator[](std::string_view identifier) const;
 
         /** @brief same as get().value().to<T>()
          */
@@ -104,13 +104,13 @@ namespace rythe::core::filesystem
             return get().value().template to<T>(std::forward<Args>(args)...);
         }
 
-        R_NODISCARD common::result<std::vector<view>,fs_error> ls() const;
+        [[nodiscard]] common::result<std::vector<view>,fs_error> ls() const;
 
 #if  !defined( RYTHE_DISABLE_POTENTIALLY_WEIRD_SYNTAX )
 
         /** @brief alternative syntax for find
          */
-        R_NODISCARD view operator/(std::string_view identifier) const
+        [[nodiscard]] view operator/(std::string_view identifier) const
         {
             return operator[](identifier);
         }

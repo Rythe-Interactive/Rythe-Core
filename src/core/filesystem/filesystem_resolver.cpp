@@ -4,7 +4,7 @@
 
 namespace rythe::core::filesystem {
 
-    R_NODISCARD file_traits filesystem_resolver::resolve(const std::string& path) noexcept
+    [[nodiscard]] file_traits filesystem_resolver::resolve(const std::string& path) noexcept
     {
         set_target(path);
         return get_traits();

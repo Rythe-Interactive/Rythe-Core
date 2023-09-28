@@ -3,7 +3,7 @@
 #include <string>                       // std::string
 #include <set>                          // set::set
 
-#include <rsl/type_util>   // R_NODISCARD
+#include <rsl/type_util>   // [[nodiscard]]
 #include <core/filesystem/resource.hpp> // basic_resource
 #include <core/common/inteface_traits.hpp>
 #include <core/common/result.hpp>
@@ -41,13 +41,13 @@ namespace rythe::core::filesystem {
          *  @param [in] path The location identifier to the resource.
          *  @return file_traits All traits of the file bunched together.
          */
-        R_NODISCARD file_traits resolve(const std::string& path) noexcept;
+        [[nodiscard]] file_traits resolve(const std::string& path) noexcept;
 
         /** @brief Gets all traits of a particular file.
          *  @note Same as getting all the individual traits manually.
          *  @return file_traits All traits of the file bunched together.
          */
-        R_NODISCARD file_traits get_traits() noexcept;
+        [[nodiscard]] file_traits get_traits() noexcept;
 
         
         /** @brief Sets the identifier of the filesystem.
@@ -72,34 +72,34 @@ namespace rythe::core::filesystem {
          */
 
          /** @brief Checks if target points to a file.*/
-        R_NODISCARD virtual bool is_file()      const noexcept = 0;
+        [[nodiscard]] virtual bool is_file()      const noexcept = 0;
         /** @brief Checks if target points to a directory.*/
-        R_NODISCARD virtual bool is_directory() const noexcept = 0;
+        [[nodiscard]] virtual bool is_directory() const noexcept = 0;
         /** @brief Checks if target points to a valid location.*/
-        R_NODISCARD virtual bool is_valid_path()     const noexcept = 0;
+        [[nodiscard]] virtual bool is_valid_path()     const noexcept = 0;
         /** @brief Checks if the target location can be written to.*/
-        R_NODISCARD virtual bool writeable()    const noexcept = 0;
+        [[nodiscard]] virtual bool writeable()    const noexcept = 0;
         /** @brief Checks if the target location can be read from.*/
-        R_NODISCARD virtual bool readable()     const noexcept = 0;
+        [[nodiscard]] virtual bool readable()     const noexcept = 0;
         /** @brief Checks if the target location can be created.*/
-        R_NODISCARD virtual bool creatable()    const noexcept = 0;
+        [[nodiscard]] virtual bool creatable()    const noexcept = 0;
         /** @brief Checks if the target location exists.*/
-        R_NODISCARD virtual bool exists()       const noexcept = 0;
+        [[nodiscard]] virtual bool exists()       const noexcept = 0;
 
         /** @brief Gets all entries in a directory or similar concept (assume -a).
          *  @note When not is_directory this should return an empty set.
          *  @ref set_target
          *  @return A set of strings of entries at the current pointed at location.
          */
-        R_NODISCARD virtual std::set<std::string> ls() const noexcept = 0;
+        [[nodiscard]] virtual std::set<std::string> ls() const noexcept = 0;
 
         /** @brief Get the contents of the file pointed at.
          *  @note When not readable this should return an fs_error using Err().
          *  @ref set_target
          *  @return basic_resource wrapped in Ok() or fs_error wrapped in Err().
          */
-        R_NODISCARD common::result<basic_resource, fs_error> get() noexcept;
-        R_NODISCARD common::result<const basic_resource, fs_error> get() const noexcept;
+        [[nodiscard]] common::result<basic_resource, fs_error> get() noexcept;
+        [[nodiscard]] common::result<const basic_resource, fs_error> get() const noexcept;
         virtual common::result<basic_resource, fs_error> get(interfaces::implement_signal_t) noexcept = 0;
         virtual common::result<const basic_resource, fs_error> get(interfaces::implement_signal_t) const noexcept = 0;
 
@@ -110,13 +110,13 @@ namespace rythe::core::filesystem {
          *  @ref set_target
          *  @return result<void,fs_error>, has_error == true when the file could not be read.
          */
-        R_NODISCARD common::result<void, fs_error> set(const basic_resource& res);
+        [[nodiscard]] common::result<void, fs_error> set(const basic_resource& res);
         virtual common::result<void, fs_error> set(interfaces::implement_signal_t, const basic_resource& res) = 0;
 
         /** @brief Gets the delimiter of the filesystem.
          *  @return char single character for the delimiter of the filesystem (default: strpath_manip::separator()).
          */
-        R_NODISCARD virtual char get_delimiter() const noexcept RYTHE_IMPURE_RETURN(strpath_manip::separator());
+        [[nodiscard]] virtual char get_delimiter() const noexcept { return strpath_manip::separator(); }
 
 
         /** @brief Destroys the file pointed to.
@@ -125,7 +125,7 @@ namespace rythe::core::filesystem {
         void erase() const noexcept;
         virtual void erase(interfaces::implement_signal_t) const noexcept = 0;
 
-        R_NODISCARD const filesystem_traits& get_fs_traits() const { return m_traits; }
+        [[nodiscard]] const filesystem_traits& get_fs_traits() const { return m_traits; }
         void inherit(filesystem_resolver& outer)
         {
             inherit_traits(outer.m_traits,m_traits);    
@@ -134,15 +134,15 @@ namespace rythe::core::filesystem {
         /** @brief Required to create new instances of the provider, similar to a surrogate constructor
          *         if required arguments must be copied over.
          */
-        R_NODISCARD virtual filesystem_resolver* make() = 0;
+        [[nodiscard]] virtual filesystem_resolver* make() = 0;
 
         /** @brief Gets the identifier of the filesystem for tl resolvers this is the same as the root-domains.
          */
-        R_NODISCARD const std::string& get_identifier() const { return m_identifier; }
+        [[nodiscard]] const std::string& get_identifier() const { return m_identifier; }
 
         /** @brief Gets the targeted file of the filesystem.
          */
-        R_NODISCARD const std::string& get_target() const { return m_target; }
+        [[nodiscard]] const std::string& get_target() const { return m_target; }
 
     private:
         std::string m_identifier;

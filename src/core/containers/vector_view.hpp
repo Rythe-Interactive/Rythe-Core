@@ -54,44 +54,44 @@ namespace rythe::core
         ~vector_view() = default;
 
         template< typename = std::enable_if_t<is_const>>
-        R_NODISCARD iterator begin()
+        [[nodiscard]] iterator begin()
         {
             return m_targetVector->begin() + m_offset;
         }
 
-        R_NODISCARD const_iterator begin() const 
+        [[nodiscard]] const_iterator begin() const 
         {
             return m_targetVector->cbegin() + m_offset;
         }
 
         template< typename = std::enable_if_t<is_const>>
-        R_NODISCARD iterator end()
+        [[nodiscard]] iterator end()
         {
             return m_targetVector->begin() + m_offset + m_targetSize;
         }
 
-        R_NODISCARD const_iterator end() const 
+        [[nodiscard]] const_iterator end() const 
         {
             return m_targetVector->cbegin() + m_offset + m_targetSize;
         }
 
         template< typename = std::enable_if_t<is_const>>
-        R_NODISCARD auto data()
+        [[nodiscard]] auto data()
         {
             return m_targetVector->data() + m_offset;
         }
 
-        R_NODISCARD auto data() const -> const T*
+        [[nodiscard]] auto data() const -> const T*
         {
             return m_targetVector->data() + m_offset;
         }
 
-        R_NODISCARD auto size() const noexcept
+        [[nodiscard]] auto size() const noexcept
         {
             return m_targetSize;
         }
 
-        R_NODISCARD auto max_size() const noexcept
+        [[nodiscard]] auto max_size() const noexcept
         {
             return m_targetSize;
         }

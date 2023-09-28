@@ -62,28 +62,28 @@ namespace rythe::core::ecs
         /**@brief Get the handle to one of the components in the archetype.
          */
         template<typename T>
-        R_NODISCARD T& get();
+        [[nodiscard]] T& get();
 
-        R_NODISCARD ref_group get();
+        [[nodiscard]] ref_group get();
 
         template<rsl::size_type I>
-        R_NODISCARD rsl::element_at_t<I, component_type, component_types...>& get();
+        [[nodiscard]] rsl::element_at_t<I, component_type, component_types...>& get();
 
-        R_NODISCARD handle_group handles();
-        R_NODISCARD const_handle_group handles() const;
-        R_NODISCARD ref_group values();
+        [[nodiscard]] handle_group handles();
+        [[nodiscard]] const_handle_group handles() const;
+        [[nodiscard]] ref_group values();
 
-        R_NODISCARD bool valid() const;
+        [[nodiscard]] bool valid() const;
 
-        R_NODISCARD operator bool() const;
+        [[nodiscard]] operator bool() const;
 
         void destroy();
 
-        R_NODISCARD static handle_group get_handles(entity ent);
-        R_NODISCARD static const_handle_group get_const_handles(entity ent);
-        R_NODISCARD static ref_group get(entity ent);
+        [[nodiscard]] static handle_group get_handles(entity ent);
+        [[nodiscard]] static const_handle_group get_const_handles(entity ent);
+        [[nodiscard]] static ref_group get(entity ent);
         static void destroy(entity ent);
-        R_NODISCARD static bool has(entity ent);
+        [[nodiscard]] static bool has(entity ent);
 
     private:
         std::variant<handle_group, copy_group> underlying;

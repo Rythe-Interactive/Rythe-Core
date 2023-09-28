@@ -59,30 +59,30 @@ namespace rythe::core
             return *this;
         }
 
-        R_NODISCARD rsl::math::float3 right() const
+        [[nodiscard]] rsl::math::float3 right() const
         {
             return rsl::math::float3x3(*this) * rsl::math::float3::right;
         }
 
-        R_NODISCARD rsl::math::float3 up() const
+        [[nodiscard]] rsl::math::float3 up() const
         {
             return rsl::math::float3x3(*this) * rsl::math::float3::up;
         }
 
-        R_NODISCARD rsl::math::float3 forward() const
+        [[nodiscard]] rsl::math::float3 forward() const
         {
             return rsl::math::float3x3(*this) * rsl::math::float3::forward;
         }
 
-        R_NODISCARD rsl::math::float3x3 matrix() const
+        [[nodiscard]] rsl::math::float3x3 matrix() const
         {
             return rsl::math::float3x3(*this);
         }
 
-        R_NODISCARD static rotation lookat(rsl::math::float3 position, rsl::math::float3 center, rsl::math::float3 up = rsl::math::float3::up);
+        [[nodiscard]] static rotation lookat(rsl::math::float3 position, rsl::math::float3 center, rsl::math::float3 up = rsl::math::float3::up);
     };
 
-    R_NODISCARD inline rotation rotation::lookat(rsl::math::float3 position, rsl::math::float3 center, rsl::math::float3 up)
+    [[nodiscard]] inline rotation rotation::lookat(rsl::math::float3 position, rsl::math::float3 center, rsl::math::float3 up)
     {
         return rsl::math::quat::conjugate(rsl::math::normalize(rsl::math::quat::look_at(position, center, up)));
     }
@@ -119,12 +119,12 @@ namespace rythe::core
         using base = ecs::archetype<position, rotation, scale>;
         using base::archetype;
 
-        R_NODISCARD rsl::math::float4x4 from_world_matrix()
+        [[nodiscard]] rsl::math::float4x4 from_world_matrix()
         {
             return rsl::math::inverse(to_world_matrix());
         }
 
-        R_NODISCARD rsl::math::float4x4 to_world_matrix()
+        [[nodiscard]] rsl::math::float4x4 to_world_matrix()
         {
             if (owner->parent)
             {
@@ -135,12 +135,12 @@ namespace rythe::core
             return to_parent_matrix();
         }
 
-        R_NODISCARD rsl::math::float4x4 from_parent_matrix()
+        [[nodiscard]] rsl::math::float4x4 from_parent_matrix()
         {
             return rsl::math::inverse(to_parent_matrix());
         }
 
-        R_NODISCARD rsl::math::float4x4 to_parent_matrix()
+        [[nodiscard]] rsl::math::float4x4 to_parent_matrix()
         {
             auto [position, rotation, scale] = values();
             return rsl::math::compose(scale, rotation, position);

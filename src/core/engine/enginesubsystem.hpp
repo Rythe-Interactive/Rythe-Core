@@ -47,9 +47,9 @@ namespace rythe::core
         static void reportDependency();
 
     public:
-        R_NODISCARD static SubSystem& getInstance();
+        [[nodiscard]] static SubSystem& getInstance();
 
-        R_NODISCARD static bool initialized();
+        [[nodiscard]] static bool initialized();
 
         static void init();
 

@@ -38,30 +38,30 @@ namespace rythe::core
 
         /**@brief Creates empty entity with the world as its parent.
          */
-        R_NODISCARD static ecs::entity createEntity();
+        [[nodiscard]] static ecs::entity createEntity();
 
-        R_NODISCARD static ecs::entity createEntity(const std::string& name);
+        [[nodiscard]] static ecs::entity createEntity(const std::string& name);
 
         /**@brief Creates empty entity with a specific entity as its parent.
          * @param parent Entity to assign as the parent of the new entity.
          */
-        R_NODISCARD static ecs::entity createEntity(ecs::entity parent);
+        [[nodiscard]] static ecs::entity createEntity(ecs::entity parent);
 
-        R_NODISCARD static ecs::entity createEntity(ecs::entity parent, const std::string& name);
-        R_NODISCARD static ecs::entity createEntity(const std::string& name, ecs::entity parent);
+        [[nodiscard]] static ecs::entity createEntity(ecs::entity parent, const std::string& name);
+        [[nodiscard]] static ecs::entity createEntity(const std::string& name, ecs::entity parent);
 
         /**@brief Creates empty entity with a specific entity as its parent. Entity is serialized from a prototype.
          *        This function will also create any components or child entities in the prototype structure.
          * @param parent Entity to assign as the parent of the new entity.
          * @param prototype Prototype to serialize entity from.
          */
-        //R_NODISCARD static ecs::entity createEntity(ecs::entity parent, const serialization::entity_prototype& prototype);
+        //[[nodiscard]] static ecs::entity createEntity(ecs::entity parent, const serialization::entity_prototype& prototype);
 
         /**@brief Creates empty entity with the world as its parent. Entity is serialized from a prototype.
          *        This function will also create any components or child entities in the prototype structure.
          * @param prototype Prototype to serialize entity from.
          */
-       // R_NODISCARD static ecs::entity createEntity(const serialization::entity_prototype& prototype);
+       // [[nodiscard]] static ecs::entity createEntity(const serialization::entity_prototype& prototype);
 
         /**@brief Insert event into bus and notify all subscribers.
          * @tparam event_type Event type to raise.

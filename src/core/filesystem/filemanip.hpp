@@ -6,7 +6,7 @@
 
 #include <fstream>
 
-#include <rsl/type_util> // R_NODISCARD
+#include <rsl/type_util> // [[nodiscard]]
 #include <rsl/primitives>       // rsl::byte, rsl::byte_vec
 #include <rsl/utilities>     // rsl_assert_msg
 
@@ -18,7 +18,7 @@ namespace rythe::core::filesystem {
     /**@brief Check if file exists.
      * @param [in] path The path of the file to check.
      */
-    R_NODISCARD inline bool exists(std::string_view path)
+    [[nodiscard]] inline bool exists(std::string_view path)
     {
         FILE* f = fopen(std::string(path).c_str(),"r+b");
 
@@ -35,7 +35,7 @@ namespace rythe::core::filesystem {
      * @param [in] path The path of the file to open.
      * @return A vector of bytes with the contents of the file at path.
      */
-    R_NODISCARD inline rsl::byte_vec read_file(std::string_view path)
+    [[nodiscard]] inline rsl::byte_vec read_file(std::string_view path)
     {
         std::ifstream file(path.data(), std::ios::ate | std::ios::binary);
 

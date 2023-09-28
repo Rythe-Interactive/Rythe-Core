@@ -70,27 +70,27 @@ namespace rythe::core::common
                     throw m_error;
         }
 
-        R_NODISCARD success_type& value()
+        [[nodiscard]] success_type& value()
         {
             if (m_succeeded)
                 return m_success;
             throw m_error;
         }
 
-        R_NODISCARD const success_type& value() const
+        [[nodiscard]] const success_type& value() const
         {
             if (m_succeeded)
                 return m_success;
             throw m_error;
         }
 
-        R_NODISCARD operator bool() const noexcept { return m_succeeded; }
-        R_NODISCARD bool operator ==(const valid_t&) const noexcept { return m_succeeded; }
-        R_NODISCARD bool operator !=(const valid_t&) const noexcept { return !m_succeeded; }
-        R_NODISCARD bool valid() const noexcept { return m_succeeded; }
-        R_NODISCARD bool has_error() const noexcept { return !m_succeeded; }
+        [[nodiscard]] operator bool() const noexcept { return m_succeeded; }
+        [[nodiscard]] bool operator ==(const valid_t&) const noexcept { return m_succeeded; }
+        [[nodiscard]] bool operator !=(const valid_t&) const noexcept { return !m_succeeded; }
+        [[nodiscard]] bool valid() const noexcept { return m_succeeded; }
+        [[nodiscard]] bool has_error() const noexcept { return !m_succeeded; }
 
-        R_NODISCARD const error_type& error() const
+        [[nodiscard]] const error_type& error() const
         {
             if (!m_succeeded)
             {
@@ -100,7 +100,7 @@ namespace rythe::core::common
             throw std::runtime_error("this result would have been valid!");
         }
 
-        R_NODISCARD error_type& error()
+        [[nodiscard]] error_type& error()
         {
             if (!m_succeeded)
             {
@@ -112,22 +112,22 @@ namespace rythe::core::common
 
         void mark_handled() const noexcept { m_handled = true; }
 
-        R_NODISCARD operator success_type() { return value(); }
-        R_NODISCARD operator success_type() const { return value(); }
-        R_NODISCARD operator error_type() { return error(); }
-        R_NODISCARD operator error_type() const { return error(); }
+        [[nodiscard]] operator success_type() { return value(); }
+        [[nodiscard]] operator success_type() const { return value(); }
+        [[nodiscard]] operator error_type() { return error(); }
+        [[nodiscard]] operator error_type() const { return error(); }
 
-        R_NODISCARD success_type& operator*() { return m_success; }
-        R_NODISCARD const success_type& operator*() const { return m_success; }
-        R_NODISCARD success_type* operator->() { return &m_success; }
-        R_NODISCARD const success_type* operator->() const { return &m_success; }
+        [[nodiscard]] success_type& operator*() { return m_success; }
+        [[nodiscard]] const success_type& operator*() const { return m_success; }
+        [[nodiscard]] success_type* operator->() { return &m_success; }
+        [[nodiscard]] const success_type* operator->() const { return &m_success; }
 
-        R_NODISCARD bool has_warnings() const noexcept { return !m_warnings.empty(); }
-        R_NODISCARD size_t warning_count() const noexcept { return m_warnings.size(); }
-        R_NODISCARD const Warning& warning_at(size_t i) const { return m_warnings[i]; }
-        R_NODISCARD Warning& warning_at(size_t i) { return m_warnings[i]; }
-        R_NODISCARD const warning_list& warnings() const { return m_warnings; }
-        R_NODISCARD warning_list& warnings() { return m_warnings; }
+        [[nodiscard]] bool has_warnings() const noexcept { return !m_warnings.empty(); }
+        [[nodiscard]] size_t warning_count() const noexcept { return m_warnings.size(); }
+        [[nodiscard]] const Warning& warning_at(size_t i) const { return m_warnings[i]; }
+        [[nodiscard]] Warning& warning_at(size_t i) { return m_warnings[i]; }
+        [[nodiscard]] const warning_list& warnings() const { return m_warnings; }
+        [[nodiscard]] warning_list& warnings() { return m_warnings; }
 
         template<typename Func, typename... Args>
         auto except(Func&& f, Args&&... args)
@@ -178,13 +178,13 @@ namespace rythe::core::common
         result(const error_type& e, warning_list&& w) : m_error(e), m_warnings(w) {}
         result(const error_type& e, const warning_list& w) : m_error(e), m_warnings(w) {}
 
-        R_NODISCARD operator bool() const noexcept { return !m_error; }
-        R_NODISCARD bool operator ==(const valid_t&) const noexcept { return !m_error; }
-        R_NODISCARD bool operator !=(const valid_t&) const noexcept { return m_error.has_value(); }
-        R_NODISCARD bool valid() const noexcept { return !m_error; }
-        R_NODISCARD bool has_error() const noexcept { return m_error.has_value(); }
+        [[nodiscard]] operator bool() const noexcept { return !m_error; }
+        [[nodiscard]] bool operator ==(const valid_t&) const noexcept { return !m_error; }
+        [[nodiscard]] bool operator !=(const valid_t&) const noexcept { return m_error.has_value(); }
+        [[nodiscard]] bool valid() const noexcept { return !m_error; }
+        [[nodiscard]] bool has_error() const noexcept { return m_error.has_value(); }
 
-        R_NODISCARD const error_type& error() const
+        [[nodiscard]] const error_type& error() const
         {
             if (m_error)
             {
@@ -194,7 +194,7 @@ namespace rythe::core::common
             throw std::runtime_error("this result would have been valid!");
         }
 
-        R_NODISCARD error_type& error()
+        [[nodiscard]] error_type& error()
         {
             if (m_error)
             {
@@ -206,15 +206,15 @@ namespace rythe::core::common
 
         void mark_handled() const noexcept { m_handled = true; }
 
-        R_NODISCARD operator error_type() { return error(); }
-        R_NODISCARD operator error_type() const { return error(); }
+        [[nodiscard]] operator error_type() { return error(); }
+        [[nodiscard]] operator error_type() const { return error(); }
 
-        R_NODISCARD bool has_warnings() const noexcept { return !m_warnings.empty(); }
-        R_NODISCARD size_t warning_count() const noexcept { return m_warnings.size(); }
-        R_NODISCARD const Warning& warning_at(size_t i) const { return m_warnings[i]; }
-        R_NODISCARD Warning& warning_at(size_t i) { return m_warnings[i]; }
-        R_NODISCARD const warning_list& warnings() const { return m_warnings; }
-        R_NODISCARD warning_list& warnings() { return m_warnings; }
+        [[nodiscard]] bool has_warnings() const noexcept { return !m_warnings.empty(); }
+        [[nodiscard]] size_t warning_count() const noexcept { return m_warnings.size(); }
+        [[nodiscard]] const Warning& warning_at(size_t i) const { return m_warnings[i]; }
+        [[nodiscard]] Warning& warning_at(size_t i) { return m_warnings[i]; }
+        [[nodiscard]] const warning_list& warnings() const { return m_warnings; }
+        [[nodiscard]] warning_list& warnings() { return m_warnings; }
 
         template<typename Func, typename... Args>
         void except(Func&& f, Args&&... args)
@@ -255,38 +255,38 @@ namespace rythe::core::common
         result(const success_type& s, warning_list&& w) : m_success(s), m_warnings(w) {}
         result(const success_type& s, const warning_list& w) : m_success(s), m_warnings(w) {}
 
-        R_NODISCARD operator bool() const noexcept { return m_success; }
-        R_NODISCARD bool operator ==(const valid_t&) const noexcept { return m_success; }
-        R_NODISCARD bool operator !=(const valid_t&) const noexcept { return !m_success; }
-        R_NODISCARD bool valid() const noexcept { return m_success; }
-        R_NODISCARD bool has_error() const noexcept { return !m_success; }
+        [[nodiscard]] operator bool() const noexcept { return m_success; }
+        [[nodiscard]] bool operator ==(const valid_t&) const noexcept { return m_success; }
+        [[nodiscard]] bool operator !=(const valid_t&) const noexcept { return !m_success; }
+        [[nodiscard]] bool valid() const noexcept { return m_success; }
+        [[nodiscard]] bool has_error() const noexcept { return !m_success; }
 
-        R_NODISCARD const success_type& value() const
+        [[nodiscard]] const success_type& value() const
         {
             if (m_success) return *m_success;
             throw rythe_exception_msg("this result is invalid!");
         }
 
-        R_NODISCARD success_type& value()
+        [[nodiscard]] success_type& value()
         {
             if (m_success) return *m_success;
             throw rythe_exception_msg("this result is invalid!");
         }
 
-        R_NODISCARD operator success_type() { return value(); }
-        R_NODISCARD operator success_type() const { return value(); }
+        [[nodiscard]] operator success_type() { return value(); }
+        [[nodiscard]] operator success_type() const { return value(); }
 
-        R_NODISCARD success_type& operator*() { return *m_success; }
-        R_NODISCARD const success_type& operator*() const { return *m_success; }
-        R_NODISCARD success_type* operator->() { return &*m_success; }
-        R_NODISCARD const success_type* operator->() const { return &*m_success; }
+        [[nodiscard]] success_type& operator*() { return *m_success; }
+        [[nodiscard]] const success_type& operator*() const { return *m_success; }
+        [[nodiscard]] success_type* operator->() { return &*m_success; }
+        [[nodiscard]] const success_type* operator->() const { return &*m_success; }
 
-        R_NODISCARD bool has_warnings() const noexcept { return !m_warnings.empty(); }
-        R_NODISCARD size_t warning_count() const noexcept { return m_warnings.size(); }
-        R_NODISCARD const Warning& warning_at(size_t i) const { return m_warnings[i]; }
-        R_NODISCARD Warning& warning_at(size_t i) { return m_warnings[i]; }
-        R_NODISCARD const warning_list& warnings() const { return m_warnings; }
-        R_NODISCARD warning_list& warnings() { return m_warnings; }
+        [[nodiscard]] bool has_warnings() const noexcept { return !m_warnings.empty(); }
+        [[nodiscard]] size_t warning_count() const noexcept { return m_warnings.size(); }
+        [[nodiscard]] const Warning& warning_at(size_t i) const { return m_warnings[i]; }
+        [[nodiscard]] Warning& warning_at(size_t i) { return m_warnings[i]; }
+        [[nodiscard]] const warning_list& warnings() const { return m_warnings; }
+        [[nodiscard]] warning_list& warnings() { return m_warnings; }
 
         template<typename Func, typename... Args>
         auto except(Func&& f, Args&&... args)
@@ -326,18 +326,18 @@ namespace rythe::core::common
         result(success_t, warning_list&& w) : m_succeeded(true), m_warnings(w) {}
         result(success_t, const warning_list& w) : m_succeeded(true), m_warnings(w) {}
 
-        R_NODISCARD operator bool() const noexcept { return m_succeeded; }
-        R_NODISCARD bool operator ==(const valid_t&) const noexcept { return m_succeeded; }
-        R_NODISCARD bool operator !=(const valid_t&) const noexcept { return !m_succeeded; }
-        R_NODISCARD bool valid() const noexcept { return m_succeeded; }
-        R_NODISCARD bool has_error() const noexcept { return !m_succeeded; }
+        [[nodiscard]] operator bool() const noexcept { return m_succeeded; }
+        [[nodiscard]] bool operator ==(const valid_t&) const noexcept { return m_succeeded; }
+        [[nodiscard]] bool operator !=(const valid_t&) const noexcept { return !m_succeeded; }
+        [[nodiscard]] bool valid() const noexcept { return m_succeeded; }
+        [[nodiscard]] bool has_error() const noexcept { return !m_succeeded; }
 
-        R_NODISCARD bool has_warnings() const noexcept { return !m_warnings.empty(); }
-        R_NODISCARD size_t warning_count() const noexcept { return m_warnings.size(); }
-        R_NODISCARD const Warning& warning_at(size_t i) const { return m_warnings[i]; }
-        R_NODISCARD Warning& warning_at(size_t i) { return m_warnings[i]; }
-        R_NODISCARD const warning_list& warnings() const { return m_warnings; }
-        R_NODISCARD warning_list& warnings() { return m_warnings; }
+        [[nodiscard]] bool has_warnings() const noexcept { return !m_warnings.empty(); }
+        [[nodiscard]] size_t warning_count() const noexcept { return m_warnings.size(); }
+        [[nodiscard]] const Warning& warning_at(size_t i) const { return m_warnings[i]; }
+        [[nodiscard]] Warning& warning_at(size_t i) { return m_warnings[i]; }
+        [[nodiscard]] const warning_list& warnings() const { return m_warnings; }
+        [[nodiscard]] warning_list& warnings() { return m_warnings; }
 
 
         template<typename Func, typename... Args>

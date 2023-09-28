@@ -86,8 +86,8 @@ namespace rythe::core
 
         static rsl::id_type generateId();
 
-        R_NODISCARD static rsl::multicast_delegate<void()>& initializationSequence();
-        R_NODISCARD static rsl::multicast_delegate<void()>& shutdownSequence();
+        [[nodiscard]] static rsl::multicast_delegate<void()>& initializationSequence();
+        [[nodiscard]] static rsl::multicast_delegate<void()>& shutdownSequence();
 
         void shutdownModules();
 
