@@ -29,7 +29,7 @@ namespace rythe::core::scheduling
 
     Clock::span_type Clock::elapsedSinceTickStart() noexcept
     {
-        return (rsl::main_clock.current_point() - instance.m_lastTickStart) * instance.m_timeScale;
+        return (rsl::mainClock.now() - instance.m_lastTickStart) * instance.m_timeScale;
     }
 
     Clock::span_type Clock::lastTickDuration() noexcept
@@ -39,7 +39,7 @@ namespace rythe::core::scheduling
 
     Clock::span_type Clock::unscaledElapsedSinceTickStart() noexcept
     {
-        return rsl::main_clock.current_point() - instance.m_lastTickStart;
+        return rsl::mainClock.now() - instance.m_lastTickStart;
     }
 
     Clock::span_type Clock::unscaledLastTickDuration() noexcept
@@ -69,7 +69,7 @@ namespace rythe::core::scheduling
 
     void Clock::update()
     {
-        auto loopStart = rsl::main_clock.current_point();
+        auto loopStart = rsl::mainClock.now();
         auto elapsedSinceLastTick = loopStart - instance.m_lastTickStart;
 
         if (instance.m_waitBuffer.nanoseconds() > static_cast<span_type::time_type>(0))

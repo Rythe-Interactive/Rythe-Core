@@ -53,7 +53,7 @@ namespace rythe::core::scheduling
 
         log::info("Starting thread.");
 
-        rsl::timer clock;
+        rsl::stopwatch<> clock;
         rsl::span timeBuffer;
         rsl::span sleepTime;
 
@@ -114,7 +114,7 @@ namespace rythe::core::scheduling
                 {
                     timeBuffer -= sleepTime;
 
-                    rsl::timer sleepTimer;
+                    rsl::stopwatch<> sleepTimer;
                     sleepTimer.start();
                     std::this_thread::sleep_for(std::chrono::nanoseconds(1));
                     sleepTime = sleepTimer.elapsed_time();

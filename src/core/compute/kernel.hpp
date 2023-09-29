@@ -1,5 +1,5 @@
 #pragma once
-#include "detail/cl_include.hpp"
+#include <cl.h>
 
 #include <core/compute/buffer.hpp>
 #include <rsl/logging>

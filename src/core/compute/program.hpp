@@ -1,5 +1,5 @@
 #pragma once
-#include "detail/cl_include.hpp"
+#include <cl.h>
 
 #include <core/filesystem/resource.hpp>
 #include <core/compute/kernel.hpp>

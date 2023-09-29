@@ -6,12 +6,13 @@
 
 #include <rsl/primitives>
 #include <rsl/math>
+#include <rsl/utilities>
 
 #include "core/common/result.hpp"
 #include "core/compute/buffer.hpp"
 #include "core/compute/kernel.hpp"
 #include "core/compute/program.hpp"
-#include "core/common/assert.hpp"
+
 #include "core/filesystem/resource.hpp"
 
 namespace rythe::core::compute {
@@ -42,7 +43,7 @@ namespace rythe::core::compute {
 
         karg(invalid_karg_type) : container(std::make_pair<void*, rsl::size_type>(nullptr, 0)) {}
 
-        template <class T CNDOXY(std::enable_if_t<!std::is_same_v<std::remove_reference_t<T>, karg>, int > = 0)>
+        template <class T, std::enable_if_t<!std::is_same_v<std::remove_reference_t<T>, karg>, int>>
         karg(T& v, const std::string& n = "") : container(&v, sizeof(T)), name(n){}
         karg(const karg&) = default;
         karg(karg&&) noexcept = default;

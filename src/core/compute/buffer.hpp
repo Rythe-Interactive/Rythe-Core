@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cl.h>
 #include <cl_platform.h>// cl_context , cl_mem , cl_mem_flags
 #include <rsl/primitives> // rsl::byte, size_t
 

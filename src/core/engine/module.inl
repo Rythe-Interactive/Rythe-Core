@@ -20,17 +20,17 @@ namespace rythe::core
 
         SystemType* system = static_cast<SystemType*>(m_systems.emplace(rsl::make_hash<SystemType>(), std::make_unique<SystemType>(std::forward<Args>(args)...)).first->second.get());
 
-        if constexpr (has_setup_v<SystemType, void()>)
+        if constexpr (rsl::has_setup_v<SystemType, void()>)
         {
             m_setupFuncs.push_back<SystemType, &SystemType::setup>(*system);
         }
 
-        if constexpr (has_shutdown_v<SystemType, void()>)
+        if constexpr (rsl::has_shutdown_v<SystemType, void()>)
         {
             m_shutdownFuncs.push_back<SystemType, &SystemType::shutdown>(*system);
         }
 
-        if constexpr (has_update_v<SystemType, void(rsl::span)>)
+        if constexpr (rsl::has_update_v<SystemType, void(rsl::span)>)
         {
             system->template createProcess<&SystemType::update>("Update");
         }
