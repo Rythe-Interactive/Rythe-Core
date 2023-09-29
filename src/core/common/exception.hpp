@@ -3,6 +3,10 @@
 #include <rsl/primitives>
 #include <rsl/type_util>
 
+#define SPDLOG_HEADER_ONLY
+#define FMT_CONSTEVAL
+#include <rsl/logging>
+
 /**
  * @file exception.hpp
  */
@@ -301,5 +305,31 @@ namespace rythe::core
     };
 #pragma endregion 
 
+}
 
+namespace fmt
+{
+    template <>
+    struct formatter<rythe::core::exception> {
+        char presentation = 'f';
+
+        constexpr const char* parse(format_parse_context& ctx) {
+            auto it = ctx.begin(), end = ctx.end();
+
+            if (!it)
+                return nullptr;
+
+            if (it != end && (*it == 'f' || *it == 'e')) presentation = *it++;
+
+            if (it != end && *it != '}')
+                throw format_error("invalid format");
+
+            return it;
+        }
+
+        template <typename FormatContext>
+        auto format(const rythe::core::exception& e, FormatContext& ctx) {
+            return v8::format_to(ctx.out(), "{}-[{}]({}):{}", e.file(), e.line(), e.func(), e.what());
+        }
+    };
 }

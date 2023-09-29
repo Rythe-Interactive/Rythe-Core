@@ -43,7 +43,7 @@ namespace rythe::core::common
         result(const error_type& e, warning_list&& w) : m_error(e), m_handled(false), m_succeeded(false), m_warnings(w) {}
         result(const error_type& e, const warning_list& w) : m_error(e), m_handled(false), m_succeeded(false), m_warnings(w) {}
 
-        result(const result& src) : m_handled(src.m_handled), m_succeeded(src.m_succeeded), m_warnings(src.m_warnings)
+        result(const result& src) : m_succeeded(src.m_succeeded), m_handled(src.m_handled), m_warnings(src.m_warnings)
         {
             if (src.m_succeeded)
                 new (&m_success) success_type(src.m_success);

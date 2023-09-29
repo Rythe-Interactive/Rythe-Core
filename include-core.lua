@@ -34,6 +34,6 @@ includedirs {
 dependson { "core" }
 defines {"_CRT_SECURE_NO_WARNINGS"}
 filter "kind:not StaticLib"
-    links { "core", "OpenCL", "stdc++" }
+    links { "core", "OpenCL"}
 
 filter {}
