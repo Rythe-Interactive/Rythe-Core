@@ -198,7 +198,7 @@ namespace rythe::core::scheduling
 
         instance.m_start.store(true, std::memory_order_release);
 
-        rsl::delegate<void(rsl::main_clock::span_type)> del;
+        rsl::delegate<void(rsl::timer::span_type)> del;
         del = &doTick;
         Clock::subscribeToTick(del);
 
