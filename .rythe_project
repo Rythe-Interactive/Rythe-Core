@@ -1,10 +1,8 @@
 local project = {
-    group = "rythe/engine",
-    name = "core",
-    types = { "test", "module" },
+    additional_types = { "test", "editor" },
     dependencies = {
         "third_party/OpenCL",
-        "rythe/engine/rythe-standard-library"
+        "public rythe/rythe-standard-library"
     },
     defines = { "RYTHE_INTERNAL" }
 }
