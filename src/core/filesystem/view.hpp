@@ -5,155 +5,157 @@
 
 #include <core/common/exception.hpp>
 
+#include "detail/traits.hpp"
 #include "mem_filesystem_resolver.hpp"
 #include "navigator.hpp"
-#include "detail/traits.hpp"
 
 namespace rythe::core::filesystem
 {
-    /**@class view
-     * @brief Generates a view onto the virtual filesystem,
-     *        can be used to do all kinds of fun stuff with,
-     *        the underlying drivers.
-     */
-    class view
-    {
-    public:
+	/**@class view
+	 * @brief Generates a view onto the virtual filesystem,
+	 *        can be used to do all kinds of fun stuff with,
+	 *        the underlying drivers.
+	 */
+	class view
+	{
+	public:
+		// behold the noise that is copy and move operations
+		view(const view& other) = default;
+		view(view&& other) noexcept = default;
+		view& operator=(const view& other) = default;
+		view& operator=(view&& other) noexcept = default;
+		virtual ~view() = default;
 
-        //behold the noise that is copy and move operations
-        view(const view& other) = default;
-        view(view&& other) noexcept = default;
-        view& operator=(const view& other) = default;
-        view& operator=(view&& other) noexcept = default;
-        virtual ~view() = default;
+		view(std::string_view path)
+			: m_path(strpath_manip::localize(std::string(path)))
+		{
+		}
 
-        view(std::string_view path) : m_path(strpath_manip::localize(std::string(path))) {}
+		/** @brief Checks the view for validity.
+		 *  @note No deep check!
+		 */
+		[[nodiscard]] operator bool() const;
 
-        /** @brief Checks the view for validity.
-         *  @note No deep check!
-         */
-        [[nodiscard]] operator bool() const;
+		/** @brief Checks the view for validity
+		 *  @param deep_check Also checks if the provided path can be resolved
+		 *         instead of doing just a basic sanity check.
+		 */
+		[[nodiscard]] bool is_valid(bool deep_check = false) const;
 
-        /** @brief Checks the view for validity
-         *  @param deep_check Also checks if the provided path can be resolved
-         *         instead of doing just a basic sanity check.
-         */
-        [[nodiscard]] bool is_valid( bool deep_check = false) const;
+		/** @brief Gets the traits of the file pointed to.
+		 */
+		[[nodiscard]] file_traits file_info() const;
 
-        /** @brief Gets the traits of the file pointed to.
-         */
-        [[nodiscard]] file_traits file_info() const;
+		/** @brief Gets the traits of the top most filesystem pointed to.
+		 */
+		[[nodiscard]] filesystem_traits filesystem_info() const;
 
-        /** @brief Gets the traits of the top most filesystem pointed to.
-         */
-        [[nodiscard]] filesystem_traits filesystem_info() const;
+		/** @brief Gets the root domain.
+		 */
+		[[nodiscard]] std::string get_domain() const;
 
-        /** @brief Gets the root domain.
-         */
-        [[nodiscard]] std::string get_domain() const;
+		/**@brief Gets full virtual path.
+		 */
+		[[nodiscard]] const std::string& get_virtual_path() const;
 
-        /**@brief Gets full virtual path.
-         */
-        [[nodiscard]] const std::string& get_virtual_path() const;
+		/**@brief Gets file extension if applicable.
+		 *  @note You can use rythe::common::valid to check for validity.
+		 */
+		[[nodiscard]] common::result<std::string, fs_error> get_extension() const;
 
-        /**@brief Gets file extension if applicable.
-         *  @note You can use rythe::common::valid to check for validity.
-         */
-        [[nodiscard]] common::result<std::string, fs_error> get_extension() const;
+		/**@brief Gets file name if applicable.
+		 *  @note You can use rythe::common::valid to check for validity.
+		 */
+		[[nodiscard]] common::result<std::string, fs_error> get_filename() const;
 
-        /**@brief Gets file name if applicable.
-         *  @note You can use rythe::common::valid to check for validity.
-         */
-        [[nodiscard]] common::result<std::string, fs_error> get_filename() const;
+		/**@brief Gets file name if applicable.
+		 *  @note You can use rythe::common::valid to check for validity.
+		 */
+		[[nodiscard]] common::result<std::string, fs_error> get_filestem() const;
 
-        /**@brief Gets file name if applicable.
-         *  @note You can use rythe::common::valid to check for validity.
-         */
-        [[nodiscard]] common::result<std::string, fs_error> get_filestem() const;
-
-        /** @brief Gets the contents of the resource pointed to.
-         *  @note You can use rythe::common::valid to check for validity.
-         */
-        [[nodiscard]] common::result<basic_resource,fs_error> get();
-        [[nodiscard]] common::result<const basic_resource,fs_error> get() const;
-
-
-        /** @brief Sets the contents of the resource pointed to.
-         *  @note When setting was not possible has_err() will be true and get_err().what() will contain information on what went wrong.
-         */
-        [[nodiscard]] common::result<void,fs_error> set(const basic_resource& resource);
-
-        /** @brief Gets the parent folder of the file/folder and creates a new view from it.
-         */
-        [[nodiscard]] view parent() const;
-
-        /** @brief Creates a new view from a sub path (by first joining them together and then sanitizing the input)
-         **/
-        [[nodiscard]] virtual view find(std::string_view identifier) const;
+		/** @brief Gets the contents of the resource pointed to.
+		 *  @note You can use rythe::common::valid to check for validity.
+		 */
+		[[nodiscard]] common::result<basic_resource, fs_error> get();
+		[[nodiscard]] common::result<const basic_resource, fs_error> get() const;
 
 
-        /** @brief alternative syntax for find
-         */
-        [[nodiscard]] view operator[](std::string_view identifier) const;
+		/** @brief Sets the contents of the resource pointed to.
+		 *  @note When setting was not possible has_err() will be true and get_err().what() will contain information on what went wrong.
+		 */
+		[[nodiscard]] common::result<void, fs_error> set(const basic_resource& resource);
 
-        /** @brief same as get().value().to<T>()
-         */
-        template <class T, class... Args>
-        auto load_as(Args&&...args) -> decltype(auto)
-        {
-            return get().value().template to<T>(std::forward<Args>(args)...);
-        }
+		/** @brief Gets the parent folder of the file/folder and creates a new view from it.
+		 */
+		[[nodiscard]] view parent() const;
 
-        [[nodiscard]] common::result<std::vector<view>,fs_error> ls() const;
+		/** @brief Creates a new view from a sub path (by first joining them together and then sanitizing the input)
+		 **/
+		[[nodiscard]] virtual view find(std::string_view identifier) const;
 
-#if  !defined( RYTHE_DISABLE_POTENTIALLY_WEIRD_SYNTAX )
 
-        /** @brief alternative syntax for find
-         */
-        [[nodiscard]] view operator/(std::string_view identifier) const
-        {
-            return operator[](identifier);
-        }
+		/** @brief alternative syntax for find
+		 */
+		[[nodiscard]] view operator[](std::string_view identifier) const;
+
+		/** @brief same as get().value().to<T>()
+		 */
+		template <class T, class... Args>
+		auto load_as(Args&&... args) -> decltype(auto)
+		{
+			return get().value().template to<T>(std::forward<Args>(args)...);
+		}
+
+		[[nodiscard]] common::result<std::vector<view>, fs_error> ls() const;
+
+#if !defined(RYTHE_DISABLE_POTENTIALLY_WEIRD_SYNTAX)
+
+		/** @brief alternative syntax for find
+		 */
+		[[nodiscard]] view operator/(std::string_view identifier) const
+		{
+			return operator[](identifier);
+		}
 
 #endif
 
-    protected:
-        view() = default;
-        std::string m_path;
+	protected:
+		view() = default;
+		std::string m_path;
 
-        std::string create_identifier(const navigator::solution::iterator&) const;
-        std::shared_ptr<filesystem_resolver> build() const;
+		std::string create_identifier(const navigator::solution::iterator&) const;
+		std::shared_ptr<filesystem_resolver> build() const;
 
-        struct create_chain
-        {
-            std::shared_ptr<mem_filesystem_resolver> subject; // subject to be resolved
-            std::shared_ptr<filesystem_resolver> provider;    // resolver to be used to resolve
+		struct create_chain
+		{
+			std::shared_ptr<mem_filesystem_resolver> subject; // subject to be resolved
+			std::shared_ptr<filesystem_resolver> provider;    // resolver to be used to resolve
 
-            std::shared_ptr<create_chain> next; //next in chain
-        };
+			std::shared_ptr<create_chain> next;               // next in chain
+		};
 
-        void make_inheritance() const;
-        std::shared_ptr<create_chain> translate_solution() const;
-
-
-        common::result<void,fs_error> make_solution() const;
-
-        mutable navigator::solution m_foundSolution{};
-    };
+		void make_inheritance() const;
+		std::shared_ptr<create_chain> translate_solution() const;
 
 
-    namespace literals
-    {
-        /**@brief. creates a view from a string literal
-         */
-       inline view operator""_view(const char* str,std::size_t len)
-       {
-           return view(std::string_view(str,len));
-       }
-    }
+		common::result<void, fs_error> make_solution() const;
+
+		mutable navigator::solution m_foundSolution{};
+	};
 
 
-#if 0 //not ready yet
+	namespace literals
+	{
+		/**@brief. creates a view from a string literal
+		 */
+		inline view operator""_view(const char* str, std::size_t len)
+		{
+			return view(std::string_view(str, len));
+		}
+	} // namespace literals
+
+
+#if 0 // not ready yet
 
     template <std::size_t S>
     class combined_view
@@ -170,15 +172,14 @@ namespace rythe::core::filesystem
         std::array<view&,S> m_views;
     };
 
-#if !defined(DOXY_EXCLUDE)
+	#if !defined(DOXY_EXCLUDE)
     template<class... Views>
     combined_view(Views...) -> combined_view<sizeof...(Views)>;
-#endif
+	#endif
 
     template <std::size_t S>
     view combined_view<S>::find(std::string_view identifier)
     {
     }
 #endif
-}
-
+} // namespace rythe::core::filesystem

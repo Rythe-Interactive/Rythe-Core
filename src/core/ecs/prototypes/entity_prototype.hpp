@@ -1,6 +1,6 @@
 #pragma once
-#include <unordered_set>
 #include <memory>
+#include <unordered_set>
 
 
 #include <core/ecs/data/entity_data.hpp>
@@ -12,14 +12,14 @@
 
 namespace rythe::core::serialization
 {
-    /**@struct prototype<ecs::entity>
-     * @brief Prototype specialization for entities.
-     */
+	/**@struct prototype<ecs::entity>
+	 * @brief Prototype specialization for entities.
+	 */
 
 
 
-    /**@struct entity_prototype
-     * @brief Type alias for `prototype<ecs::entity>`. Can be used to serialize and deserialize entities.
-     */
+	/**@struct entity_prototype
+	 * @brief Type alias for `prototype<ecs::entity>`. Can be used to serialize and deserialize entities.
+	 */
 
-}
+} // namespace rythe::core::serialization

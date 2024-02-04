@@ -2,9 +2,9 @@
 #include <memory>
 #include <type_traits>
 
+#include <rsl/delegate>
 #include <rsl/primitives>
 #include <rsl/type_util>
-#include <rsl/delegate>
 
 #include "core/engine/system.hpp"
 
@@ -14,49 +14,50 @@
 
 namespace rythe::core
 {
-    /**@class Module
-     * @brief interface for engine-modules, must be implemented
-     * @ref rythe::core::Engine::reportModule<T,...>()
-     */
-    class Module
-    {
-        friend class Engine;
-    private:
-        rsl::multicast_delegate<void()> m_setupFuncs;
-        rsl::multicast_delegate<void()> m_shutdownFuncs;
+	/**@class Module
+	 * @brief interface for engine-modules, must be implemented
+	 * @ref rythe::core::Engine::reportModule<T,...>()
+	 */
+	class Module
+	{
+		friend class Engine;
 
-        std::unordered_map<rsl::id_type, std::unique_ptr<SystemBase>> m_systems;
+	private:
+		rsl::multicast_delegate<void()> m_setupFuncs;
+		rsl::multicast_delegate<void()> m_shutdownFuncs;
 
-        void init()
-        {
-            m_setupFuncs.invoke();
-        }
+		std::unordered_map<rsl::id_type, std::unique_ptr<SystemBase>> m_systems;
 
-        void shutdown()
-        {
-            m_shutdownFuncs.invoke();
-        }
+		void init()
+		{
+			m_setupFuncs.invoke();
+		}
 
-    protected:
-        template<rsl::size_type charc>
-        void createProcessChain(const char(&name)[charc]) const;
+		void shutdown()
+		{
+			m_shutdownFuncs.invoke();
+		}
 
-        template<typename SystemType, typename... Args>
-        void reportSystem(Args&&... args);
+	protected:
+		template <rsl::size_type charc>
+		void createProcessChain(const char (&name)[charc]) const;
 
-        template<typename component_type, typename... Args>
-        void registerComponentType(Args&&... args);
+		template <typename SystemType, typename... Args>
+		void reportSystem(Args&&... args);
 
-    public:
-        virtual void setup() = 0;
+		template <typename component_type, typename... Args>
+		void registerComponentType(Args&&... args);
 
-        /**@brief determines the execution priority of this module
-         * @returns rsl::priority_type signed int8 higher is higher priority and get called first
-         * @note default priority of the engine is 0.
-         * @note call order for modules with the same priority is undefined.
-         */
-        virtual rsl::priority_type priority() { return default_priority; }
+	public:
+		virtual void setup() = 0;
 
-        virtual ~Module() = default;
-    };
-}
+		/**@brief determines the execution priority of this module
+		 * @returns rsl::priority_type signed int8 higher is higher priority and get called first
+		 * @note default priority of the engine is 0.
+		 * @note call order for modules with the same priority is undefined.
+		 */
+		virtual rsl::priority_type priority() { return default_priority; }
+
+		virtual ~Module() = default;
+	};
+} // namespace rythe::core

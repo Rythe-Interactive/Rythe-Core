@@ -1,11 +1,11 @@
 #pragma once
+#include <array>
+#include <tuple>
 #include <type_traits>
 #include <variant>
-#include <tuple>
-#include <array>
 
-#include <rsl/primitives>
 #include <rsl/math>
+#include <rsl/primitives>
 #include <rsl/utilities>
 
 #include "core/common/result.hpp"
@@ -15,346 +15,366 @@
 
 #include "core/filesystem/resource.hpp"
 
-namespace rythe::core::compute {
+namespace rythe::core::compute
+{
 
-    struct in_ident {};
-    struct out_ident {};
-    struct inout_ident {};
+	struct in_ident
+	{
+	};
+	struct out_ident
+	{
+	};
+	struct inout_ident
+	{
+	};
 
-    namespace detail {
-        struct buffer_base
-        {
-            buffer_base(rsl::byte* buffer, rsl::size_type size, std::string n) : container(std::make_pair(buffer, size)), name(std::move(n)) {}
-            buffer_base(const buffer_base& other) = default;
-            buffer_base(buffer_base&& other) noexcept = default;
-            buffer_base& operator=(const buffer_base& other) = default;
-            buffer_base& operator=(buffer_base&& other) noexcept = default;
-            ~buffer_base() = default;
+	namespace detail
+	{
+		struct buffer_base
+		{
+			buffer_base(rsl::byte* buffer, rsl::size_type size, std::string n)
+				: container(std::make_pair(buffer, size)),
+				  name(std::move(n))
+			{
+			}
+			buffer_base(const buffer_base& other) = default;
+			buffer_base(buffer_base&& other) noexcept = default;
+			buffer_base& operator=(const buffer_base& other) = default;
+			buffer_base& operator=(buffer_base&& other) noexcept = default;
+			~buffer_base() = default;
 
-            std::pair<rsl::byte*, rsl::size_type> container;
-            std::string name;
-        };
-    }
+			std::pair<rsl::byte*, rsl::size_type> container;
+			std::string name;
+		};
+	} // namespace detail
 
-    struct invalid_karg_type {};
+	struct invalid_karg_type
+	{
+	};
 
-    struct karg
-    {
+	struct karg
+	{
 
-        karg(invalid_karg_type) : container(std::make_pair<void*, rsl::size_type>(nullptr, 0)) {}
+		karg(invalid_karg_type)
+			: container(std::make_pair<void*, rsl::size_type>(nullptr, 0))
+		{
+		}
 
-        template <class T, std::enable_if_t<!std::is_same_v<std::remove_reference_t<T>, karg>, int>>
-        karg(T& v, const std::string& n = "") : container(&v, sizeof(T)), name(n){}
-        karg(const karg&) = default;
-        karg(karg&&) noexcept = default;
-        karg& operator=(const karg&) = default;
-        karg& operator=(karg&&) noexcept = default;
-        ~karg() = default;
+		template <class T, std::enable_if_t<!std::is_same_v<std::remove_reference_t<T>, karg>, int>>
+		karg(T& v, const std::string& n = "")
+			: container(&v, sizeof(T)),
+			  name(n)
+		{
+		}
+		karg(const karg&) = default;
+		karg(karg&&) noexcept = default;
+		karg& operator=(const karg&) = default;
+		karg& operator=(karg&&) noexcept = default;
+		~karg() = default;
 
-        std::pair<void*, rsl::size_type> container;
-        std::string name;
-    };
-
-
-
-    /**
-     * @class in
-     * @brief Wraps a vector parameter to a kernel invocation, marks it
-     * as an in-bound parameter, can have an optional name.
-     */
-    template <class T>
-    struct in : public in_ident, public detail::buffer_base
-    {
-        static_assert(rsl::is_vector<std::remove_reference_t<T>>::value, "T needs to be a vector");
-
-        in(T& vec, std::string name = "") :
-            buffer_base(reinterpret_cast<rsl::byte*>(vec.data()),
-                sizeof(typename std::remove_reference_t<T>::value_type)* vec.size(), name) {}
-        ~in() = default;
-        in(const in& other) = default;
-        in(in&& other) noexcept = default;
-        in& operator=(const in& other) = default;
-        in& operator=(in&& other) noexcept = default;
-        using value_type = T;
-    };
-
-    /**
-     * @class out
-     * @brief Wraps a vector parameter to a kernel invocation, marks it
-     * as an out-bound parameter, can have an optional name.
-     */
-    template <class T>
-    struct out : public out_ident, public detail::buffer_base
-    {
-        static_assert(rsl::is_vector<std::remove_reference_t<T>>::value, "T needs to be a vector");
-
-        out(T& vec, std::string name = "") :
-            buffer_base(reinterpret_cast<rsl::byte*>(vec.data()),
-                sizeof(typename std::remove_reference_t<T>::value_type)* vec.size(), name) {}
-        ~out() = default;
-        out(const out& other) = default;
-        out(out&& other) noexcept = default;
-        out& operator=(const out& other) = default;
-        out& operator=(out&& other) noexcept = default;
-        using value_type = T;
-    };
-
-    /**
-     * @class in
-     * @brief Wraps a vector parameter to a kernel invocation, marks it
-     * as an in and out-bound parameter, can have an optional name.
-     */
-    template <class T>
-    struct inout : public inout_ident, public detail::buffer_base
-    {
-        static_assert(rsl::is_vector<std::remove_reference_t<T>>::value, "T needs to be a vector");
-
-        inout(T& vec, std::string name = "") :
-            buffer_base(reinterpret_cast<rsl::byte*>(vec.data()),
-                sizeof(typename std::remove_reference_t<T>::value_type)* vec.size(), name) {}
-        ~inout() = default;
-        inout(const inout& other) = default;
-        inout(inout&& other) noexcept = default;
-        inout& operator=(const inout& other) = default;
-        inout& operator=(inout&& other) noexcept = default;
-        using value_type = T;
-    };
-
-    class function_base
-    {
-
-    protected:
-        using invoke_buffer_container = std::vector<std::pair<detail::buffer_base*, buffer_type>>;
-        using dvar = std::variant<std::tuple<rsl::size_type>,
-            std::tuple<rsl::size_type, rsl::size_type>,
-            std::tuple<rsl::size_type, rsl::size_type, rsl::size_type>
-        >;
-
-        //invokes the NdRangeKernel
-        [[nodiscard]] common::result<void, void> invoke(dvar global, invoke_buffer_container& parameters, std::vector<karg> kernelArgs) const;
-        [[nodiscard]] common::result<void, void> invoke2(dvar global, std::vector<Buffer> buffers, std::vector<karg> kernelArgs) const;
+		std::pair<void*, rsl::size_type> container;
+		std::string name;
+	};
 
 
-        std::shared_ptr<Kernel> m_kernel;
-        std::shared_ptr<Program> m_program;
-        size_t m_locals = 512;
-    public:
+
+	/**
+	 * @class in
+	 * @brief Wraps a vector parameter to a kernel invocation, marks it
+	 * as an in-bound parameter, can have an optional name.
+	 */
+	template <class T>
+	struct in : public in_ident, public detail::buffer_base
+	{
+		static_assert(rsl::is_vector<std::remove_reference_t<T>>::value, "T needs to be a vector");
+
+		in(T& vec, std::string name = "")
+			: buffer_base(reinterpret_cast<rsl::byte*>(vec.data()), sizeof(typename std::remove_reference_t<T>::value_type) * vec.size(), name)
+		{
+		}
+		~in() = default;
+		in(const in& other) = default;
+		in(in&& other) noexcept = default;
+		in& operator=(const in& other) = default;
+		in& operator=(in&& other) noexcept = default;
+		using value_type = T;
+	};
+
+	/**
+	 * @class out
+	 * @brief Wraps a vector parameter to a kernel invocation, marks it
+	 * as an out-bound parameter, can have an optional name.
+	 */
+	template <class T>
+	struct out : public out_ident, public detail::buffer_base
+	{
+		static_assert(rsl::is_vector<std::remove_reference_t<T>>::value, "T needs to be a vector");
+
+		out(T& vec, std::string name = "")
+			: buffer_base(reinterpret_cast<rsl::byte*>(vec.data()), sizeof(typename std::remove_reference_t<T>::value_type) * vec.size(), name)
+		{
+		}
+		~out() = default;
+		out(const out& other) = default;
+		out(out&& other) noexcept = default;
+		out& operator=(const out& other) = default;
+		out& operator=(out&& other) noexcept = default;
+		using value_type = T;
+	};
+
+	/**
+	 * @class in
+	 * @brief Wraps a vector parameter to a kernel invocation, marks it
+	 * as an in and out-bound parameter, can have an optional name.
+	 */
+	template <class T>
+	struct inout : public inout_ident, public detail::buffer_base
+	{
+		static_assert(rsl::is_vector<std::remove_reference_t<T>>::value, "T needs to be a vector");
+
+		inout(T& vec, std::string name = "")
+			: buffer_base(reinterpret_cast<rsl::byte*>(vec.data()), sizeof(typename std::remove_reference_t<T>::value_type) * vec.size(), name)
+		{
+		}
+		~inout() = default;
+		inout(const inout& other) = default;
+		inout(inout&& other) noexcept = default;
+		inout& operator=(const inout& other) = default;
+		inout& operator=(inout&& other) noexcept = default;
+		using value_type = T;
+	};
+
+	class function_base
+	{
+
+	protected:
+		using invoke_buffer_container = std::vector<std::pair<detail::buffer_base*, buffer_type>>;
+		using dvar = std::variant<std::tuple<rsl::size_type>, std::tuple<rsl::size_type, rsl::size_type>, std::tuple<rsl::size_type, rsl::size_type, rsl::size_type>>;
+
+		// invokes the NdRangeKernel
+		[[nodiscard]] common::result<void, void> invoke(dvar global, invoke_buffer_container& parameters, std::vector<karg> kernelArgs) const;
+		[[nodiscard]] common::result<void, void> invoke2(dvar global, std::vector<Buffer> buffers, std::vector<karg> kernelArgs) const;
 
 
-        /**
-         * @brief Sets how many work-elements should be processed concurrently.
-         * @param locals Number of parallel processes or 0,
-         *         when 0 the measured max will be used.
-         * @return How many parallel processes are going to be used.
-         */
-        rsl::size_type setLocalSize(rsl::size_type locals)
-        {
-            const rsl::size_type max = m_kernel->getMaxWorkSize();
+		std::shared_ptr<Kernel> m_kernel;
+		std::shared_ptr<Program> m_program;
+		size_t m_locals = 512;
 
-            if (locals == 0)
-            {
-                m_locals = max;
-            }
-            else
-                m_locals = (std::min)(locals, max);
+	public:
+		/**
+		 * @brief Sets how many work-elements should be processed concurrently.
+		 * @param locals Number of parallel processes or 0,
+		 *         when 0 the measured max will be used.
+		 * @return How many parallel processes are going to be used.
+		 */
+		rsl::size_type setLocalSize(rsl::size_type locals)
+		{
+			const rsl::size_type max = m_kernel->getMaxWorkSize();
 
-            return m_locals;
-        }
-    };
+			if (locals == 0)
+			{
+				m_locals = max;
+			}
+			else
+				m_locals = (std::min)(locals, max);
 
-    class function final : public function_base
-    {
-    public:
-        using function_base::setLocalSize;
-        function(std::string name) : m_name(std::move(name)) {}
-        function() = default;
-        function(function&& other) noexcept
-        {
-            m_program = std::move(other.m_program);
-            m_kernel = std::move(other.m_kernel);
-            m_locals = std::move(other.m_locals);
-        }
-        function(const function& other)
-        {
-            m_program = other.m_program;
-            m_kernel = other.m_kernel;
-            m_locals = other.m_locals;
-        }
-        function& operator=(const function& other)
-        {
-            m_program = other.m_program;
-            m_kernel = other.m_kernel;
-            m_locals = other.m_locals;
-            return *this;
-        }
+			return m_locals;
+		}
+	};
 
-        function& operator=(function&& other)
-        {
-            m_program = std::move(other.m_program);
-            m_kernel = std::move(other.m_kernel);
-            m_locals = std::move(other.m_locals);
-            return *this;
-        }
-        /**
-          * @brief Sets the program from which to create the wrapped kernel.
-          */
-        void setProgram(Program&& p)
-        {
-            m_program = std::make_shared<Program>(p);
-            m_kernel = std::make_shared<Kernel>(m_program->kernelContext(m_name));
-            m_locals = m_kernel->getMaxWorkSize();
-        }
+	class function final : public function_base
+	{
+	public:
+		using function_base::setLocalSize;
+		function(std::string name)
+			: m_name(std::move(name))
+		{
+		}
+		function() = default;
+		function(function&& other) noexcept
+		{
+			m_program = std::move(other.m_program);
+			m_kernel = std::move(other.m_kernel);
+			m_locals = std::move(other.m_locals);
+		}
+		function(const function& other)
+		{
+			m_program = other.m_program;
+			m_kernel = other.m_kernel;
+			m_locals = other.m_locals;
+		}
+		function& operator=(const function& other)
+		{
+			m_program = other.m_program;
+			m_kernel = other.m_kernel;
+			m_locals = other.m_locals;
+			return *this;
+		}
 
-        /**
-         * @brief Invokes the wrapped kernel with the passed buffers
-         * @param dispatch_size How many items to process.
-         * @param args a collection of either vectors and wrapped vectors or compute::Buffers
-         * @return Ok() if the kernel succeeded or Err() otherwise
-         */
-        template <typename... Args>
-        common::result<void, void> operator()(std::variant<rsl::size_type, math::int2, math::int3> dispatch_size, Args&&... args)
-        {
-            dvar dim;
+		function& operator=(function&& other)
+		{
+			m_program = std::move(other.m_program);
+			m_kernel = std::move(other.m_kernel);
+			m_locals = std::move(other.m_locals);
+			return *this;
+		}
+		/**
+		 * @brief Sets the program from which to create the wrapped kernel.
+		 */
+		void setProgram(Program&& p)
+		{
+			m_program = std::make_shared<Program>(p);
+			m_kernel = std::make_shared<Kernel>(m_program->kernelContext(m_name));
+			m_locals = m_kernel->getMaxWorkSize();
+		}
 
-            if (std::holds_alternative<rsl::size_type>(dispatch_size))
-            {
-                dim = std::make_tuple(std::get<0>(dispatch_size));
-            }
-            else if (std::holds_alternative<math::ivec2>(dispatch_size))
-            {
-                dim = std::make_tuple(static_cast<rsl::size_type>(std::get<1>(dispatch_size)[0]),
-                    static_cast<rsl::size_type>(std::get<1>(dispatch_size)[1]));
-            }
-            else if (std::holds_alternative<math::ivec3>(dispatch_size))
-            {
-                dim = std::make_tuple(static_cast<rsl::size_type>(std::get<2>(dispatch_size)[0]),
-                    static_cast<rsl::size_type>(std::get<2>(dispatch_size)[1]),
-                    static_cast<rsl::size_type>(std::get<2>(dispatch_size)[2]));
-            }
+		/**
+		 * @brief Invokes the wrapped kernel with the passed buffers
+		 * @param dispatch_size How many items to process.
+		 * @param args a collection of either vectors and wrapped vectors or compute::Buffers
+		 * @return Ok() if the kernel succeeded or Err() otherwise
+		 */
+		template <typename... Args>
+		common::result<void, void> operator()(std::variant<rsl::size_type, math::int2, math::int3> dispatch_size, Args&&... args)
+		{
+			dvar dim;
 
-            //check if we are dealing with a list of buffers or a list of vectors
-            //TODO(algo-ryth-mix) Update the cppcheck version of the CI once this bug is resolved!
-            //cppcheck has an issue with if contexpr and the || in here
-            //cppcheck-suppress internalAstError
-            if constexpr (((std::is_same_v<compute::Buffer, std::remove_reference_t<Args>> || std::is_same_v<karg, Args>) && ...))
-            {
-                return invoke_helper_buffers(dim, std::forward<Args>(args)...);
-            }
-            else
-            {
-                return invoke_helper_raw(dim, std::forward<Args>(args)...);
-            }
-        }
+			if (std::holds_alternative<rsl::size_type>(dispatch_size))
+			{
+				dim = std::make_tuple(std::get<0>(dispatch_size));
+			}
+			else if (std::holds_alternative<math::ivec2>(dispatch_size))
+			{
+				dim = std::make_tuple(static_cast<rsl::size_type>(std::get<1>(dispatch_size)[0]), static_cast<rsl::size_type>(std::get<1>(dispatch_size)[1]));
+			}
+			else if (std::holds_alternative<math::ivec3>(dispatch_size))
+			{
+				dim = std::make_tuple(static_cast<rsl::size_type>(std::get<2>(dispatch_size)[0]), static_cast<rsl::size_type>(std::get<2>(dispatch_size)[1]), static_cast<rsl::size_type>(std::get<2>(dispatch_size)[2]));
+			}
 
-
-        static void from_resource(function* value, const filesystem::basic_resource& resource)
-        {
-            value->setProgram(resource.to<Program>());
-        }
-
-        bool isValid() const
-        {
-            return m_program != nullptr;
-        }
-
-    private:
-        std::string m_name;
-
-        //transformation from in / out / inout to pair(buffer,"in") / pair(buffer,"out") / pair(buffer,"inout")
-        template <class T>
-        static std::pair<detail::buffer_base*, buffer_type>  transform_to_pairs(T& buffer_container)
-        {
-            using detail::buffer_base;
-
-            if constexpr (std::is_base_of_v<in_ident, T>)
-            {
-                return std::pair<buffer_base*, buffer_type>(static_cast<buffer_base*>(&buffer_container), buffer_type::READ_BUFFER);
-            }
-            else if constexpr (std::is_base_of_v<out_ident, T>)
-            {
-                return std::pair<buffer_base*, buffer_type>(static_cast<buffer_base*>(&buffer_container), buffer_type::WRITE_BUFFER);
-            }
-            else if constexpr (std::is_base_of_v<inout_ident, T>)
-            {
-                return std::pair<buffer_base*, buffer_type>(static_cast<buffer_base*>(&buffer_container), buffer_type::READ_BUFFER | buffer_type::WRITE_BUFFER);
-            }
-            else
-                return std::pair<buffer_base*, buffer_type>(nullptr, buffer_type::WRITE_BUFFER);
-        }
-
-        template <class T>
-        static karg transform_to_karg(T& buffer_container)
-        {
-            if constexpr (std::is_same_v<karg, std::remove_reference_t<T>>)
-                return buffer_container;
-            else
-            {
-                return karg(invalid_karg_type{});
-            }
-
-        }
-
-        template <class T>
-        static Buffer transform_to_buffer(T& buffer_container)
-        {
-            if constexpr (std::is_same_v<Buffer, T>)
-                return buffer_container;
-            else return Buffer(nullptr, nullptr, 0, buffer_type::WRITE_BUFFER, "broken buffer");
-        }
+			// check if we are dealing with a list of buffers or a list of vectors
+			// TODO(algo-ryth-mix) Update the cppcheck version of the CI once this bug is resolved!
+			// cppcheck has an issue with if contexpr and the || in here
+			// cppcheck-suppress internalAstError
+			if constexpr (((std::is_same_v<compute::Buffer, std::remove_reference_t<Args>> || std::is_same_v<karg, Args>) && ...))
+			{
+				return invoke_helper_buffers(dim, std::forward<Args>(args)...);
+			}
+			else
+			{
+				return invoke_helper_raw(dim, std::forward<Args>(args)...);
+			}
+		}
 
 
-    private:
-        template <typename... Args>
-        common::result<void, void> invoke_helper_raw(dvar dispatch_size, Args&& ... args)
-        {
-            //do some sanity checking args either need to be in(vector) out(vector) inout(vector) vector or karg
-            static_assert(((
-                std::is_same_v<karg, Args> ||
-                std::is_base_of_v<detail::buffer_base, Args> ||
-                rsl::is_vector<std::remove_reference_t<Args>>::value) && ...), "Types passed to operator() must be vector or in,out,inout");
+		static void from_resource(function* value, const filesystem::basic_resource& resource)
+		{
+			value->setProgram(resource.to<Program>());
+		}
+
+		bool isValid() const
+		{
+			return m_program != nullptr;
+		}
+
+	private:
+		std::string m_name;
+
+		// transformation from in / out / inout to pair(buffer,"in") / pair(buffer,"out") / pair(buffer,"inout")
+		template <class T>
+		static std::pair<detail::buffer_base*, buffer_type> transform_to_pairs(T& buffer_container)
+		{
+			using detail::buffer_base;
+
+			if constexpr (std::is_base_of_v<in_ident, T>)
+			{
+				return std::pair<buffer_base*, buffer_type>(static_cast<buffer_base*>(&buffer_container), buffer_type::READ_BUFFER);
+			}
+			else if constexpr (std::is_base_of_v<out_ident, T>)
+			{
+				return std::pair<buffer_base*, buffer_type>(static_cast<buffer_base*>(&buffer_container), buffer_type::WRITE_BUFFER);
+			}
+			else if constexpr (std::is_base_of_v<inout_ident, T>)
+			{
+				return std::pair<buffer_base*, buffer_type>(static_cast<buffer_base*>(&buffer_container), buffer_type::READ_BUFFER | buffer_type::WRITE_BUFFER);
+			}
+			else
+				return std::pair<buffer_base*, buffer_type>(nullptr, buffer_type::WRITE_BUFFER);
+		}
+
+		template <class T>
+		static karg transform_to_karg(T& buffer_container)
+		{
+			if constexpr (std::is_same_v<karg, std::remove_reference_t<T>>)
+				return buffer_container;
+			else
+			{
+				return karg(invalid_karg_type{});
+			}
+		}
+
+		template <class T>
+		static Buffer transform_to_buffer(T& buffer_container)
+		{
+			if constexpr (std::is_same_v<Buffer, T>)
+				return buffer_container;
+			else
+				return Buffer(nullptr, nullptr, 0, buffer_type::WRITE_BUFFER, "broken buffer");
+		}
 
 
-            //promote vector to in(vector) leave the rest alone
-            std::tuple container = { std::conditional_t<rsl::is_vector<std::remove_reference_t<Args>>::value,in<Args>,Args>(args)... };
-
-            auto kargs = std::apply(
-                [](auto&& ... x)
-                {
-                    return std::vector<karg>{function::transform_to_karg(x)...};
-                }, container);
-
-            //transform from tuple(in,out,inout,...) to vector(pair(buffer,"in"),pair(buffer,"out"), ...)
-            auto vector = std::apply(
-                [](auto&&...x)
-                {
-                    return invoke_buffer_container{ function::transform_to_pairs(x)... };
-                }, container);
+	private:
+		template <typename... Args>
+		common::result<void, void> invoke_helper_raw(dvar dispatch_size, Args&&... args)
+		{
+			// do some sanity checking args either need to be in(vector) out(vector) inout(vector) vector or karg
+			static_assert(((std::is_same_v<karg, Args> || std::is_base_of_v<detail::buffer_base, Args> || rsl::is_vector<std::remove_reference_t<Args>>::value) && ...), "Types passed to operator() must be vector or in,out,inout");
 
 
-            //we finally transformed it into a way that the non-templated function can use
-            return invoke(dispatch_size, vector, kargs);
-        }
+			// promote vector to in(vector) leave the rest alone
+			std::tuple container = {std::conditional_t<rsl::is_vector<std::remove_reference_t<Args>>::value, in<Args>, Args>(args)...};
 
-        template <typename... Args>
-        common::result<void, void> invoke_helper_buffers(dvar dispatch_size, Args&&... args)
-        {
-            static_assert(((std::is_same_v<compute::Buffer, std::remove_reference_t<Args>> || std::is_same_v<karg, std::remove_reference_t<Args>> ) && ...),
-                "Types passed to operator must be Buffer");
+			auto kargs = std::apply(
+				[](auto&&... x)
+			{
+				return std::vector<karg>{function::transform_to_karg(x)...};
+			}, container
+			);
 
-            std::tuple tpl = { args... };
+			// transform from tuple(in,out,inout,...) to vector(pair(buffer,"in"),pair(buffer,"out"), ...)
+			auto vector = std::apply(
+				[](auto&&... x)
+			{
+				return invoke_buffer_container{function::transform_to_pairs(x)...};
+			}, container
+			);
 
-            auto kargs = std::apply(
-                [](auto&& ... x)
-                {
-                    return std::vector<karg>{function::transform_to_karg(x)...};
-                }, tpl);
-            auto buffers = std::apply(
-                [](auto&&...x)
-                {
-                    return std::vector<Buffer>{ function::transform_to_buffer(x)... };
-                }, tpl);
 
-            return invoke2(dispatch_size, buffers, kargs);
-        }
-    };
-}
+			// we finally transformed it into a way that the non-templated function can use
+			return invoke(dispatch_size, vector, kargs);
+		}
+
+		template <typename... Args>
+		common::result<void, void> invoke_helper_buffers(dvar dispatch_size, Args&&... args)
+		{
+			static_assert(((std::is_same_v<compute::Buffer, std::remove_reference_t<Args>> || std::is_same_v<karg, std::remove_reference_t<Args>>) && ...), "Types passed to operator must be Buffer");
+
+			std::tuple tpl = {args...};
+
+			auto kargs = std::apply(
+				[](auto&&... x)
+			{
+				return std::vector<karg>{function::transform_to_karg(x)...};
+			}, tpl
+			);
+			auto buffers = std::apply(
+				[](auto&&... x)
+			{
+				return std::vector<Buffer>{function::transform_to_buffer(x)...};
+			}, tpl
+			);
+
+			return invoke2(dispatch_size, buffers, kargs);
+		}
+	};
+} // namespace rythe::core::compute

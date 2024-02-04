@@ -4,7 +4,8 @@
 
 namespace rythe::core::events
 {
-    exit::exit(int exitCode) : exitcode(exitCode)
-    {
-    }
-}
+	exit::exit(int exitCode)
+		: exitcode(exitCode)
+	{
+	}
+} // namespace rythe::core::events

@@ -5,33 +5,33 @@
  * @brief Single include header for RYTHE-Core
  */
 
-#include <rsl/type_util>
 #include <rsl/math>
 #include <rsl/primitives>
+#include <rsl/type_util>
 
-#include "core/platform/shellinvoke.hpp"
-#include "core/common/common.hpp"
 #include "core/async/async.hpp"
+#include "core/common/common.hpp"
 #include "core/containers/containers.hpp"
 #include "core/ecs/ecs.hpp"
-#include "core/scheduling/scheduling.hpp"
-#include "core/events/events.hpp"
-#include "core/entry/entry_point.hpp"
 #include "core/engine/engine.hpp"
+#include "core/entry/entry_point.hpp"
+#include "core/events/events.hpp"
+#include "core/platform/shellinvoke.hpp"
+#include "core/scheduling/scheduling.hpp"
 #include "core/serialization/serializationutil.hpp"
 
-#include "core/filesystem/filesystem.hpp"
 #include "core/assets/assets.hpp"
 #include "core/data/data.hpp"
+#include "core/filesystem/filesystem.hpp"
 
 #include "core/defaults/defaultcomponents.hpp"
 
-#include "core/engine/system.inl"
 #include "core/engine/module.inl"
+#include "core/engine/system.inl"
 
 namespace rythe
 {
-    using namespace core;
+	using namespace core;
 }
 
 namespace ryt = rythe;

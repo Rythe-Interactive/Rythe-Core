@@ -1,7 +1,7 @@
 #pragma once
-#include <rsl/type_util>
-#include <rsl/math>
 #include <rsl/hash>
+#include <rsl/math>
+#include <rsl/type_util>
 
 #include "core/ecs/handles/entity.hpp"
 
@@ -11,69 +11,67 @@
 
 namespace rythe::core::ecs
 {
-    /**@class component_base
-     * @brief Shared bass class for component handles.
-     */
-    struct component_base
-    {
-    };
+	/**@class component_base
+	 * @brief Shared bass class for component handles.
+	 */
+	struct component_base
+	{
+	};
 
-    /**@class component
-     * @brief Inter frame storable handle to a component. 
-     * @tparam component_type Type of component the handle references.
-     */
-    template<typename component_type>
-    struct component : public component_base
-    {
-        static constexpr rsl::type_hash<component_type> typeId = rsl::make_hash<component_type>();
+	/**@class component
+	 * @brief Inter frame storable handle to a component.
+	 * @tparam component_type Type of component the handle references.
+	 */
+	template <typename component_type>
+	struct component : public component_base
+	{
+		static constexpr rsl::type_hash<component_type> typeId = rsl::make_hash<component_type>();
 
-        entity owner;
+		entity owner;
 
-        component& operator=(const component_type& src);
-        component& operator=(component_type&& src);
+		component& operator=(const component_type& src);
+		component& operator=(component_type&& src);
 
-        [[nodiscard]] operator component_type& ();
-        [[nodiscard]] operator const component_type& () const;
+		[[nodiscard]] operator component_type&();
+		[[nodiscard]] operator const component_type&() const;
 
-        [[nodiscard]] bool valid() const noexcept;
-        [[nodiscard]] operator bool() const noexcept;
+		[[nodiscard]] bool valid() const noexcept;
+		[[nodiscard]] operator bool() const noexcept;
 
-        [[nodiscard]] component_type& operator*();
-        [[nodiscard]] const component_type& operator*() const;
+		[[nodiscard]] component_type& operator*();
+		[[nodiscard]] const component_type& operator*() const;
 
-        [[nodiscard]] component_type* operator->();
-        [[nodiscard]] const component_type* operator->() const;
+		[[nodiscard]] component_type* operator->();
+		[[nodiscard]] const component_type* operator->() const;
 
-        bool operator==(const component& other) const noexcept;
+		bool operator==(const component& other) const noexcept;
 
-        /**@brief Gets a reference to the component the handle references.
-         */
-        [[nodiscard]] component_type& get();
-        [[nodiscard]] const component_type& get() const;
+		/**@brief Gets a reference to the component the handle references.
+		 */
+		[[nodiscard]] component_type& get();
+		[[nodiscard]] const component_type& get() const;
 
-        /**@brief Destroys the component the handle references.
-         */
-        void destroy();
-    };
-}
+		/**@brief Destroys the component the handle references.
+		 */
+		void destroy();
+	};
+} // namespace rythe::core::ecs
 
 #if !defined(DOXY_EXCLUDE)
 namespace std
 {
-    template<typename component_type>
-    struct hash<rythe::core::ecs::component<component_type>>
-    {
-        std::size_t operator()(rythe::core::ecs::component<component_type> const& handle) const noexcept
-        {
-            std::size_t hash = 0;
+	template <typename component_type>
+	struct hash<rythe::core::ecs::component<component_type>>
+	{
+		std::size_t operator()(rythe::core::ecs::component<component_type> const& handle) const noexcept
+		{
+			std::size_t hash = 0;
 
-            rsl::math::detail::combine_hash(hash,
-                std::hash<rythe::core::rsl::id_type>{}(handle.owner->id));
-            rsl::math::detail::combine_hash(hash,
-                rythe::core::rsl::typeHash<component_type>());
+			rsl::math::detail::combine_hash(hash, std::hash<rythe::core::rsl::id_type>{}(handle.owner->id));
+			rsl::math::detail::combine_hash(hash, rythe::core::rsl::typeHash<component_type>());
 
-            return hash;
-        }
-    };
-}
+			return hash;
+		}
+	};
+} // namespace std
 #endif

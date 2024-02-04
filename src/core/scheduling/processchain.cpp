@@ -1,70 +1,74 @@
+#include <core/scheduling/clock.hpp>
 #include <core/scheduling/processchain.hpp>
 #include <core/scheduling/scheduler.hpp>
-#include <core/scheduling/clock.hpp>
 
 namespace rythe::core::scheduling
 {
-    ProcessChain::ProcessChain(rsl::cstring name) : m_name(name), m_nameHash(rsl::nameHash(name))
-    {
-    }
+	ProcessChain::ProcessChain(rsl::cstring name)
+		: m_name(name),
+		  m_nameHash(rsl::nameHash(name))
+	{
+	}
 
-    ProcessChain::ProcessChain(rsl::cstring name, rsl::id_type id) : m_name(name), m_nameHash(id)
-    {
-    }
+	ProcessChain::ProcessChain(rsl::cstring name, rsl::id_type id)
+		: m_name(name),
+		  m_nameHash(id)
+	{
+	}
 
-    rsl::id_type ProcessChain::id()
-    {
-        return m_nameHash;
-    }
+	rsl::id_type ProcessChain::id()
+	{
+		return m_nameHash;
+	}
 
-    void ProcessChain::subscribeToChainStart(const chain_callback_delegate& callback)
-    {
-        m_onChainStart.push_back(callback);
-    }
+	void ProcessChain::subscribeToChainStart(const chain_callback_delegate& callback)
+	{
+		m_onChainStart.push_back(callback);
+	}
 
-    void ProcessChain::unsubscribeFromChainStart(const chain_callback_delegate& callback)
-    {
-        m_onChainStart.remove(callback);
-    }
+	void ProcessChain::unsubscribeFromChainStart(const chain_callback_delegate& callback)
+	{
+		m_onChainStart.remove(callback);
+	}
 
-    void ProcessChain::subscribeToChainEnd(const chain_callback_delegate& callback)
-    {
-        m_onChainEnd.push_back(callback);
-    }
+	void ProcessChain::subscribeToChainEnd(const chain_callback_delegate& callback)
+	{
+		m_onChainEnd.push_back(callback);
+	}
 
-    void ProcessChain::unsubscribeFromChainEnd(const chain_callback_delegate& callback)
-    {
-        m_onChainEnd.remove(callback);
-    }
+	void ProcessChain::unsubscribeFromChainEnd(const chain_callback_delegate& callback)
+	{
+		m_onChainEnd.remove(callback);
+	}
 
-    void ProcessChain::addProcess(Process& process)
-    {
-        m_processes.insert(process.id(), pointer<Process>{ &process });
-    }
+	void ProcessChain::addProcess(Process& process)
+	{
+		m_processes.insert(process.id(), pointer<Process>{&process});
+	}
 
-    void ProcessChain::addProcess(pointer<Process> process)
-    {
-        m_processes.insert(process->id(), process);
-    }
+	void ProcessChain::addProcess(pointer<Process> process)
+	{
+		m_processes.insert(process->id(), process);
+	}
 
-    bool ProcessChain::removeProcess(Process& process)
-    {
-        return m_processes.erase(process.id());
-    }
+	bool ProcessChain::removeProcess(Process& process)
+	{
+		return m_processes.erase(process.id());
+	}
 
-    bool ProcessChain::removeProcess(pointer<Process> process)
-    {
-        return m_processes.erase(process->id());
-    }
+	bool ProcessChain::removeProcess(pointer<Process> process)
+	{
+		return m_processes.erase(process->id());
+	}
 
-    void ProcessChain::runInCurrentThread(rsl::span deltaTime)
-    {
-        m_onChainStart(deltaTime, rsl::span(Clock::elapsedSinceTickStart()));
+	void ProcessChain::runInCurrentThread(rsl::span deltaTime)
+	{
+		m_onChainStart(deltaTime, rsl::span(Clock::elapsedSinceTickStart()));
 
-        for (auto [_, ptr] : m_processes)
-            ptr->execute(deltaTime);
+		for (auto [_, ptr] : m_processes)
+			ptr->execute(deltaTime);
 
-        m_onChainEnd(deltaTime, rsl::span(Clock::elapsedSinceTickStart()));
-    }
+		m_onChainEnd(deltaTime, rsl::span(Clock::elapsedSinceTickStart()));
+	}
 
-}
+} // namespace rythe::core::scheduling

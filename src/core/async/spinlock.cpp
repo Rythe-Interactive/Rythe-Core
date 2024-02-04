@@ -2,83 +2,83 @@
 
 namespace rythe::core::async
 {
-    bool spinlock::m_forceRelease = false;
-    std::atomic_uint spinlock::m_lastId = { 1 };
-    thread_local std::unordered_map<rsl::id_type, rsl::uint> spinlock::m_localState;
+	bool spinlock::m_forceRelease = false;
+	std::atomic_uint spinlock::m_lastId = {1};
+	thread_local std::unordered_map<rsl::id_type, rsl::uint> spinlock::m_localState;
 
-    void spinlock::force_release(bool release)
-    {
-        m_forceRelease = release;
-    }
+	void spinlock::force_release(bool release)
+	{
+		m_forceRelease = release;
+	}
 
-    spinlock::spinlock(spinlock&& source) noexcept
-    {
-        if (m_forceRelease)
-            return;
+	spinlock::spinlock(spinlock&& source) noexcept
+	{
+		if (m_forceRelease)
+			return;
 
-        rsl_assert_msg("Attempted to move a spinlock that was locked.", !source.m_lock.load(std::memory_order_relaxed));
-        m_id = source.m_id;
-    }
+		rsl_assert_msg("Attempted to move a spinlock that was locked.", !source.m_lock.load(std::memory_order_relaxed));
+		m_id = source.m_id;
+	}
 
-    spinlock& spinlock::operator=(spinlock&& source) noexcept
-    {
-        if (m_forceRelease)
-            return *this;
+	spinlock& spinlock::operator=(spinlock&& source) noexcept
+	{
+		if (m_forceRelease)
+			return *this;
 
-        rsl_assert_msg("Attempted to move a spinlock that was locked.", !source.m_lock.load(std::memory_order_relaxed));
-        m_id = source.m_id;
-        return *this;
-    }
+		rsl_assert_msg("Attempted to move a spinlock that was locked.", !source.m_lock.load(std::memory_order_relaxed));
+		m_id = source.m_id;
+		return *this;
+	}
 
-    void spinlock::lock() const noexcept
-    {
-        if (m_forceRelease)
-            return;
+	void spinlock::lock() const noexcept
+	{
+		if (m_forceRelease)
+			return;
 
-        auto& locks = m_localState[m_id];
-        if (locks)
-        {
-            locks++;
-            return;
-        }
+		auto& locks = m_localState[m_id];
+		if (locks)
+		{
+			locks++;
+			return;
+		}
 
-        while (true)
-        {
-            if (!m_lock.exchange(true, std::memory_order_acquire))
-                break;
-            while (m_lock.load(std::memory_order_relaxed))
-                R_PAUSE_INSTRUCTION();
-        }
+		while (true)
+		{
+			if (!m_lock.exchange(true, std::memory_order_acquire))
+				break;
+			while (m_lock.load(std::memory_order_relaxed))
+				R_PAUSE_INSTRUCTION();
+		}
 
-        locks++;
-    }
+		locks++;
+	}
 
-    [[nodiscard]] bool spinlock::try_lock() const noexcept
-    {
-        if (m_forceRelease)
-            return true;
+	[[nodiscard]] bool spinlock::try_lock() const noexcept
+	{
+		if (m_forceRelease)
+			return true;
 
-        auto& locks = m_localState[m_id];
-        if (locks)
-        {
-            locks++;
-            return true;
-        }
+		auto& locks = m_localState[m_id];
+		if (locks)
+		{
+			locks++;
+			return true;
+		}
 
-        bool ret = !m_lock.load(std::memory_order_relaxed) && !m_lock.exchange(true, std::memory_order_acquire);
+		bool ret = !m_lock.load(std::memory_order_relaxed) && !m_lock.exchange(true, std::memory_order_acquire);
 
-        if (ret)
-            locks++;
+		if (ret)
+			locks++;
 
-        return ret;
-    }
+		return ret;
+	}
 
-    void spinlock::unlock() const noexcept
-    {
-        if (m_forceRelease)
-            return;
+	void spinlock::unlock() const noexcept
+	{
+		if (m_forceRelease)
+			return;
 
-        m_lock.store(false, std::memory_order_release);
-        m_localState[m_id]--;
-    }
-}
+		m_lock.store(false, std::memory_order_release);
+		m_localState[m_id]--;
+	}
+} // namespace rythe::core::async

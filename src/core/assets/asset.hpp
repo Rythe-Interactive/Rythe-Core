@@ -3,32 +3,35 @@
 
 namespace rythe::core::assets
 {
-    template<typename AssetType>
-    struct asset : public pointer<AssetType>
-    {
-        template<typename T>
-        friend class AssetCache;
+	template <typename AssetType>
+	struct asset : public pointer<AssetType>
+	{
+		template <typename T>
+		friend class AssetCache;
 
-        constexpr asset(AssetType* p, rsl::id_type id) noexcept : pointer<AssetType>({ p }), m_id(id) {}
+		constexpr asset(AssetType* p, rsl::id_type id) noexcept
+			: pointer<AssetType>({p}),
+			  m_id(id)
+		{
+		}
 
-        constexpr bool operator==(const asset& other) const noexcept { return m_id == other.m_id && this->ptr == other.ptr; }
-        constexpr bool operator!=(const asset& other) const noexcept { return !operator==(other); }
+		constexpr bool operator==(const asset& other) const noexcept { return m_id == other.m_id && this->ptr == other.ptr; }
+		constexpr bool operator!=(const asset& other) const noexcept { return !operator==(other); }
 
-        RULE_OF_5_NOEXCEPT(asset);
+		RULE_OF_5_NOEXCEPT(asset);
 
-    private:
-        rsl::id_type m_id;
+	private:
+		rsl::id_type m_id;
 
-    public:
-        rsl::id_type id() const noexcept;
-        const std::string& name() const;
-        const std::string& path() const;
-        void destroy();
-        asset copy(const std::string& name) const;
-        asset copy(rsl::id_type 
-            , const std::string& name) const;
-    };
+	public:
+		rsl::id_type id() const noexcept;
+		const std::string& name() const;
+		const std::string& path() const;
+		void destroy();
+		asset copy(const std::string& name) const;
+		asset copy(rsl::id_type, const std::string& name) const;
+	};
 
-    template<typename AssetType>
-    constexpr static asset<AssetType> invalid_asset = { nullptr, invalid_id };
-}
+	template <typename AssetType>
+	constexpr static asset<AssetType> invalid_asset = {nullptr, invalid_id};
+} // namespace rythe::core::assets

@@ -3,8 +3,10 @@
 
 namespace rythe::core::scheduling
 {
-    template<rsl::size_type charc>
-    inline rythe_always_inline ProcessChain::ProcessChain(const char(&name)[charc]) : m_name(name), m_nameHash(rsl::nameHash<charc>(name))
-    {
-    }
-}
+	template <rsl::size_type charc>
+	inline rythe_always_inline ProcessChain::ProcessChain(const char (&name)[charc])
+		: m_name(name),
+		  m_nameHash(rsl::nameHash<charc>(name))
+	{
+	}
+} // namespace rythe::core::scheduling

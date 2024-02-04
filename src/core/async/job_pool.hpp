@@ -8,92 +8,105 @@
 
 namespace rythe::core::async
 {
-    struct this_job
-    {
-        friend struct job_pool;
-    private:
-        static thread_local rsl::id_type m_id;
-        static thread_local float m_progress;
-    public:
-        static rsl::id_type get_id() noexcept;
-        static float get_progress() noexcept;
-    };
+	struct this_job
+	{
+		friend struct job_pool;
 
-    struct job_pool
-    {
-    private:
-        std::shared_ptr<async_progress<void>> m_progress;
-        std::atomic<rsl::size_type> m_index;
-        rsl::size_type m_size;
-        rsl::delegate<void()> m_job;
+	private:
+		static thread_local rsl::id_type m_id;
+		static thread_local float m_progress;
 
-    public:
-        job_pool(rsl::size_type count, const rsl::delegate<void()>& func) : m_progress(new async_progress<void>(count)), m_index(count), m_size(count), m_job(func) {}
+	public:
+		static rsl::id_type get_id() noexcept;
+		static float get_progress() noexcept;
+	};
 
-        std::shared_ptr<async_progress<void>> get_progress() const noexcept;
+	struct job_pool
+	{
+	private:
+		std::shared_ptr<async_progress<void>> m_progress;
+		std::atomic<rsl::size_type> m_index;
+		rsl::size_type m_size;
+		rsl::delegate<void()> m_job;
 
-        bool empty() const noexcept;
+	public:
+		job_pool(rsl::size_type count, const rsl::delegate<void()>& func)
+			: m_progress(new async_progress<void>(count)),
+			  m_index(count),
+			  m_size(count),
+			  m_job(func)
+		{
+		}
 
-        bool prime_job();
-        void complete_job();
+		std::shared_ptr<async_progress<void>> get_progress() const noexcept;
 
-        bool is_done() const noexcept;
-    };
+		bool empty() const noexcept;
 
-    using job_queue = std::list<std::shared_ptr<job_pool>>;
+		bool prime_job();
+		void complete_job();
 
-    template<typename Func, typename CompleteFunc>
-    struct job_operation : public repeating_async_operation<Func, void>
-    {
-    private:
-        CompleteFunc m_onComplete;
+		bool is_done() const noexcept;
+	};
 
-    public:
-        std::shared_ptr<job_pool> jobPoolPtr;
+	using job_queue = std::list<std::shared_ptr<job_pool>>;
 
-        job_operation(const std::shared_ptr<async_progress<void>>& progress, const std::shared_ptr<job_pool>& jobPool, Func&& repeater, CompleteFunc&& complete)
-            : repeating_async_operation<Func, void>(progress, repeater), m_onComplete(complete), jobPoolPtr(jobPool) {}
+	template <typename Func, typename CompleteFunc>
+	struct job_operation : public repeating_async_operation<Func, void>
+	{
+	private:
+		CompleteFunc m_onComplete;
 
-        job_operation(const job_operation&) noexcept(std::is_nothrow_copy_constructible_v<Func> && std::is_nothrow_copy_constructible_v<CompleteFunc>) = default;
-        job_operation(job_operation&&) noexcept(std::is_nothrow_move_constructible_v<Func> && std::is_nothrow_move_constructible_v<CompleteFunc>) = default;
+	public:
+		std::shared_ptr<job_pool> jobPoolPtr;
 
-        virtual void wait(wait_priority priority = wait_priority_normal) const noexcept override
-        {
-            if (!jobPoolPtr)
-                return;
+		job_operation(const std::shared_ptr<async_progress<void>>& progress, const std::shared_ptr<job_pool>& jobPool, Func&& repeater, CompleteFunc&& complete)
+			: repeating_async_operation<Func, void>(progress, repeater),
+			  m_onComplete(complete),
+			  jobPoolPtr(jobPool)
+		{
+		}
 
-            while (!jobPoolPtr->is_done())
-            {
-                switch (priority)
-                {
-                case wait_priority::sleep:
-                    std::this_thread::sleep_for(std::chrono::microseconds(1));
-                    break;
-                case wait_priority::normal:
-                {
-                    jobPoolPtr->prime_job();
-                    jobPoolPtr->complete_job();
-                    R_PAUSE_INSTRUCTION();
-                    break;
-                }
-                case wait_priority::real_time:
-                default:
-                {
-                    jobPoolPtr->prime_job();
-                    jobPoolPtr->complete_job();
-                    break;
-                }
-                }
-            }
-            m_onComplete();
-        }
-    };
+		job_operation(const job_operation&) noexcept(std::is_nothrow_copy_constructible_v<Func> && std::is_nothrow_copy_constructible_v<CompleteFunc>) = default;
+		job_operation(job_operation&&) noexcept(std::is_nothrow_move_constructible_v<Func> && std::is_nothrow_move_constructible_v<CompleteFunc>) = default;
+
+		virtual void wait(wait_priority priority = wait_priority_normal) const noexcept override
+		{
+			if (!jobPoolPtr)
+				return;
+
+			while (!jobPoolPtr->is_done())
+			{
+				switch (priority)
+				{
+					case wait_priority::sleep:
+						std::this_thread::sleep_for(std::chrono::microseconds(1));
+						break;
+					case wait_priority::normal:
+					{
+						jobPoolPtr->prime_job();
+						jobPoolPtr->complete_job();
+						R_PAUSE_INSTRUCTION();
+						break;
+					}
+					case wait_priority::real_time:
+					default:
+					{
+						jobPoolPtr->prime_job();
+						jobPoolPtr->complete_job();
+						break;
+					}
+				}
+			}
+			m_onComplete();
+		}
+	};
 
 #if !defined(DOXY_EXCLUDE)
-    template<typename Func, typename CompletionFunc>
-    job_operation(
-        const std::shared_ptr<async_progress<void>>&,
-        const std::shared_ptr<job_pool>&,
-        Func&&, CompletionFunc&&)->job_operation<Func, CompletionFunc>;
+	template <typename Func, typename CompletionFunc>
+	job_operation(
+		const std::shared_ptr<async_progress<void>>&,
+		const std::shared_ptr<job_pool>&,
+		Func&&, CompletionFunc&&
+	) -> job_operation<Func, CompletionFunc>;
 #endif
-}
+} // namespace rythe::core::async

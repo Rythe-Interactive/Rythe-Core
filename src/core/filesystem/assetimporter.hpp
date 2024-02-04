@@ -13,114 +13,112 @@
 
 namespace rythe::core::filesystem
 {
-    namespace detail
-    {
-        /**@class resource_converter_base
-         * @brief Common base struct of all resource converters.
-         */
-        struct resource_converter_base
-        {
-            virtual rsl::id_type result_type() = 0;
-        };
+	namespace detail
+	{
+		/**@class resource_converter_base
+		 * @brief Common base struct of all resource converters.
+		 */
+		struct resource_converter_base
+		{
+			virtual rsl::id_type result_type() = 0;
+		};
 
-    }
+	} // namespace detail
 
-    /**@class resource_converter
-     * @brief Base struct all user created resource converters should inherit from.
-     * @tparam result Result type that the converter converts to.
-     * @tparam Settings... Any settings to be passed to the load function.
-     */
-    template<typename result, typename... Settings>
-    struct resource_converter : public detail::resource_converter_base
-    {
+	/**@class resource_converter
+	 * @brief Base struct all user created resource converters should inherit from.
+	 * @tparam result Result type that the converter converts to.
+	 * @tparam Settings... Any settings to be passed to the load function.
+	 */
+	template <typename result, typename... Settings>
+	struct resource_converter : public detail::resource_converter_base
+	{
 
-        virtual rsl::id_type result_type() override { return rsl::typeHash<result>(); }
+		virtual rsl::id_type result_type() override { return rsl::typeHash<result>(); }
 
-        virtual common::result<result, fs_error> load_default(const basic_resource& resource) = 0;
-        virtual common::result<result, fs_error> load(const basic_resource& resource, Settings&&...) = 0;
+		virtual common::result<result, fs_error> load_default(const basic_resource& resource) = 0;
+		virtual common::result<result, fs_error> load(const basic_resource& resource, Settings&&...) = 0;
+	};
 
-    };
+	/**@class basic_resource_converter
+	 * @brief Converter from basic resource to basic resource (essentially does nothing and allows you to load files as binary or text form through the AssetImporter).
+	 */
+	struct basic_resource_converter final : public resource_converter<basic_resource>
+	{
+		common::result<basic_resource, fs_error> load_default(const basic_resource& resource) override { return load(resource); }
+		virtual common::result<basic_resource, fs_error> load(const basic_resource& resource) override { return resource; }
+	};
 
-    /**@class basic_resource_converter
-     * @brief Converter from basic resource to basic resource (essentially does nothing and allows you to load files as binary or text form through the AssetImporter).
-     */
-    struct basic_resource_converter final : public resource_converter<basic_resource>
-    {
-        common::result<basic_resource, fs_error> load_default(const basic_resource& resource) override { return load(resource); }
-        virtual common::result<basic_resource, fs_error> load(const basic_resource& resource) override { return resource; }
-    };
+	/**@class basic_converter
+	 * @brief Simple default converter that uses from_resource<T> to convert from binary to the item to import.
+	 * @ref rythe::core::filesystem::from_resource
+	 */
+	template <typename T>
+	struct basic_converter final : public resource_converter<T>
+	{
+		virtual common::result<T, fs_error> load(const basic_resource& resource) { return from_resource<T>(resource); }
+	};
 
-    /**@class basic_converter
-     * @brief Simple default converter that uses from_resource<T> to convert from binary to the item to import.
-     * @ref rythe::core::filesystem::from_resource
-     */
-    template<typename T>
-    struct basic_converter final : public resource_converter<T>
-    {
-        virtual common::result<T, fs_error> load(const basic_resource& resource) { return from_resource<T>(resource); }
-    };
+	/**@class AssetImporter
+	 * @brief Static class that allows you to load any object type from a file as long as a converter exists for that combination.
+	 */
+	class AssetImporter
+	{
+	private:
+		static sparse_map<rsl::id_type, std::vector<std::unique_ptr<detail::resource_converter_base>>> m_converters;
 
-    /**@class AssetImporter
-     * @brief Static class that allows you to load any object type from a file as long as a converter exists for that combination.
-     */
-    class AssetImporter
-    {
-    private:
-        static sparse_map<rsl::id_type, std::vector<std::unique_ptr<detail::resource_converter_base>>> m_converters;
-
-    public:
-        /**@brief Reports a converter type to the importer and allows converting from the given extension to the given object type.
-         * @param extension File extension to which the converter belongs.
-         * @tparam T Type of the converter.
-         */
-        template<typename T>
-        static void reportConverter(rsl::cstring extension)
-        {
-            m_converters[rsl::nameHash(extension)].push_back(std::make_unique<T>());
-        }
+	public:
+		/**@brief Reports a converter type to the importer and allows converting from the given extension to the given object type.
+		 * @param extension File extension to which the converter belongs.
+		 * @tparam T Type of the converter.
+		 */
+		template <typename T>
+		static void reportConverter(rsl::cstring extension)
+		{
+			m_converters[rsl::nameHash(extension)].push_back(std::make_unique<T>());
+		}
 
 
-        /**@brief Attempt to load an object from a file using the pre-reported converters.
-         * @param view filesystem::view to the file to load.
-         * @param settings... Settings to pass to the load function of the converter.
-         * @tparam T Type of the object to try to load.
-         * @return common::result<T, fs_error> Result containing either an error or the successfully loaded object.
-         */
-        template<typename T, typename... Settings>
-        static common::result<T, fs_error> tryLoad(const view& view, Settings&&... settings)
-        {
-            // Debug log the settings used for loading the files so that you can track down why something got loaded wrong if it did.
-            if constexpr (sizeof...(settings) == 0)
-                log::trace("Tried to load asset of type{}", rsl::nameOfType<T>());
-            else if constexpr (sizeof...(settings) == 1)
-                log::trace("Tried to load asset of type{} with settings of type:{}", rsl::nameOfType<T>(), (std::string(rsl::nameOfType<Settings>()) + ...));
-            else
-                log::trace("Tried to load asset of type{} with settings of types:{}", rsl::nameOfType<T>(), ((std::string(rsl::nameOfType<Settings>()) + ", ") + ...));
+		/**@brief Attempt to load an object from a file using the pre-reported converters.
+		 * @param view filesystem::view to the file to load.
+		 * @param settings... Settings to pass to the load function of the converter.
+		 * @tparam T Type of the object to try to load.
+		 * @return common::result<T, fs_error> Result containing either an error or the successfully loaded object.
+		 */
+		template <typename T, typename... Settings>
+		static common::result<T, fs_error> tryLoad(const view& view, Settings&&... settings)
+		{
+			// Debug log the settings used for loading the files so that you can track down why something got loaded wrong if it did.
+			if constexpr (sizeof...(settings) == 0)
+				log::trace("Tried to load asset of type{}", rsl::nameOfType<T>());
+			else if constexpr (sizeof...(settings) == 1)
+				log::trace("Tried to load asset of type{} with settings of type:{}", rsl::nameOfType<T>(), (std::string(rsl::nameOfType<Settings>()) + ...));
+			else
+				log::trace("Tried to load asset of type{} with settings of types:{}", rsl::nameOfType<T>(), ((std::string(rsl::nameOfType<Settings>()) + ", ") + ...));
 
-            // Check if the view is valid to load as a file.
-            if (!view.is_valid() || !view.file_info().is_file)
-                return rythe_fs_error("requested asset load on view that isn't a valid file.");
+			// Check if the view is valid to load as a file.
+			if (!view.is_valid() || !view.file_info().is_file)
+				return rythe_fs_error("requested asset load on view that isn't a valid file.");
 
-            // Get data from file and check validity.
-            auto result = view.get();
-            if (result != common::valid)
-                return result.error();
+			// Get data from file and check validity.
+			auto result = view.get();
+			if (result != common::valid)
+				return result.error();
 
-            for (auto& base : m_converters[rsl::nameHash(view.get_extension().value())])
-            {
-                // Do a safety check if the cast was valid before we call any functions on it.
-                if (rsl::typeHash<T>() == base->result_type())
-                {
-                    // Retrieve the correct converter to use.
-                    auto* converter = static_cast<resource_converter<T, Settings...>*>(base.get());
+			for (auto& base : m_converters[rsl::nameHash(view.get_extension().value())])
+			{
+				// Do a safety check if the cast was valid before we call any functions on it.
+				if (rsl::typeHash<T>() == base->result_type())
+				{
+					// Retrieve the correct converter to use.
+					auto* converter = static_cast<resource_converter<T, Settings...>*>(base.get());
 
-                    // Attempt the conversion and return the result.
-                    return converter->load(result, std::forward<Settings>(settings)...);
-                }
-            }
+					// Attempt the conversion and return the result.
+					return converter->load(result, std::forward<Settings>(settings)...);
+				}
+			}
 
-            return rythe_fs_error("requested asset load on file that stores a different type of asset.");
-        }
-
-    };
-}
+			return rythe_fs_error("requested asset load on file that stores a different type of asset.");
+		}
+	};
+} // namespace rythe::core::filesystem

@@ -1,184 +1,200 @@
 #include "core/engine/engine.hpp"
 #include "core/defaults/coremodule.hpp"
 #include "core/ecs/ecs.hpp"
-#include "core/scheduling/scheduling.hpp"
 #include "core/events/eventbus.hpp"
+#include "core/scheduling/scheduling.hpp"
 
 namespace rythe::core
 {
-    thread_local Engine* this_engine::m_ptr;
+	thread_local Engine* this_engine::m_ptr;
 
-    pointer<Engine> this_engine::get_context()
-    {
-        return { m_ptr };
-    }
+	pointer<Engine> this_engine::get_context()
+	{
+		return {m_ptr};
+	}
 
-    engine_id& this_engine::id()
-    {
-        return m_ptr->id;
-    }
+	engine_id& this_engine::id()
+	{
+		return m_ptr->id;
+	}
 
-    int& this_engine::exit_code()
-    {
-        return m_ptr->exitCode;
-    }
+	int& this_engine::exit_code()
+	{
+		return m_ptr->exitCode;
+	}
 
-    argh::parser& this_engine::cliargs()
-    {
-        return m_ptr->cliargs;
-    }
+	argh::parser& this_engine::cliargs()
+	{
+		return m_ptr->cliargs;
+	}
 
-    void this_engine::restart()
-    {
-        m_ptr->restart();
-    }
+	void this_engine::restart()
+	{
+		m_ptr->restart();
+	}
 
-    void this_engine::shutdown()
-    {
-        m_ptr->shutdown();
-    }
+	void this_engine::shutdown()
+	{
+		m_ptr->shutdown();
+	}
 
-    rsl::size_type Engine::m_initializedInstances = 0;
-    async::spinlock Engine::m_startupShutdownLock{};
+	rsl::size_type Engine::m_initializedInstances = 0;
+	async::spinlock Engine::m_startupShutdownLock{};
 
-    rsl::id_type Engine::generateId()
-    {
-        static rsl::id_type baseId = rsl::nameHash("\xabRYTHE ENGINE\xbb\r\n\x13\n");
-        rsl::id_type threadId = std::hash<std::thread::id>{}(std::this_thread::get_id());
-        return rsl::combine_hash(baseId++, threadId);
-    }
+	rsl::id_type Engine::generateId()
+	{
+		static rsl::id_type baseId = rsl::nameHash("\xabRYTHE ENGINE\xbb\r\n\x13\n");
+		rsl::id_type threadId = std::hash<std::thread::id>{}(std::this_thread::get_id());
+		return rsl::combine_hash(baseId++, threadId);
+	}
 
-    rsl::multicast_delegate<void()>& Engine::initializationSequence()
-    {
-        static rsl::multicast_delegate<void()> m_initializationSequence;
-        return m_initializationSequence;
-    }
+	rsl::multicast_delegate<void()>& Engine::initializationSequence()
+	{
+		static rsl::multicast_delegate<void()> m_initializationSequence;
+		return m_initializationSequence;
+	}
 
-    rsl::multicast_delegate<void()>& Engine::shutdownSequence()
-    {
-        static rsl::multicast_delegate<void()> m_shutdownSequence;
-        return m_shutdownSequence;
-    }
+	rsl::multicast_delegate<void()>& Engine::shutdownSequence()
+	{
+		static rsl::multicast_delegate<void()> m_shutdownSequence;
+		return m_shutdownSequence;
+	}
 
-    void Engine::shutdownModules()
-    {
-        for (const auto& [priority, moduleList] : m_modules)
-            for (auto& module : moduleList)
-                module->shutdown();
-    }
+	void Engine::shutdownModules()
+	{
+		for (const auto& [priority, moduleList] : m_modules)
+			for (auto& module : moduleList)
+				module->shutdown();
+	}
 
-    Engine::Engine(int argc, char** argv)
-        : m_modules(), m_shouldRestart(false), id(generateId()), exitCode(0), cliargs(argc, argv)
-    {
-        reportModule<CoreModule>();
-    }
+	Engine::Engine(int argc, char** argv)
+		: m_modules(),
+		  m_shouldRestart(false),
+		  id(generateId()),
+		  exitCode(0),
+		  cliargs(argc, argv)
+	{
+		reportModule<CoreModule>();
+	}
 
-    Engine::Engine() : m_modules(), m_shouldRestart(false), id(generateId()), exitCode(0), cliargs()
-    {
-        reportModule<CoreModule>();
-    }
+	Engine::Engine()
+		: m_modules(),
+		  m_shouldRestart(false),
+		  id(generateId()),
+		  exitCode(0),
+		  cliargs()
+	{
+		reportModule<CoreModule>();
+	}
 
-    Engine::Engine(Engine&& other)
-        : m_modules(std::move(other.m_modules)), m_shouldRestart(other.m_shouldRestart.load(std::memory_order_relaxed)), id(std::move(other.id)), exitCode(0), cliargs(std::move(other.cliargs))
-    {
-        reportModule<CoreModule>();
-    }
+	Engine::Engine(Engine&& other)
+		: m_modules(std::move(other.m_modules)),
+		  m_shouldRestart(other.m_shouldRestart.load(std::memory_order_relaxed)),
+		  id(std::move(other.id)),
+		  exitCode(0),
+		  cliargs(std::move(other.cliargs))
+	{
+		reportModule<CoreModule>();
+	}
 
-    Engine& Engine::operator=(Engine&& other)
-    {
-        m_modules = std::move(other.m_modules);
-        m_shouldRestart.store(other.m_shouldRestart.load(std::memory_order_relaxed), std::memory_order_relaxed);
-        id = std::move(other.id);
-        exitCode = other.exitCode;
-        cliargs = std::move(other.cliargs);
-        return *this;
-    }
+	Engine& Engine::operator=(Engine&& other)
+	{
+		m_modules = std::move(other.m_modules);
+		m_shouldRestart.store(other.m_shouldRestart.load(std::memory_order_relaxed), std::memory_order_relaxed);
+		id = std::move(other.id);
+		exitCode = other.exitCode;
+		cliargs = std::move(other.cliargs);
+		return *this;
+	}
 
-    void Engine::makeCurrentContext()
-    {
-        this_engine::m_ptr = this;
-    }
+	void Engine::makeCurrentContext()
+	{
+		this_engine::m_ptr = this;
+	}
 
-    void Engine::initialize()
-    {
-        log::undecoratedInfo(
-            "==========================\n"
-            "| Initializing engine... |\n"
-            "==========================");
+	void Engine::initialize()
+	{
+		log::undecoratedInfo(
+			"==========================\n"
+			"| Initializing engine... |\n"
+			"=========================="
+		);
 
-        {
-            async::lock_guard guard(m_startupShutdownLock);
-            if (m_initializedInstances == 0)
-                initializationSequence()();
+		{
+			async::lock_guard guard(m_startupShutdownLock);
+			if (m_initializedInstances == 0)
+				initializationSequence()();
 
-            m_initializedInstances++;
-        }
+			m_initializedInstances++;
+		}
 
-        {
-            auto& logData = log::impl::get();
-            //async::readwrite_guard guard(logData.threadNamesLock);
-            logData.threadNames[std::this_thread::get_id()] = "Initialization";
-        }
+		{
+			auto& logData = log::impl::get();
+			// async::readwrite_guard guard(logData.threadNamesLock);
+			logData.threadNames[std::this_thread::get_id()] = "Initialization";
+		}
 
-        for (const auto& [priority, moduleList] : m_modules)
-            for (auto& module : moduleList)
-                module->setup();
+		for (const auto& [priority, moduleList] : m_modules)
+			for (auto& module : moduleList)
+				module->setup();
 
-        for (const auto& [priority, moduleList] : m_modules)
-            for (auto& module : moduleList)
-                module->init();
+		for (const auto& [priority, moduleList] : m_modules)
+			for (auto& module : moduleList)
+				module->init();
 
 
-        {
-            auto& logData = log::impl::get();
-            //async::readwrite_guard guard(logData.threadNamesLock);
-            logData.threadNames[std::this_thread::get_id()] = "Main thread: " + std::to_string(id.value());
-        }
-    }
+		{
+			auto& logData = log::impl::get();
+			// async::readwrite_guard guard(logData.threadNamesLock);
+			logData.threadNames[std::this_thread::get_id()] = "Main thread: " + std::to_string(id.value());
+		}
+	}
 
-    void Engine::uninitialize()
-    {
-        async::lock_guard guard(m_startupShutdownLock);
-        m_initializedInstances--;
+	void Engine::uninitialize()
+	{
+		async::lock_guard guard(m_startupShutdownLock);
+		m_initializedInstances--;
 
-        if (m_initializedInstances == 0)
-            shutdownSequence()();
-    }
+		if (m_initializedInstances == 0)
+			shutdownSequence()();
+	}
 
-    void Engine::run(bool low_power, rsl::uint minThreads)
-    {
-        makeCurrentContext();
-        do
-        {
-            m_shouldRestart.store(false, std::memory_order_relaxed);
+	void Engine::run(bool low_power, rsl::uint minThreads)
+	{
+		makeCurrentContext();
+		do
+		{
+			m_shouldRestart.store(false, std::memory_order_relaxed);
 
-            initialize();
+			initialize();
 
-            log::undecoratedInfo(
-                "==============================\n"
-                "| Entering main engine loop. |\n"
-                "==============================");
+			log::undecoratedInfo(
+				"==============================\n"
+				"| Entering main engine loop. |\n"
+				"=============================="
+			);
 
-            exitCode = scheduling::Scheduler::run(*this, low_power, minThreads);
+			exitCode = scheduling::Scheduler::run(*this, low_power, minThreads);
 
-            uninitialize();
+			uninitialize();
 
-        } while (m_shouldRestart.load(std::memory_order_relaxed));
-    }
+		} while (m_shouldRestart.load(std::memory_order_relaxed));
+	}
 
-    void Engine::restart()
-    {
-        m_shouldRestart.store(true, std::memory_order_relaxed);
+	void Engine::restart()
+	{
+		m_shouldRestart.store(true, std::memory_order_relaxed);
 
-        log::undecoratedInfo(
-            "========================\n"
-            "| Restarting engine... |\n"
-            "========================");
-        shutdown();
-    }
+		log::undecoratedInfo(
+			"========================\n"
+			"| Restarting engine... |\n"
+			"========================"
+		);
+		shutdown();
+	}
 
-    void Engine::shutdown()
-    {
-        scheduling::Scheduler::exit(exitCode);
-    }
-}
+	void Engine::shutdown()
+	{
+		scheduling::Scheduler::exit(exitCode);
+	}
+} // namespace rythe::core

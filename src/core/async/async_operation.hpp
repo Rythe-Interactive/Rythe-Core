@@ -1,242 +1,277 @@
 #pragma once
 #include <atomic>
-#include <mutex>
 #include <memory>
+#include <mutex>
 #include <optional>
 #include <thread>
 #include <utility>
 
-#include <rsl/type_util>
-#include <rsl/primitives>
 #include <rsl/delegate>
-
+#include <rsl/primitives>
 #include <rsl/type_util>
-#include <core/async/wait_priority.hpp>
+
 #include <core/async/spinlock.hpp>
-#include <core/common/result.hpp>
+#include <core/async/wait_priority.hpp>
 #include <core/common/exception.hpp>
+#include <core/common/result.hpp>
+#include <rsl/type_util>
 
 namespace rythe::core::async
 {
-    struct async_progress_base
-    {
-    protected:
-        const rsl::size_type m_size;
-        std::atomic<rsl::size_type> m_progress;
+	struct async_progress_base
+	{
+	protected:
+		const rsl::size_type m_size;
+		std::atomic<rsl::size_type> m_progress;
 
-        template<typename T>
-        constexpr static T precision_scale = static_cast<T>(1000);
+		template <typename T>
+		constexpr static T precision_scale = static_cast<T>(1000);
 
-        void complete_impl() noexcept;
+		void complete_impl() noexcept;
 
-    public:
-        constexpr async_progress_base() noexcept : m_size(100u * precision_scale<rsl::size_type>), m_progress(0) {}
-        constexpr explicit async_progress_base(float size) noexcept : m_size(static_cast<rsl::size_type>(size * precision_scale<float>)), m_progress(0) {}
+	public:
+		constexpr async_progress_base() noexcept
+			: m_size(100u * precision_scale<rsl::size_type>),
+			  m_progress(0)
+		{
+		}
+		constexpr explicit async_progress_base(float size) noexcept
+			: m_size(static_cast<rsl::size_type>(size * precision_scale<float>)),
+			  m_progress(0)
+		{
+		}
 
-        [[nodiscard]] float size() const noexcept;
-        [[nodiscard]] rsl::size_type raw_size() const noexcept;
-        [[nodiscard]] rsl::size_type raw_progress() const noexcept;
+		[[nodiscard]] float size() const noexcept;
+		[[nodiscard]] rsl::size_type raw_size() const noexcept;
+		[[nodiscard]] rsl::size_type raw_progress() const noexcept;
 
-        void advance_progress(float progress = 1.f) noexcept;
-        void reset(float progress = 0.f) noexcept;
-        [[nodiscard]] bool is_done() const noexcept;
-        [[nodiscard]] float progress() const noexcept;
-    };
+		void advance_progress(float progress = 1.f) noexcept;
+		void reset(float progress = 0.f) noexcept;
+		[[nodiscard]] bool is_done() const noexcept;
+		[[nodiscard]] float progress() const noexcept;
+	};
 
-    template<typename ReturnType>
-    struct async_progress : public async_progress_base
-    {
-        using payload_type = ReturnType;
-    protected:
-        spinlock m_payloadLock;
-        std::optional<payload_type> m_payload;
+	template <typename ReturnType>
+	struct async_progress : public async_progress_base
+	{
+		using payload_type = ReturnType;
 
-    public:
-        constexpr async_progress() noexcept : async_progress_base() {}
-        constexpr explicit async_progress(float size) noexcept : async_progress_base(size) {}
+	protected:
+		spinlock m_payloadLock;
+		std::optional<payload_type> m_payload;
 
-        void complete(ReturnType&& value) noexcept
-        {
-            std::lock_guard guard(m_payloadLock);
-            m_payload = std::move(value);
-            complete_impl();
-        }
+	public:
+		constexpr async_progress() noexcept
+			: async_progress_base()
+		{
+		}
+		constexpr explicit async_progress(float size) noexcept
+			: async_progress_base(size)
+		{
+		}
 
-        template<typename... Args>
-        void complete(Args&&... args) noexcept
-        {
-            std::lock_guard guard(m_payloadLock);
-            m_payload.emplace(std::forward<Args>(args)...);
-            complete_impl();
-        }
+		void complete(ReturnType&& value) noexcept
+		{
+			std::lock_guard guard(m_payloadLock);
+			m_payload = std::move(value);
+			complete_impl();
+		}
 
-        [[nodiscard]] common::result<std::reference_wrapper<payload_type>> get_result()
-        {
-            std::lock_guard guard(m_payloadLock);
-            if (m_payload)
-                return std::ref(m_payload.value());
-            return rythe_exception_msg("Payload of async operation was not ready yet.");
-        }
-    };
+		template <typename... Args>
+		void complete(Args&&... args) noexcept
+		{
+			std::lock_guard guard(m_payloadLock);
+			m_payload.emplace(std::forward<Args>(args)...);
+			complete_impl();
+		}
 
-    template<>
-    struct async_progress<void> : public async_progress_base
-    {
-    public:
-        constexpr async_progress() noexcept : async_progress_base() {}
-        constexpr explicit async_progress(float size) noexcept : async_progress_base(size) {}
+		[[nodiscard]] common::result<std::reference_wrapper<payload_type>> get_result()
+		{
+			std::lock_guard guard(m_payloadLock);
+			if (m_payload)
+				return std::ref(m_payload.value());
+			return rythe_exception_msg("Payload of async operation was not ready yet.");
+		}
+	};
 
-        void complete() noexcept { complete_impl(); }
-    };
+	template <>
+	struct async_progress<void> : public async_progress_base
+	{
+	public:
+		constexpr async_progress() noexcept
+			: async_progress_base()
+		{
+		}
+		constexpr explicit async_progress(float size) noexcept
+			: async_progress_base(size)
+		{
+		}
 
-    struct async_operation_base
-    {
-    protected:
-        std::shared_ptr<async_progress_base> m_progress;
+		void complete() noexcept { complete_impl(); }
+	};
 
-    public:
-        explicit async_operation_base(const std::shared_ptr<async_progress_base>& progress) noexcept;
-        NO_DTOR_RULE5_NOEXCEPT(async_operation_base);
-        virtual ~async_operation_base() = default;
+	struct async_operation_base
+	{
+	protected:
+		std::shared_ptr<async_progress_base> m_progress;
 
-        [[nodiscard]] bool is_done() const noexcept;
+	public:
+		explicit async_operation_base(const std::shared_ptr<async_progress_base>& progress) noexcept;
+		NO_DTOR_RULE5_NOEXCEPT(async_operation_base);
+		virtual ~async_operation_base() = default;
 
-        [[nodiscard]] float progress() const noexcept;
+		[[nodiscard]] bool is_done() const noexcept;
 
-        virtual void wait(wait_priority priority = wait_priority_normal) const noexcept;
-    };
+		[[nodiscard]] float progress() const noexcept;
 
-    template<typename functor, typename payload>
-    struct repeating_async_operation : public async_operation_base
-    {
-    protected:
-        functor m_repeater;
+		virtual void wait(wait_priority priority = wait_priority_normal) const noexcept;
+	};
 
-    public:
-        repeating_async_operation(const std::shared_ptr<async_progress<payload>>& progress, functor&& repeater) : async_operation_base(progress), m_repeater(repeater) {}
-        repeating_async_operation() noexcept(std::is_nothrow_default_constructible_v<functor>) = default;
-        repeating_async_operation(const repeating_async_operation&) noexcept(std::is_nothrow_copy_constructible_v<functor>) = default;
-        repeating_async_operation(repeating_async_operation&&) noexcept(std::is_nothrow_move_constructible_v<functor>) = default;
+	template <typename functor, typename payload>
+	struct repeating_async_operation : public async_operation_base
+	{
+	protected:
+		functor m_repeater;
 
-        repeating_async_operation& operator=(const repeating_async_operation&) noexcept(std::is_nothrow_copy_assignable_v<functor>) = default;
-        repeating_async_operation& operator=(repeating_async_operation&&) noexcept(std::is_nothrow_move_assignable_v<functor>) = default;
+	public:
+		repeating_async_operation(const std::shared_ptr<async_progress<payload>>& progress, functor&& repeater)
+			: async_operation_base(progress),
+			  m_repeater(repeater)
+		{
+		}
+		repeating_async_operation() noexcept(std::is_nothrow_default_constructible_v<functor>) = default;
+		repeating_async_operation(const repeating_async_operation&) noexcept(std::is_nothrow_copy_constructible_v<functor>) = default;
+		repeating_async_operation(repeating_async_operation&&) noexcept(std::is_nothrow_move_constructible_v<functor>) = default;
 
-        virtual ~repeating_async_operation() = default;
+		repeating_async_operation& operator=(const repeating_async_operation&) noexcept(std::is_nothrow_copy_assignable_v<functor>) = default;
+		repeating_async_operation& operator=(repeating_async_operation&&) noexcept(std::is_nothrow_move_assignable_v<functor>) = default;
 
-        template<typename... argument_types>
-        auto then(argument_types... args) const
-        {
-            wait();
-            return m_repeater(std::forward<argument_types>(args)...);
-        }
+		virtual ~repeating_async_operation() = default;
 
-        template<typename... argument_types>
-        auto then(wait_priority priority, argument_types... args) const
-        {
-            wait(priority);
-            return m_repeater(std::forward<argument_types>(args)...);
-        }
+		template <typename... argument_types>
+		auto then(argument_types... args) const
+		{
+			wait();
+			return m_repeater(std::forward<argument_types>(args)...);
+		}
 
-        [[nodiscard]] payload& get_result(wait_priority priority = wait_priority_normal)
-        {
-            wait(priority);
-            return static_cast<async_progress<payload>*>(m_progress.get())->get_result().value();
-        }
-    };
+		template <typename... argument_types>
+		auto then(wait_priority priority, argument_types... args) const
+		{
+			wait(priority);
+			return m_repeater(std::forward<argument_types>(args)...);
+		}
 
-#if !defined(DOXY_EXCLUDE)
-    template<typename functor, typename payload>
-    repeating_async_operation(const std::shared_ptr<async_progress<payload>>&, functor&&)->repeating_async_operation<functor, payload>;
-#endif
-
-    template<typename functor>
-    struct repeating_async_operation<functor, void> : public async_operation_base
-    {
-    protected:
-        functor m_repeater;
-
-    public:
-        repeating_async_operation(const std::shared_ptr<async_progress<void>>& progress, functor&& repeater) : async_operation_base(progress), m_repeater(repeater) {}
-        repeating_async_operation() noexcept(std::is_nothrow_default_constructible_v<functor>) = default;
-        repeating_async_operation(const repeating_async_operation&) noexcept(std::is_nothrow_copy_constructible_v<functor>) = default;
-        repeating_async_operation(repeating_async_operation&&) noexcept(std::is_nothrow_move_constructible_v<functor>) = default;
-
-        repeating_async_operation& operator=(const repeating_async_operation&) noexcept(std::is_nothrow_copy_assignable_v<functor>) = default;
-        repeating_async_operation& operator=(repeating_async_operation&&) noexcept(std::is_nothrow_move_assignable_v<functor>) = default;
-
-        virtual ~repeating_async_operation() = default;
-
-        template<typename... argument_types>
-        auto then(argument_types... args) const
-        {
-            wait();
-            return m_repeater(std::forward<argument_types>(args)...);
-        }
-
-        template<typename... argument_types>
-        auto then(wait_priority priority, argument_types... args) const
-        {
-            wait(priority);
-            return m_repeater(std::forward<argument_types>(args)...);
-        }
-    };
-
-    template<typename payload>
-    struct async_operation : public async_operation_base
-    {
-    public:
-        async_operation(const std::shared_ptr<async_progress<payload>>& progress) : async_operation_base(progress) {}
-
-        NO_DTOR_RULE5_NOEXCEPT(async_operation);
-        virtual ~async_operation() = default;
-
-        template<typename Functor, typename... argument_types>
-        auto then(Functor&& func, argument_types... args) const
-        {
-            wait();
-            return std::invoke(std::forward<Functor>(func), std::forward<argument_types>(args)...);
-        }
-
-        template<typename Functor, typename... argument_types>
-        auto then(wait_priority priority, Functor&& func, argument_types... args) const
-        {
-            wait(priority);
-            return std::invoke(std::forward<Functor>(func), std::forward<argument_types>(args)...);
-        }
-
-        [[nodiscard]] payload& get_result(wait_priority priority = wait_priority_normal)
-        {
-            wait(priority);
-            return static_cast<async_progress<payload>*>(m_progress.get())->get_result().value();
-        }
-    };
+		[[nodiscard]] payload& get_result(wait_priority priority = wait_priority_normal)
+		{
+			wait(priority);
+			return static_cast<async_progress<payload>*>(m_progress.get())->get_result().value();
+		}
+	};
 
 #if !defined(DOXY_EXCLUDE)
-    template<typename payload>
-    async_operation(const std::shared_ptr<async_progress<payload>>&)->async_operation<payload>;
+	template <typename functor, typename payload>
+	repeating_async_operation(const std::shared_ptr<async_progress<payload>>&, functor&&) -> repeating_async_operation<functor, payload>;
 #endif
 
-    template<>
-    struct async_operation<void> : public async_operation_base
-    {
-    public:
-        async_operation(const std::shared_ptr<async_progress<void>>& progress) : async_operation_base(progress) {}
-        NO_DTOR_RULE5_NOEXCEPT(async_operation);
+	template <typename functor>
+	struct repeating_async_operation<functor, void> : public async_operation_base
+	{
+	protected:
+		functor m_repeater;
 
-        virtual ~async_operation() = default;
+	public:
+		repeating_async_operation(const std::shared_ptr<async_progress<void>>& progress, functor&& repeater)
+			: async_operation_base(progress),
+			  m_repeater(repeater)
+		{
+		}
+		repeating_async_operation() noexcept(std::is_nothrow_default_constructible_v<functor>) = default;
+		repeating_async_operation(const repeating_async_operation&) noexcept(std::is_nothrow_copy_constructible_v<functor>) = default;
+		repeating_async_operation(repeating_async_operation&&) noexcept(std::is_nothrow_move_constructible_v<functor>) = default;
 
-        template<typename Functor, typename... argument_types>
-        auto then(Functor&& func, argument_types... args) const
-        {
-            wait();
-            return std::invoke(std::forward<Functor>(func), std::forward<argument_types>(args)...);
-        }
+		repeating_async_operation& operator=(const repeating_async_operation&) noexcept(std::is_nothrow_copy_assignable_v<functor>) = default;
+		repeating_async_operation& operator=(repeating_async_operation&&) noexcept(std::is_nothrow_move_assignable_v<functor>) = default;
 
-        template<typename Functor, typename... argument_types>
-        auto then(wait_priority priority, Functor&& func, argument_types... args) const
-        {
-            wait(priority);
-            return std::invoke(std::forward<Functor>(func), std::forward<argument_types>(args)...);
-        }
-    };
-}
+		virtual ~repeating_async_operation() = default;
+
+		template <typename... argument_types>
+		auto then(argument_types... args) const
+		{
+			wait();
+			return m_repeater(std::forward<argument_types>(args)...);
+		}
+
+		template <typename... argument_types>
+		auto then(wait_priority priority, argument_types... args) const
+		{
+			wait(priority);
+			return m_repeater(std::forward<argument_types>(args)...);
+		}
+	};
+
+	template <typename payload>
+	struct async_operation : public async_operation_base
+	{
+	public:
+		async_operation(const std::shared_ptr<async_progress<payload>>& progress)
+			: async_operation_base(progress)
+		{
+		}
+
+		NO_DTOR_RULE5_NOEXCEPT(async_operation);
+		virtual ~async_operation() = default;
+
+		template <typename Functor, typename... argument_types>
+		auto then(Functor&& func, argument_types... args) const
+		{
+			wait();
+			return std::invoke(std::forward<Functor>(func), std::forward<argument_types>(args)...);
+		}
+
+		template <typename Functor, typename... argument_types>
+		auto then(wait_priority priority, Functor&& func, argument_types... args) const
+		{
+			wait(priority);
+			return std::invoke(std::forward<Functor>(func), std::forward<argument_types>(args)...);
+		}
+
+		[[nodiscard]] payload& get_result(wait_priority priority = wait_priority_normal)
+		{
+			wait(priority);
+			return static_cast<async_progress<payload>*>(m_progress.get())->get_result().value();
+		}
+	};
+
+#if !defined(DOXY_EXCLUDE)
+	template <typename payload>
+	async_operation(const std::shared_ptr<async_progress<payload>>&) -> async_operation<payload>;
+#endif
+
+	template <>
+	struct async_operation<void> : public async_operation_base
+	{
+	public:
+		async_operation(const std::shared_ptr<async_progress<void>>& progress)
+			: async_operation_base(progress)
+		{
+		}
+		NO_DTOR_RULE5_NOEXCEPT(async_operation);
+
+		virtual ~async_operation() = default;
+
+		template <typename Functor, typename... argument_types>
+		auto then(Functor&& func, argument_types... args) const
+		{
+			wait();
+			return std::invoke(std::forward<Functor>(func), std::forward<argument_types>(args)...);
+		}
+
+		template <typename Functor, typename... argument_types>
+		auto then(wait_priority priority, Functor&& func, argument_types... args) const
+		{
+			wait(priority);
+			return std::invoke(std::forward<Functor>(func), std::forward<argument_types>(args)...);
+		}
+	};
+} // namespace rythe::core::async

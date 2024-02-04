@@ -1,8 +1,8 @@
 #pragma once
-#include <rsl/type_util>
-#include <rsl/logging>
 #include <rsl/delegate>
 #include <rsl/hash>
+#include <rsl/logging>
+#include <rsl/type_util>
 
 
 #include "core/common/exception.hpp"
@@ -10,67 +10,71 @@
 
 namespace rythe::core
 {
-    RYTHE_HAS_FUNC(onInit);
-    RYTHE_HAS_FUNC(onShutdown);
+	RYTHE_HAS_FUNC(onInit);
+	RYTHE_HAS_FUNC(onShutdown);
 
-    template<class SubSystem>
-    class EngineSubSystem
-    {
-        template<class T>
-        friend class EngineSubSystem;
-    private:
-        static bool m_isInitialized;
-        static bool m_isShutdown;
-        static bool m_constructed;
+	template <class SubSystem>
+	class EngineSubSystem
+	{
+		template <class T>
+		friend class EngineSubSystem;
 
-        static rsl::multicast_delegate<void()>& shutdownSequence();
+	private:
+		static bool m_isInitialized;
+		static bool m_isShutdown;
+		static bool m_constructed;
 
-        struct data
-        {
-            union
-            {
-                SubSystem inst;
-                rsl::byte dummy;
-            };
+		static rsl::multicast_delegate<void()>& shutdownSequence();
 
-            data() : dummy(0) {}
-            ~data() {}
-        };
+		struct data
+		{
+			union
+			{
+				SubSystem inst;
+				rsl::byte dummy;
+			};
 
-        static data m_data;
+			data()
+				: dummy(0)
+			{
+			}
+			~data() {}
+		};
 
-    protected:
-        template<typename... Args>
-        static SubSystem& create(Args&&... args);
+		static data m_data;
 
-        template<typename T>
-        static void reportDependency();
+	protected:
+		template <typename... Args>
+		static SubSystem& create(Args&&... args);
 
-    public:
-        [[nodiscard]] static SubSystem& getInstance();
+		template <typename T>
+		static void reportDependency();
 
-        [[nodiscard]] static bool initialized();
+	public:
+		[[nodiscard]] static SubSystem& getInstance();
 
-        static void init();
+		[[nodiscard]] static bool initialized();
 
-        static void shutdown();
+		static void init();
 
-        static void restart();
-    };
-}
+		static void shutdown();
+
+		static void restart();
+	};
+} // namespace rythe::core
 
 #define SubSystemInstance(Type) inline static Type& instance = rythe::core::EngineSubSystem<Type>::getInstance();
 
 #define AllowPrivateOnInit                        \
-template<typename, typename>                        \
-friend struct rythe::core::has_static_onInit;      \
-template<typename>                                  \
-friend class rythe::core::EngineSubSystem;
+	template <typename, typename>                 \
+	friend struct rythe::core::has_static_onInit; \
+	template <typename>                           \
+	friend class rythe::core::EngineSubSystem;
 
-#define AllowPrivateOnShutdown                    \
-template<typename, typename>                        \
-friend struct rythe::core::has_static_onShutdown;  \
-template<typename>                                  \
-friend class rythe::core::EngineSubSystem;
+#define AllowPrivateOnShutdown                        \
+	template <typename, typename>                     \
+	friend struct rythe::core::has_static_onShutdown; \
+	template <typename>                               \
+	friend class rythe::core::EngineSubSystem;
 
 #include <core/engine/enginesubsystem.inl>

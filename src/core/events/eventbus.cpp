@@ -2,31 +2,31 @@
 
 namespace rythe::core::events
 {
-    void EventBus::raiseEvent(event_base& value)
-    {
-        if (instance.m_eventCallbacks.count(value.get_id()))
-            instance.m_eventCallbacks.at(value.get_id()).invoke(value);
-    }
+	void EventBus::raiseEvent(event_base& value)
+	{
+		if (instance.m_eventCallbacks.count(value.get_id()))
+			instance.m_eventCallbacks.at(value.get_id()).invoke(value);
+	}
 
-    void EventBus::raiseEventUnsafe(event_base& value, rsl::id_type id)
-    {
-        if (instance.m_eventCallbacks.count(id))
-            instance.m_eventCallbacks.at(id).invoke(value);
-    }
+	void EventBus::raiseEventUnsafe(event_base& value, rsl::id_type id)
+	{
+		if (instance.m_eventCallbacks.count(id))
+			instance.m_eventCallbacks.at(id).invoke(value);
+	}
 
-    void EventBus::bindToEvent(rsl::id_type id, const rsl::delegate<void(event_base&)>& callback)
-    {
-        instance.m_eventCallbacks.try_emplace(id).first->second.push_back(callback);
-    }
+	void EventBus::bindToEvent(rsl::id_type id, const rsl::delegate<void(event_base&)>& callback)
+	{
+		instance.m_eventCallbacks.try_emplace(id).first->second.push_back(callback);
+	}
 
-    void EventBus::bindToEvent(rsl::id_type id, rsl::delegate<void(event_base&)>&& callback)
-    {
-        instance.m_eventCallbacks.try_emplace(id).first->second.push_back(std::move(callback));
-    }
+	void EventBus::bindToEvent(rsl::id_type id, rsl::delegate<void(event_base&)>&& callback)
+	{
+		instance.m_eventCallbacks.try_emplace(id).first->second.push_back(std::move(callback));
+	}
 
-    void EventBus::unbindFromEvent(rsl::id_type id, const rsl::delegate<void(event_base&)>& callback)
-    {
-        instance.m_eventCallbacks.at(id).remove(callback);
-    }
+	void EventBus::unbindFromEvent(rsl::id_type id, const rsl::delegate<void(event_base&)>& callback)
+	{
+		instance.m_eventCallbacks.at(id).remove(callback);
+	}
 
-}
+} // namespace rythe::core::events

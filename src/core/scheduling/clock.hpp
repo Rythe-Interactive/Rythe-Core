@@ -9,59 +9,62 @@
 
 namespace rythe::core::scheduling
 {
-    enum struct advancement_protocol
-    {
-        Free, Interval, Manual
-    };
+	enum struct advancement_protocol
+	{
+		Free,
+		Interval,
+		Manual
+	};
 
-    class Clock : public EngineSubSystem<Clock>
-    {
-        AllowPrivateOnInit;
-        SubSystemInstance(Clock);
-    public:
-        using span_type = rsl::timer::span_type;
-        using time_type = span_type::time_type;
-        using tick_callback_type = void(span_type);
-        using tick_callback_delegate = rsl::delegate<tick_callback_type>;
+	class Clock : public EngineSubSystem<Clock>
+	{
+		AllowPrivateOnInit;
+		SubSystemInstance(Clock);
 
-    private:
-        span_type m_lastTickStart = 0;
-        advancement_protocol m_protocol = advancement_protocol::Free;
-        span_type m_interval = static_cast<Clock::time_type>(1.0 / 60.0);
-        span_type m_lastTickDuration = 0;
-        span_type m_waitBuffer = 0;
-        std::atomic<bool> m_doTick = { false };
-        rsl::multicast_delegate<tick_callback_type> m_onTick;
-        time_type m_timeScale = static_cast<Clock::time_type>(1);
+	public:
+		using span_type = rsl::timer::span_type;
+		using time_type = span_type::time_type;
+		using tick_callback_type = void(span_type);
+		using tick_callback_delegate = rsl::delegate<tick_callback_type>;
 
-        static void advance(span_type start, span_type elapsed);
+	private:
+		span_type m_lastTickStart = 0;
+		advancement_protocol m_protocol = advancement_protocol::Free;
+		span_type m_interval = static_cast<Clock::time_type>(1.0 / 60.0);
+		span_type m_lastTickDuration = 0;
+		span_type m_waitBuffer = 0;
+		std::atomic<bool> m_doTick = {false};
+		rsl::multicast_delegate<tick_callback_type> m_onTick;
+		time_type m_timeScale = static_cast<Clock::time_type>(1);
 
-        static void onInit();
+		static void advance(span_type start, span_type elapsed);
 
-    public:
-        static time_type timeScale() noexcept;
-        static void setTimeScale(time_type value) noexcept;
+		static void onInit();
 
-        static span_type elapsedSinceTickStart() noexcept;
-        static span_type lastTickDuration() noexcept;
-        static span_type unscaledElapsedSinceTickStart() noexcept;
-        static span_type unscaledLastTickDuration() noexcept;
+	public:
+		static time_type timeScale() noexcept;
+		static void setTimeScale(time_type value) noexcept;
 
-        static void subscribeToTick(const tick_callback_delegate& func);
-        static void unsubscribeFromTick(const tick_callback_delegate& func);
+		static span_type elapsedSinceTickStart() noexcept;
+		static span_type lastTickDuration() noexcept;
+		static span_type unscaledElapsedSinceTickStart() noexcept;
+		static span_type unscaledLastTickDuration() noexcept;
 
-        static void setAdvancementProtocol(advancement_protocol protocol) noexcept;
+		static void subscribeToTick(const tick_callback_delegate& func);
+		static void unsubscribeFromTick(const tick_callback_delegate& func);
 
-        static void setTickSpeed(span_type interval) noexcept;
+		static void setAdvancementProtocol(advancement_protocol protocol) noexcept;
 
-        static void update();
+		static void setTickSpeed(span_type interval) noexcept;
 
-        static void pause(span_type duration) noexcept;
+		static void update();
 
-        static void bufferPause(span_type duration) noexcept;
+		static void pause(span_type duration) noexcept;
 
-        static void tick();
-    };
+		static void bufferPause(span_type duration) noexcept;
 
-    ReportSubSystem(Clock);
-}
+		static void tick();
+	};
+
+	ReportSubSystem(Clock);
+} // namespace rythe::core::scheduling
