@@ -1,7 +1,11 @@
 local project = {
     additional_types = { "test", "editor" },
     dependencies = {
-        "public rythe/rythe-standard-library"
+        "public rythe/rythe-standard-library",
+        "public third_party/argh",
+        "public third_party/stb",
+        "public third_party/tinygltf",
+        "public third_party/tinyobj"
     },
     defines = { "RYTHE_INTERNAL" }
 }
