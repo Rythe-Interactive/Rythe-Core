@@ -9,29 +9,15 @@
 #include <rsl/primitives>
 #include <rsl/type_util>
 
-#include "core/async/async.hpp"
-#include "core/common/common.hpp"
-#include "core/containers/containers.hpp"
-#include "core/ecs/ecs.hpp"
-#include "core/engine/engine.hpp"
-#include "core/entry/entry_point.hpp"
-#include "core/events/events.hpp"
-#include "core/platform/shellinvoke.hpp"
-#include "core/scheduling/scheduling.hpp"
-#include "core/serialization/serializationutil.hpp"
+#include "entry/entry_point.hpp"
+#include "program/program.hpp"
 
-#include "core/assets/assets.hpp"
-#include "core/data/data.hpp"
-#include "core/filesystem/filesystem.hpp"
-
-#include "core/defaults/defaultcomponents.hpp"
-
-#include "core/engine/module.inl"
-#include "core/engine/system.inl"
 
 namespace rythe
 {
-	using namespace core;
+	namespace core
+    {
+    }
 }
 
 namespace ryt = rythe;
