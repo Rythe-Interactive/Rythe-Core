@@ -20,4 +20,4 @@ namespace rythe
     }
 }
 
-namespace ryt = rythe;
+namespace rte = rythe;
