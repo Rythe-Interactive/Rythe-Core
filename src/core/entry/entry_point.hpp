@@ -42,15 +42,9 @@ int main(int argc, char** argv)
 
 	program.initialize();
 
-	int maxFrames = 1000;
-	int count = 0;
-
 	while (program.isRunning())
 	{
 		program.update();
-		count++;
-		if (count >= maxFrames)
-			program.stop();
 	}
 
 	program.shutdown();

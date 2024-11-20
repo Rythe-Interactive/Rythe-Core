@@ -18,11 +18,7 @@ namespace rythe::core
     public:
         Engine(rsl::id_type id) : engineId(id) {}
 
-        void setup(Program* ptr)
-        {
-            rsl::log::debug("Engine[{}] Instance initialized", engineId);
-            programPtr = ptr;
-        }
+        void setup(Program* ptr);
 
         void update()
         {
@@ -81,9 +77,9 @@ namespace rythe::core
             m_running = false;
         }
 
-        void addEngineInstance()
+        Engine& addEngineInstance()
         {
-            m_engines.emplace(m_lastIdx, std::make_unique<Engine>(Engine{ m_lastIdx++}));
+            return *(m_engines.emplace(m_lastIdx, std::make_unique<Engine>(Engine{ m_lastIdx++})).first->second);
         }
     };
 }
