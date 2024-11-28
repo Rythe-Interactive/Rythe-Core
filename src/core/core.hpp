@@ -16,8 +16,8 @@
 namespace rythe
 {
 	namespace core
-    {
-    }
-}
+	{
+	}
+} // namespace rythe
 
 namespace rte = rythe;

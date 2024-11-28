@@ -1,85 +1,78 @@
 #pragma once
+#include <memory>
 #include <unordered_map>
 #include <vector>
-#include <memory>
 
-#include <rsl/primitives>
 #include <rsl/logging>
+#include <rsl/primitives>
 
 namespace rythe::core
 {
-    class Program;
+	class Program;
 
-    class Engine
-    {
-    private:
-        Program* programPtr = nullptr;
-        rsl::id_type engineId = 0;
-    public:
-        Engine(rsl::id_type id) : engineId(id) {}
+	class Engine
+	{
+	private:
+		Program* programPtr = nullptr;
+		rsl::id_type engineId = 0;
 
-        void setup(Program* ptr);
+	public:
+		Engine(rsl::id_type id)
+			: engineId(id)
+		{
+		}
 
-        void update()
-        {
-            rsl::log::debug("Engine[{}] Update", engineId);
-        }
+		void setup(Program* ptr);
 
-        void shutdown()
-        {
-            rsl::log::debug("Engine[{}] Shutdown", engineId);
-        }
-    };
+		void update() { rsl::log::debug("Engine[{}] Update", engineId); }
 
-    class Program
-    {
-    private:
-        std::unordered_map<rsl::id_type, std::unique_ptr<Engine>> m_engines;
-        rsl::id_type m_lastIdx = 0;
-        bool m_running = false;
-    public:
-        void initialize()
-        {
-            rsl::log::debug("Initializing Program Instance");
-            for (auto& [id, engine] : m_engines)
-            {
-                engine->setup(this);
-            }
-            m_running = true;
-        }
+		void shutdown() { rsl::log::debug("Engine[{}] Shutdown", engineId); }
+	};
 
-        void update()
-        {
-            //In the final version the updates will be handled by a process chain
-            rsl::log::debug("Program Update");
-            for (auto& [id, engine] : m_engines)
-            {
-                engine->update();
-            }
-        }
+	class Program
+	{
+	private:
+		std::unordered_map<rsl::id_type, std::unique_ptr<Engine>> m_engines;
+		rsl::id_type m_lastIdx = 0;
+		bool m_running = false;
 
-        void shutdown()
-        {
-            rsl::log::debug("Program Shutdown");
-            for (auto& [id, engine] : m_engines)
-            {
-                engine->shutdown();
-            }
-        }
+	public:
+		void initialize()
+		{
+			rsl::log::debug("Initializing Program Instance");
+			for (auto& [id, engine] : m_engines)
+			{
+				engine->setup(this);
+			}
+			m_running = true;
+		}
 
-        bool isRunning()
-        {
-            return m_running;
-        }
+		void update()
+		{
+			// In the final version the updates will be handled by a process chain
+			rsl::log::debug("Program Update");
+			for (auto& [id, engine] : m_engines)
+			{
+				engine->update();
+			}
+		}
 
-        void stop()
-        {
-            m_running = false;
-        }
+		void shutdown()
+		{
+			rsl::log::debug("Program Shutdown");
+			for (auto& [id, engine] : m_engines)
+			{
+				engine->shutdown();
+			}
+		}
 
-        Engine& addEngineInstance()
-        {
-            return *(m_engines.emplace(m_lastIdx, std::make_unique<Engine>(Engine{ m_lastIdx++})).first->second);
-        }
-    };
-}
+		bool isRunning() { return m_running; }
+
+		void stop() { m_running = false; }
+
+		Engine& addEngineInstance()
+		{
+			return *(m_engines.emplace(m_lastIdx, std::make_unique<Engine>(Engine{m_lastIdx++})).first->second);
+		}
+	};
+} // namespace rythe::core
