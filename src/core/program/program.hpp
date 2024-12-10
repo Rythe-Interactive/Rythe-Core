@@ -66,11 +66,11 @@ namespace rythe::core
 			}
 		}
 
-		bool isRunning() { return m_running; }
+		[[rythe_always_inline]] bool isRunning() { return m_running; }
 
-		void stop() { m_running = false; }
+		[[rythe_always_inline]] void stop() { m_running = false; }
 
-		Engine& addEngineInstance()
+		[[rythe_always_inline]] Engine& addEngineInstance()
 		{
 			return *(m_engines.emplace(m_lastIdx, std::make_unique<Engine>(Engine{m_lastIdx++})).first->second);
 		}

@@ -3,6 +3,7 @@
 #include <rsl/logging>
 #include <rsl/primitives>
 #include <rsl/type_util>
+#include <rsl/utilities>
 
 #include "..\program\program.hpp"
 
@@ -18,10 +19,10 @@
 
 
 /**@brief Reports engine modules to the engine, must be implemented by you.
- * @param [in] engine The engine object as ptr *
+ * @param [in] engine The engine object
  * @ref rythe::core::Engine::reportModule<T,...>()
  */
-extern int reportModules(rythe::core::Program& program);
+extern rsl::result<void> init_program(rythe::core::Program& program);
 
 #if defined(RYTHE_ENTRY)
 
@@ -35,9 +36,10 @@ int main(int argc, char** argv)
 {
 	rsl::log::setup();
 	rythe::core::Program program;
-	if (int result = reportModules(program); result != 0)
+
+	if (auto errorCode = init_program(program).report_errors(); errorCode != rsl::no_error_code)
 	{
-		return result;
+		return static_cast<int>(errorCode);
 	}
 
 	program.initialize();
