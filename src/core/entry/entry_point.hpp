@@ -37,11 +37,15 @@ int main(int argc, char** argv)
 	rsl::log::setup();
 	rythe::core::Program program;
 
-	if (auto errorCode = init_program(program).report_errors(); errorCode != rsl::no_error_code)
 	{
-		return static_cast<int>(errorCode);
-	}
+		auto result = init_program(program);
+		rsl::scoped_assert_on_error saoe(false);
 
+		if (auto errorCode = result.report_errors(); errorCode != rsl::no_error_code)
+		{
+			return static_cast<int>(errorCode);
+		}
+	}
 	program.initialize();
 
 	while (program.isRunning())

@@ -5,6 +5,8 @@
 
 #include <rsl/logging>
 #include <rsl/primitives>
+#include <rsl/type_traits>
+#include <rsl/type_map>
 
 namespace rythe::core
 {
@@ -13,26 +15,31 @@ namespace rythe::core
 	class Engine
 	{
 	private:
-		Program* programPtr = nullptr;
-		rsl::id_type engineId = 0;
+		Program* m_programPtr = nullptr;
+		rsl::id_type m_engineId = 0;
+		rsl::type_map m_context;
 
 	public:
 		Engine(rsl::id_type id)
-			: engineId(id)
+			: m_engineId(id)
 		{
 		}
 
 		void setup(Program* ptr);
 
-		void update() { rsl::log::debug("Engine[{}] Update", engineId); }
+		void update() { rsl::log::debug("Engine[{}] Update", m_engineId); }
 
-		void shutdown() { rsl::log::debug("Engine[{}] Shutdown", engineId); }
+		void shutdown() { rsl::log::debug("Engine[{}] Shutdown", m_engineId); }
+
+		rsl::type_map& get_context() noexcept { return m_context; }
+		const rsl::type_map& get_context() const noexcept { return m_context; }
 	};
 
 	class Program
 	{
 	private:
 		std::unordered_map<rsl::id_type, std::unique_ptr<Engine>> m_engines;
+		rsl::type_map m_context;
 		rsl::id_type m_lastIdx = 0;
 		bool m_running = false;
 
@@ -65,6 +72,9 @@ namespace rythe::core
 				engine->shutdown();
 			}
 		}
+
+		rsl::type_map& get_context() noexcept { return m_context; }
+		const rsl::type_map& get_context() const noexcept { return m_context; }
 
 		[[rythe_always_inline]] bool isRunning() { return m_running; }
 
