@@ -5,7 +5,8 @@ local project = {
         "public third_party/argh:header-only",
         "public third_party/stb:header-only",
         "public third_party/tinygltf:header-only",
-        "public third_party/tinyobj:header-only"
+        "public third_party/tinyobj:header-only",
+        "public third_party/semver:header-only"
     },
     defines = { "RYTHE_INTERNAL" }
 }

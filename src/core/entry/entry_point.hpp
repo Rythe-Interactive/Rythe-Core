@@ -22,7 +22,7 @@
  * @param [in] engine The engine object
  * @ref rythe::core::Engine::reportModule<T,...>()
  */
-extern rsl::result<void> init_program(rythe::core::Program& program);
+extern rsl::result<void> init_program(rythe::core::program& program);
 
 #if defined(RYTHE_ENTRY)
 
@@ -35,7 +35,7 @@ __declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
 int main(int argc, char** argv)
 {
 	rsl::log::setup();
-	rythe::core::Program program;
+	rythe::core::program program;
 
 	{
 		auto result = init_program(program);
@@ -48,7 +48,7 @@ int main(int argc, char** argv)
 	}
 	program.initialize();
 
-	while (program.isRunning())
+	while (program.is_running())
 	{
 		program.update();
 	}

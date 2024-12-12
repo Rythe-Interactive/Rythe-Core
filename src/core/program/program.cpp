@@ -2,9 +2,9 @@
 
 namespace rythe::core
 {
-	void Engine::setup(Program* ptr)
+	void engine::setup(program& program)
 	{
 		rsl::log::debug("Engine[{}] Instance initialized", m_engineId);
-		m_programPtr = ptr;
+		m_programPtr = &program;
 	}
 } // namespace rythe::core
