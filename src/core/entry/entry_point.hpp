@@ -34,7 +34,6 @@ __declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
 
 int main(int argc, char** argv)
 {
-	rsl::log::setup();
 	rythe::core::program program;
 
 	{

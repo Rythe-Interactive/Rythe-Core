@@ -5,6 +5,8 @@
 
 #include <rsl/logging>
 #include <rsl/primitives>
+#include <rsl/threading>
+#include <rsl/time>
 #include <rsl/type_traits>
 #include <rsl/type_map>
 
@@ -30,7 +32,7 @@ namespace rythe::core
 
 		void setup(program& program);
 
-		void update() { rsl::log::debug("Engine[{}] Update", m_engineId); }
+		void update();
 
 		void shutdown() { rsl::log::debug("Engine[{}] Shutdown", m_engineId); }
 
@@ -91,4 +93,18 @@ namespace rythe::core
 			return *(m_engines.emplace(m_lastIdx, std::make_unique<engine>(engine{m_lastIdx++})).first->second);
 		}
 	};
+
+    inline void engine::update()
+    {
+        using namespace rsl;
+
+        log::debug("Engine[{}] Update", m_engineId);
+
+        current_thread::sleep_for(1_s);
+
+        if (time::main_clock.elapsed_time().seconds() > 5.f)
+        {
+            m_programPtr->stop();
+        }
+    }
 } // namespace rythe::core
