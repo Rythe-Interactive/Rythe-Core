@@ -34,6 +34,8 @@ __declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
 
 int main(int argc, char** argv)
 {
+    rsl::current_thread::set_name("Main thread");
+
 	rythe::core::program program;
 
 	{
