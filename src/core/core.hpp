@@ -15,7 +15,7 @@
 
 namespace rythe
 {
-	namespace core
+    namespace core
 	{
 	}
 } // namespace rythe
