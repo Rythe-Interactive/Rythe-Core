@@ -1,5 +1,4 @@
 #pragma once
-#include <rsl/utilities>
 
 #include "../program/program.hpp"
 
@@ -7,8 +6,7 @@
  * @file entry_point.hpp
  * @brief When RYTHE_ENTRY is defined, this file will create a function with signature main(int,char**) -> int
  *        implementing the common main function of a c++ program.
- * @note When defining RYTHE_ENTRY do not create your own entry point such as main()->int, main(int,char**)->int,
- * wmain(), etc...
+ * @note When defining RYTHE_ENTRY do not create your own entry point such as main()->int, main(int,char**)->int, wmain(), etc...
  * @note When using RYTHE_ENTRY you must instead implement rsl::result<void> init_program(rythe::core::program& program).
  * @note When not using RYTHE_ENTRY you must call creation and initialization of the program manually.
  */
@@ -31,9 +29,8 @@ int main(int argc, char** argv)
 
     {
         auto result = init_program(program);
-        rsl::scoped_assert_on_error saoe(false);
 
-        if (auto errorCode = result.report_errors(); errorCode != rsl::no_error_code)
+        if (const rsl::errc errorCode = result.report_errors_and_resolve(); errorCode != rsl::no_error_code)
         {
             return static_cast<int>(errorCode);
         }

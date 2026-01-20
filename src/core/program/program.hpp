@@ -13,9 +13,9 @@ namespace rythe::core
 
     struct this_program
     {
-        [[rythe_always_inline]] static rsl::type_map& get_context() noexcept;
+        [[nodiscard]] [[rythe_always_inline]] static rsl::type_map& get_context() noexcept;
 
-        [[rythe_always_inline]] static bool is_running() noexcept;
+        [[nodiscard]] [[rythe_always_inline]] static bool is_running() noexcept;
 
         [[rythe_always_inline]] static void stop() noexcept;
 
@@ -24,12 +24,6 @@ namespace rythe::core
 
     class engine
     {
-    private:
-        program* m_programPtr = nullptr;
-        rsl::id_type m_engineId = 0;
-        rsl::pmu_allocator* m_allocator = nullptr;
-        rsl::pmu_alloc_type_map m_context;
-
     public:
         engine(const rsl::id_type id, rsl::pmu_allocator* allocator = rsl::allocator_context::threadSpecificAllocator)
             : m_engineId(id),
@@ -44,21 +38,21 @@ namespace rythe::core
 
         void shutdown() { rsl::log::debug("Engine[{}] Shutdown", m_engineId); }
 
-        rsl::pmu_alloc_type_map& get_context() noexcept { return m_context; }
-        const rsl::pmu_alloc_type_map& get_context() const noexcept { return m_context; }
+        [[nodiscard]] rsl::pmu_alloc_type_map& get_context() noexcept { return m_context; }
+        [[nodiscard]] const rsl::pmu_alloc_type_map& get_context() const noexcept { return m_context; }
 
-        rsl::pmu_allocator& get_allocator() noexcept { return *m_allocator; }
-        const rsl::pmu_allocator& get_allocator() const noexcept { return *m_allocator; }
+        [[nodiscard]] rsl::pmu_allocator& get_allocator() noexcept { return *m_allocator; }
+        [[nodiscard]] const rsl::pmu_allocator& get_allocator() const noexcept { return *m_allocator; }
+
+    private:
+        program* m_programPtr = nullptr;
+        rsl::id_type m_engineId = 0;
+        rsl::pmu_allocator* m_allocator = nullptr;
+        rsl::pmu_alloc_type_map m_context;
     };
 
     class program
     {
-    private:
-        rsl::dynamic_map<rsl::id_type, rsl::unique_object<engine>> m_engines;
-        rsl::type_map m_context;
-        rsl::id_type m_lastIdx = 0;
-        bool m_running = false;
-
     public:
         void initialize()
         {
@@ -89,10 +83,10 @@ namespace rythe::core
 			}
         }
 
-        rsl::type_map& get_context() noexcept { return m_context; }
-        const rsl::type_map& get_context() const noexcept { return m_context; }
+        [[nodiscard]] rsl::type_map& get_context() noexcept { return m_context; }
+        [[nodiscard]] const rsl::type_map& get_context() const noexcept { return m_context; }
 
-        [[rythe_always_inline]] bool is_running() const { return m_running; }
+        [[nodiscard]] [[rythe_always_inline]] bool is_running() const { return m_running; }
 
         [[rythe_always_inline]] void stop() { m_running = false; }
 
@@ -100,5 +94,11 @@ namespace rythe::core
         {
             return *m_engines.emplace(m_lastIdx, rsl::unique_object<engine>::create_in_place(engine{m_lastIdx++}));
         }
+
+    private:
+        rsl::dynamic_map<rsl::id_type, rsl::unique_object<engine>> m_engines;
+        rsl::type_map m_context;
+        rsl::id_type m_lastIdx = 0;
+        bool m_running = false;
     };
 } // namespace rythe::core
