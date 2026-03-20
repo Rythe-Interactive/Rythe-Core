@@ -22,6 +22,16 @@ namespace rythe::core
         static program& get_instance();
     };
 
+    class engine;
+
+    struct this_engine
+    {
+        [[nodiscard]] [[rythe_always_inline]] static rsl::pmu_alloc_type_map& get_context() noexcept;
+        [[nodiscard]] [[rythe_always_inline]] static rsl::pmu_allocator& get_allocator() noexcept;
+
+        static engine& get_instance();
+    };
+
     class engine
     {
     public:

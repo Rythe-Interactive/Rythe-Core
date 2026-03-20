@@ -9,6 +9,14 @@
 
 namespace rythe::core
 {
+    struct module_id
+    {
+        rsl::hashed_string_view name;
+    };
+
+#define RYTHE_DECLARE_MODULE(module_name)                                                                                             \
+    rythe::core::module_id RYTHE_CONCAT(module_name, _id){ .name = rsl::hashed_string_view::from_array(#module_name) };
+
 	struct feature_desc
 	{
 		std::string_view name;
@@ -112,8 +120,9 @@ namespace rythe::core
 	class module_base
 	{
 	public:
-		virtual rsl::result<void> initialize() noexcept = 0;
-		virtual std::span<const feature_desc> get_features_descriptions() const noexcept = 0;
+        virtual ~module_base() = default;
+        virtual rsl::result<void> initialize() noexcept = 0;
+		virtual rsl::array_view<const feature_desc> get_features_descriptions() const noexcept = 0;
 
 		virtual const feature_base* try_get_feature(rsl::id_type id) const noexcept = 0;
 		feature_base* try_get_feature(rsl::id_type id) noexcept;
@@ -135,22 +144,27 @@ namespace rythe::core
 	class module : public module_base
 	{
 	public:
-		template <typename T, typename... Args>
-		void add_feature(Args&&... args)
-		{
-			add_feature(std::unique_ptr<feature_base, rsl::stl_pmu_deleter<feature_base>>(
-				rsl::allocate<T>(get_allocator(), 1, rsl::forward<Args>(args)...),
-				rsl::make_stl_pmu_deleter(&get_allocator())
-			));
-		}
+	    using module_base::module_base;
 
-		void add_feature(std::unique_ptr<feature_base, rsl::stl_pmu_deleter<feature_base>>&& featurePtr);
-
-		std::span<const feature_desc> get_features_descriptions() const noexcept override;
+		rsl::array_view<const feature_desc> get_features_descriptions() const noexcept override;
 		const feature_base* try_get_feature(rsl::id_type id) const noexcept override;
 
-	private:
-		std::vector<feature_desc> m_featureDescriptions;
-		std::vector<std::unique_ptr<feature_base, rsl::stl_pmu_deleter<feature_base>>> m_features;
+	protected:
+	    template <typename T, typename... Args>
+        void add_feature(Args&&... args)
+	    {
+	        add_feature(
+                    rsl::temporary_object<feature_base>::create_in_place_with_allocator(
+                        get_allocator(),
+                        rsl::forward<Args>(args)...
+                        )
+                    );
+	    }
+
+	    void add_feature(rsl::temporary_object<feature_base>&& featurePtr);
+
+    private:
+		rsl::dynamic_array<feature_desc> m_featureDescriptions;
+		rsl::dynamic_array<rsl::unique_object<feature_base>> m_features;
 	};
 } // namespace rythe::core
