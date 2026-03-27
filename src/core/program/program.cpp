@@ -1,45 +1,36 @@
 #include "program.hpp"
+#include "engine.hpp"
 
 namespace rythe::core
 {
-    rsl::type_map& this_program::get_context() noexcept
-    {
-        return get_instance().get_context();
-    }
-
-    bool this_program::is_running() noexcept
-    {
-        return get_instance().is_running();
-    }
-
-    void this_program::stop() noexcept
-    {
-        get_instance().stop();
-    }
-
     program& this_program::get_instance()
     {
         static program instance;
         return instance;
     }
 
-    void engine::setup(program& program)
+    void program::initialize()
     {
-        rsl::log::debug("Engine[{}] Instance initialized", m_engineId);
-        m_programPtr = &program;
+        rsl::log::debug("Initializing Program Instance");
+        for (auto& [id, engine] : m_engines) { engine->setup(*this); }
+        m_running = true;
     }
 
-    void engine::update()
+    void program::update()
     {
-        using namespace rsl::literals;
+        // In the final version the updates will be handled by a process chain
+        rsl::log::debug("Program Update");
+        for (auto& [id, engine] : m_engines) { engine->update(); }
+    }
 
-        rsl::log::debug("Engine[{}] Update", m_engineId);
+    void program::shutdown()
+    {
+        rsl::log::debug("Program Shutdown");
+        for (auto& [id, engine] : m_engines) { engine->shutdown(); }
+    }
 
-        rsl::current_thread::sleep_for(1_s);
-
-        if (rsl::tm::main_clock.elapsed_time().seconds() > 5.f)
-        {
-            this_program::stop();
-        }
+    engine& program::add_engine_instance()
+    {
+        return *m_engines.emplace(m_lastIdx, rsl::unique_object<engine>::create_in_place(engine{ m_lastIdx++ }));
     }
 } // namespace rythe::core
