@@ -11,12 +11,11 @@
 
 #include "entry/entry_point.hpp"
 #include "program/program.hpp"
-#include "module/module.hpp"
-#include "module/system.hpp"
+#include "program/engine.hpp"
+#include "program/module.hpp"
+#include "program/system.hpp"
 
 namespace rythe
 {
-    namespace core
-    {
-    }
+    using namespace core;
 } // namespace rythe
