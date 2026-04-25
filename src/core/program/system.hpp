@@ -3,6 +3,7 @@
 #include <rsl/reflection>
 #include <rsl/string>
 #include <rsl/time>
+#include <rsl/containers>
 
 #include "module.hpp"
 
@@ -11,8 +12,48 @@ namespace rythe::core
     struct entity
     {};
 
-    template<typename Component>
-    concept component_type = rsl::trivial_type<Component> && rsl::standard_layout_type<Component>;
+    namespace internal
+    {
+        template <typename Component>
+        concept _inclusive_component_type = rsl::standard_layout_type<Component>;
+    }
+
+    template <typename... Components>
+       requires(internal::_inclusive_component_type<Components> && ...)
+    struct architype {};
+
+    namespace internal
+    {
+        template <typename... Components>
+        rsl::tuple<Components&...> _get_architype_impl(architype<Components...>&);
+        template <typename... Components>
+        rsl::tuple<const Components&...> _get_architype_impl(const architype<Components...>&);
+    }
+
+    template <typename T, typename = void>
+    struct is_architype : rsl::false_type
+    {};
+    template <typename T>
+    struct is_architype<T, rsl::void_t<decltype(internal::_get_architype_impl(T{}))>> : rsl::true_type
+    {};
+
+    template <typename T>
+    constexpr bool is_architype_v = is_architype<T>::value;
+
+    template<typename Architype>
+    concept architype_type = is_architype_v<Architype>;
+
+    template <typename T>
+    struct architype_tuple
+    {
+        using type = decltype(internal::_get_architype_impl(T{}));
+    };
+
+    template <typename T>
+    using architype_tuple_t = architype_tuple<T>::type;
+
+    template <typename Component>
+    concept component_type = internal::_inclusive_component_type<Component> && rsl::invert<architype_type<Component>>;
 
     RYTHE_DECLARE_OPAQUE_HANDLE(process_chain_handle)
 
@@ -41,6 +82,12 @@ namespace rythe::core
 
         template <component_type ComponentType>
         [[nodiscard]] const ComponentType& read(entity ent);
+
+        template <architype_type Architype>
+        [[nodiscard]] architype_tuple_t<const Architype> read();
+
+        template <architype_type Architype>
+        [[nodiscard]] architype_tuple_t<const Architype> read(entity ent);
 
         template <component_type ComponentType>
         [[nodiscard]] ComponentType& write();
