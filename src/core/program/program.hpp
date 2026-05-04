@@ -7,11 +7,11 @@
 #include <rsl/time>
 #include <rsl/type_map>
 
+#include "engine.hpp"
 
 namespace rythe::core
 {
     class program;
-    class engine;
 
     struct this_program
     {

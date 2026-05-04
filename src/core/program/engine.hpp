@@ -14,8 +14,8 @@ namespace rythe::core
 
     struct this_engine
     {
-        [[nodiscard]] [[rythe_always_inline]] static rsl::pmu_alloc_type_map& get_context() noexcept;
-        [[nodiscard]] [[rythe_always_inline]] static rsl::pmu_allocator& get_allocator() noexcept;
+        [[nodiscard]] [[rythe_always_inline]] static rsl::type_map& get_context() noexcept;
+        [[nodiscard]] [[rythe_always_inline]] static rsl::memory_allocator& get_allocator() noexcept;
 
         static engine& get_instance();
     };
@@ -23,7 +23,7 @@ namespace rythe::core
     class engine
     {
     public:
-        engine(const rsl::id_type id, rsl::pmu_allocator* allocator = rsl::allocator_context::threadSpecificAllocator)
+        engine(const rsl::id_type id, rsl::allocator_storage allocator = rsl::allocator_context::threadSpecificAllocator)
             : m_engineId(id),
               m_allocator(allocator),
               m_context(allocator)
@@ -35,16 +35,16 @@ namespace rythe::core
 
         void shutdown() { rsl::log::debug("Engine[{}] Shutdown", m_engineId); }
 
-        [[nodiscard]] rsl::pmu_alloc_type_map& get_context() noexcept { return m_context; }
-        [[nodiscard]] const rsl::pmu_alloc_type_map& get_context() const noexcept { return m_context; }
+        [[nodiscard]] rsl::type_map& get_context() noexcept { return m_context; }
+        [[nodiscard]] const rsl::type_map& get_context() const noexcept { return m_context; }
 
-        [[nodiscard]] rsl::pmu_allocator& get_allocator() noexcept { return *m_allocator; }
-        [[nodiscard]] const rsl::pmu_allocator& get_allocator() const noexcept { return *m_allocator; }
+        [[nodiscard]] rsl::memory_allocator& get_allocator() noexcept { return *m_allocator; }
+        [[nodiscard]] const rsl::memory_allocator& get_allocator() const noexcept { return *m_allocator; }
 
     private:
         program* m_programPtr = nullptr;
         rsl::id_type m_engineId = 0;
-        rsl::pmu_allocator* m_allocator = nullptr;
-        rsl::pmu_alloc_type_map m_context;
+        rsl::allocator_storage m_allocator = { nullptr };
+        rsl::type_map m_context;
     };
 }

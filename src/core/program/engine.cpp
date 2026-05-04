@@ -18,6 +18,6 @@ namespace rythe::core
 
         rsl::current_thread::sleep_for(1_s);
 
-        if (rsl::tm::main_clock.elapsed_time().seconds() > 5.f) { this_program::stop(); }
+        if (rsl::main_clock.elapsed_time().seconds() > 5.f) { this_program::stop(); }
     }
 }
