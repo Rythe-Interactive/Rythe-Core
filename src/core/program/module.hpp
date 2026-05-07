@@ -15,7 +15,7 @@ namespace rythe::core
     };
 
 #define RYTHE_DECLARE_MODULE(module_name)                                                                                             \
-    rythe::core::module_id RYTHE_CONCAT(module_name, _id){ .name = rsl::hashed_string_view::from_array(#module_name) };
+    inline rythe::core::module_id RYTHE_CONCAT(module_name, _id){ .name = rsl::hashed_string_view::from_array(#module_name) };
 
     struct feature_desc
     {

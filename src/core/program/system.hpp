@@ -11,40 +11,66 @@
 namespace rythe::core
 {
     RYTHE_DECLARE_OPAQUE_HANDLE(process_chain_handle)
+    RYTHE_DECLARE_OPAQUE_HANDLE(process_hook_handle)
+
+    enum struct [[rythe_closed_enum]] process_hook_type
+    {
+        before,
+        after,
+        destroy,
+        construct,
+    };
+
+    struct process_hook_description
+    {
+        union
+        {
+            process_chain_handle chain;
+            rsl::id_type componentType;
+        };
+
+        process_hook_type type;
+    };
+
+    class system_context;
 
     class process_chain_builder
     {
     public:
-        process_chain_builder& after(process_chain_handle handle);
-        process_chain_builder& after(rsl::string_view processChainName);
-        process_chain_builder& before(process_chain_handle handle);
-        process_chain_builder& before(rsl::string_view processChainName);
+        [[rythe_always_inline]] process_chain_builder& after(process_chain_handle handle);
+        [[rythe_always_inline]] process_chain_builder& after(rsl::string_view processChainName);
+        [[rythe_always_inline]] process_chain_builder& before(process_chain_handle handle);
+        [[rythe_always_inline]] process_chain_builder& before(rsl::string_view processChainName);
 
         template <component_type ComponentType>
-        process_chain_builder& on_create();
+        [[rythe_always_inline]] process_chain_builder& on_create();
         template <component_type ComponentType>
-        process_chain_builder& on_destroy();
+        [[rythe_always_inline]] process_chain_builder& on_destroy();
 
-        process_chain_builder& interval(rsl::time_span timeSpan);
-
-        template <typename ProcessImplType>
-        process_chain_builder& add_parallel_process(ProcessImplType&& func)
-        {
-            process_function processFunc(rsl::forward<ProcessImplType>(func));
-        }
+        [[rythe_always_inline]] process_chain_builder& interval(rsl::time_span timeSpan) noexcept;
 
         template <typename ProcessImplType>
-        process_chain_builder& add_sequential_process(ProcessImplType&& func)
-        {
-            process_function processFunc(rsl::forward<ProcessImplType>(func));
-        }
+        [[rythe_always_inline]] process_chain_builder& add_parallel_process(ProcessImplType&& func);
+
+        template <typename ProcessImplType>
+        [[rythe_always_inline]] process_chain_builder& add_sequential_process(ProcessImplType&& func);
+
+    private:
+        process_hook_handle m_hook;
+        rsl::time_span m_interval = rsl::time_span::zero;
+        rsl::dynamic_array<process_function> m_processes;
+        rsl::pointer<system_context> m_context;
     };
 
     class system_context
     {
     public:
-        process_chain_builder create_process_chain(rsl::string_view processChainName);
-        process_chain_handle find_process_chain(rsl::string_view processChainName);
+        [[nodiscard]] process_chain_builder create_process_chain(rsl::string_view processChainName);
+        [[nodiscard]] process_chain_handle find_process_chain(rsl::string_view processChainName);
+
+    private:
+        [[nodiscard]] process_hook_handle find_process_hook(const process_hook_description& description);
+        friend class process_chain_builder; 
     };
 
     class system_registrar
@@ -56,3 +82,5 @@ namespace rythe::core
     struct [[rsl_reflect(rsl::custom_attribute, rsl::restrict_function_signature(rsl::result<void>(rythe::core::system_context&)))]] system_function {};
 
 } // namespace rythe::core
+
+#include "system.inl"
