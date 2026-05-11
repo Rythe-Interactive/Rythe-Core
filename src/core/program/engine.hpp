@@ -41,6 +41,8 @@ namespace rythe::core
         [[nodiscard]] rsl::memory_allocator& get_allocator() noexcept { return *m_allocator; }
         [[nodiscard]] const rsl::memory_allocator& get_allocator() const noexcept { return *m_allocator; }
 
+        void bind();
+
     private:
         program* m_programPtr = nullptr;
         rsl::id_type m_engineId = 0;
@@ -48,3 +50,5 @@ namespace rythe::core
         rsl::type_map m_context;
     };
 }
+
+#include "engine.inl"

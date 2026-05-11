@@ -31,6 +31,11 @@ namespace rythe::core
 
     engine& program::add_engine_instance()
     {
-        return *m_engines.emplace(m_lastIdx, rsl::unique_object<engine>::create_in_place(engine{ m_lastIdx++ }));
+        return *m_engines.emplace(m_lastIdx, rsl::unique_object<engine>::create_in_place(engine{ ++m_lastIdx }));
+    }
+
+    engine& program::get_engine_instance(rsl::id_type id)
+    {
+        return *m_engines.at(id);
     }
 } // namespace rythe::core

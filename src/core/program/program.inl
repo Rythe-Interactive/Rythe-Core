@@ -17,6 +17,11 @@ namespace rythe::core
         get_instance().stop();
     }
 
+    inline engine& this_program::get_engine_instance(rsl::id_type id)
+    {
+        return get_instance().get_engine_instance(id);
+    }
+
     inline rsl::type_map& program::get_context() noexcept
     {
         return m_context;

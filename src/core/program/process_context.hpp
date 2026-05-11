@@ -99,6 +99,12 @@ namespace rythe::core
         template <component_type ComponentType>
         [[nodiscard]] const ComponentType& read(entity ent);
 
+        template <component_api_type ComponentTypeOne, component_api_type ComponentTypeTwo, component_api_type... ComponentTypeOthers>
+        [[nodiscard]] architype_tuple_t<const architype<ComponentTypeOne, ComponentTypeTwo, ComponentTypeOthers...>> read();
+
+        template <component_api_type ComponentTypeOne, component_api_type ComponentTypeTwo, component_api_type... ComponentTypeOthers>
+        [[nodiscard]] architype_tuple_t<const architype<ComponentTypeOne, ComponentTypeTwo, ComponentTypeOthers...>> read(entity ent);
+
         template <architype_type Architype>
         [[nodiscard]] architype_tuple_t<const Architype> read();
 
@@ -110,6 +116,18 @@ namespace rythe::core
 
         template <component_type ComponentType>
         [[nodiscard]] ComponentType& write(entity ent);
+
+        template <component_api_type ComponentTypeOne, component_api_type ComponentTypeTwo, component_api_type... ComponentTypeOthers>
+        [[nodiscard]] architype_tuple_t<architype<ComponentTypeOne, ComponentTypeTwo, ComponentTypeOthers...>> write();
+
+        template <component_api_type ComponentTypeOne, component_api_type ComponentTypeTwo, component_api_type... ComponentTypeOthers>
+        [[nodiscard]] architype_tuple_t<architype<ComponentTypeOne, ComponentTypeTwo, ComponentTypeOthers...>> write(entity ent);
+
+        template <architype_type Architype>
+        [[nodiscard]] architype_tuple_t<Architype> write();
+
+        template <architype_type Architype>
+        [[nodiscard]] architype_tuple_t<Architype> write(entity ent);
 
         template <component_type ComponentType>
         ComponentType& add_component(ComponentType&& = {});

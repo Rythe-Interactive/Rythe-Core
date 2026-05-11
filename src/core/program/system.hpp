@@ -32,8 +32,6 @@ namespace rythe::core
         process_hook_type type;
     };
 
-    class system_context;
-
     class process_chain_builder
     {
     public:
@@ -56,13 +54,15 @@ namespace rythe::core
         [[rythe_always_inline]] process_chain_builder& add_sequential_process(ProcessImplType&& func);
 
     private:
+        friend class process_graph;
+
         process_hook_handle m_hook;
         rsl::time_span m_interval = rsl::time_span::zero;
         rsl::dynamic_array<process_function> m_processes;
-        rsl::pointer<system_context> m_context;
+        rsl::pointer<process_graph> m_processGraph;
     };
 
-    class system_context
+    class process_graph
     {
     public:
         [[nodiscard]] process_chain_builder create_process_chain(rsl::string_view processChainName);
@@ -73,13 +73,7 @@ namespace rythe::core
         friend class process_chain_builder; 
     };
 
-    class system_registrar
-    {
-    public:
-        system_registrar(rsl::result<void> (*system_name)(rythe::core::system_context&), rsl::string_view systemName);
-    };
-
-    struct [[rsl_reflect(rsl::custom_attribute, rsl::restrict_function_signature(rsl::result<void>(rythe::core::system_context&)))]] system_function {};
+    struct [[rsl_reflect(rsl::custom_attribute, rsl::restrict_function_signature(rsl::result<void>(rythe::core::process_graph&)))]] system_function {};
 
 } // namespace rythe::core
 

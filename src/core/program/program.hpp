@@ -21,6 +21,8 @@ namespace rythe::core
 
         [[rythe_always_inline]] static void stop() noexcept;
 
+        [[nodiscard]] [[rythe_always_inline]] static engine& get_engine_instance(rsl::id_type id);
+
         static program& get_instance();
     };
 
@@ -38,6 +40,8 @@ namespace rythe::core
         [[rythe_always_inline]] void stop();
 
         engine& add_engine_instance();
+
+        engine& get_engine_instance(rsl::id_type id);
 
     private:
         rsl::dynamic_map<rsl::id_type, rsl::unique_object<engine>> m_engines;
