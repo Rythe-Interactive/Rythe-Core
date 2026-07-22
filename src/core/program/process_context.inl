@@ -3,14 +3,6 @@
 
 namespace rythe::core
 {
-    template <rsl::function_ptr ProcessImplType>
-    process_context_type<ProcessImplType> untyped_process_context::get_context() noexcept
-    {
-        process_context_type<ProcessImplType> result;
-        result.m_context = { this };
-        return result;
-    }
-
     template <process_action_type... Actions>
     template <component_type ComponentType>
     const ComponentType& process_context<Actions...>::read()
@@ -173,9 +165,18 @@ namespace rythe::core
         return false;
     }
 
-    template <rsl::function_ptr ProcessImplType>
+    template <process_function_type ProcessImplType>
+    process_context_type<ProcessImplType> untyped_process_context::get_context() noexcept
+    {
+        process_context_type<ProcessImplType> result;
+        result.m_context = { this };
+        return result;
+    }
+
+    template <process_function_type ProcessImplType>
     process_function::process_function(process_type type, ProcessImplType impl)
         : type(type),
           func([&](untyped_process_context ctx) { impl(ctx.get_context<ProcessImplType>()); })
-    {}
+    {
+    }
 }

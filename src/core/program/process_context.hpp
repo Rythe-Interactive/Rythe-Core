@@ -1,5 +1,8 @@
 #pragma once
 
+#include "rsl/delegate"
+#include "rsl/time"
+
 #include "component.hpp"
 
 namespace rythe::core
@@ -23,40 +26,6 @@ namespace rythe::core
     template<typename T>
     concept process_action_type = rsl::specialization_of<T, reads> || rsl::specialization_of<T, writes> ||
             rsl::specialization_of<T, emits> || rsl::specialization_of<T, destroys>;
-
-    template <typename Func>
-    struct process_func_info;
-
-    template <typename A>
-    struct process_func_info<void (*)(A)>
-    {
-        using context_type = rsl::remove_cvr_t<A>;
-        using function_ptr_type = void (*)(A);
-    };
-
-    template <typename F, typename A>
-    struct process_func_info<void (F::*)(A) const>
-    {
-        using context_type = rsl::remove_cvr_t<A>;
-        using function_ptr_type = void (*)(A);
-    };
-
-    template <typename Func>
-    struct process_func_info : process_func_info<decltype(&Func::operator())>
-    {};
-
-    template <typename Func>
-    using process_context_type = process_func_info<Func>::context_type;
-
-    template <process_action_type...>
-    class process_context;
-
-    class untyped_process_context
-    {
-    public:
-        template <rsl::function_ptr ProcessImplType>
-        [[nodiscard]] [[rythe_always_inline]] process_context_type<ProcessImplType> get_context() noexcept;
-    };
 
     namespace internal
     {
@@ -145,9 +114,43 @@ namespace rythe::core
         rsl::time_span time;
 
     private:
-        rsl::pointer<untyped_process_context> m_context;
-
         friend class untyped_process_context;
+
+        rsl::pointer<untyped_process_context> m_context;
+    };
+    
+    template <typename T>
+    struct process_func_info;
+
+    template <typename A>
+    struct process_func_info<void (*)(A)>
+    {
+        using context_type = rsl::remove_cvr_t<A>;
+        using function_ptr_type = void (*)(A);
+    };
+
+    template <typename F, typename A>
+    struct process_func_info<void (F::*)(A) const>
+    {
+        using context_type = rsl::remove_cvr_t<A>;
+        using function_ptr_type = void (*)(A);
+    };
+
+    template <rsl::functor Func>
+    struct process_func_info<Func> : process_func_info<decltype(&Func::operator())>
+    {};
+
+    template <typename Func>
+    using process_context_type = process_func_info<rsl::remove_cvr_t<Func>>::context_type;
+
+    template <typename Func>
+    concept process_function_type = rsl::specialization_of<process_context_type<Func>, process_context>;
+
+    class untyped_process_context
+    {
+    public:
+        template <process_function_type ProcessImplType>
+        [[nodiscard]] [[rythe_always_inline]] process_context_type<ProcessImplType> get_context() noexcept;
     };
 
     enum struct [[rythe_closed_enum]] process_type
@@ -160,7 +163,7 @@ namespace rythe::core
     {
         process_function() = default;
 
-        template <rsl::function_ptr ProcessImplType>
+        template <process_function_type ProcessImplType>
         [[rythe_always_inline]] process_function(process_type type, ProcessImplType impl);
 
         process_type type;

@@ -5,7 +5,7 @@
 namespace rythe::core
 {
     process_hook_builder::process_hook_builder(process_hook_builder&& src) noexcept
-        : m_value(rsl::move(src.m_value)), m_index(src.m_index), m_processChainBuilder(rsl::move(src.m_processChainBuilder)), m_processGraph(src.m_processGraph)
+        : m_index(src.m_index), m_processChainBuilder(rsl::move(src.m_processChainBuilder)), m_processGraph(src.m_processGraph)
     {
         src.m_index = rsl::npos;
     }
@@ -17,34 +17,156 @@ namespace rythe::core
         return *this;
     }
 
-    process_hook_builder::~process_hook_builder()
+    process_hook_builder& process_hook_builder::after(const process_chain_handle handle)
     {
-        if (is_valid())
-        {
-            m_processChainBuilder->submit(rsl::move(*this));
-        }
+        m_processChainBuilder->get_process_hook(m_index)->requirements.emplace_back(
+                process_hook_requirement{ .chain = handle, .type = process_hook_requirement_type::after });
+        return *this;
     }
 
-    process_chain_builder::~process_chain_builder()
+    process_hook_builder& process_hook_builder::after(const rsl::string_view processChainName)
     {
-        if (m_currentHookBuilder.is_valid())
-        {
-            submit(rsl::move(m_currentHookBuilder));
-        }
-        m_processGraph->submit(rsl::move(*this));
+        m_processChainBuilder->get_process_hook(m_index)->requirements.emplace_back(process_hook_requirement{
+                .chain = m_processGraph->get_process_chain(processChainName),
+                                                                     .type = process_hook_requirement_type::after });
+        return *this;
     }
 
-    void process_chain_builder::submit(process_hook_builder&& hook) noexcept
+    process_hook_builder& process_hook_builder::before(const process_chain_handle handle)
     {
-        m_value.hooks[hook.m_index] = rsl::move(hook.m_value);
-        hook.m_index = rsl::npos;
+        m_processChainBuilder->get_process_hook(m_index)->requirements.emplace_back(
+                process_hook_requirement{ .chain = handle, .type = process_hook_requirement_type::before });
+        return *this;
     }
+
+    process_hook_builder& process_hook_builder::before(const rsl::string_view processChainName)
+    {
+        m_processChainBuilder->get_process_hook(m_index)->requirements.emplace_back(process_hook_requirement{
+                .chain = m_processGraph->get_process_chain(processChainName),
+                                                                     .type = process_hook_requirement_type::before });
+        return *this;
+    }
+
+    process_hook_builder& process_hook_builder::dont_overlap(const process_chain_handle handle)
+    {
+        m_processChainBuilder->get_process_hook(m_index)->requirements.emplace_back(
+                process_hook_requirement{ .chain = handle, .type = process_hook_requirement_type::no_overlap });
+        return *this;
+    }
+
+    process_hook_builder& process_hook_builder::dont_overlap(const rsl::string_view processChainName)
+    {
+        m_processChainBuilder->get_process_hook(m_index)->requirements.emplace_back(process_hook_requirement{
+                .chain = m_processGraph->get_process_chain(processChainName),
+                                                                     .type = process_hook_requirement_type::no_overlap });
+        return *this;
+    }
+
+    process_hook_builder& process_hook_builder::interval(const rsl::time_span timeSpan) noexcept
+    {
+        m_processChainBuilder->get_process_hook(m_index)->interval = timeSpan;
+        return *this;
+    }
+
+    process_hook_builder::process_hook_builder(
+            const rsl::size_type index,
+            const rsl::pointer<process_graph_builder> processGraph,
+            const rsl::pointer<process_chain_builder> processChainBuilder) noexcept
+        : m_index(index),
+          m_processChainBuilder(processChainBuilder),
+          m_processGraph(processGraph)
+    {}
+
+    bool process_hook_builder::is_valid() const noexcept
+    {
+        return m_index != rsl::npos;
+    }
+
+    process_chain_builder& process_chain_builder::add_hook()
+    {
+        rsl::pointer<process_chain> processChain = m_processGraph->get_process_chain(m_handle);
+        m_currentHookBuilder = process_hook_builder(processChain->hooks.size(), m_processGraph, { this });
+        processChain->hooks.emplace_back();
+        return *this;
+    }
+
+    process_chain_builder& process_chain_builder::after(const process_chain_handle handle)
+    {
+        validate_hook_builder();
+        m_currentHookBuilder.after(handle);
+        return *this;
+    }
+
+    process_chain_builder& process_chain_builder::after(const rsl::string_view processChainName)
+    {
+        validate_hook_builder();
+        m_currentHookBuilder.after(processChainName);
+        return *this;
+    }
+
+    process_chain_builder& process_chain_builder::before(const process_chain_handle handle)
+    {
+        validate_hook_builder();
+        m_currentHookBuilder.before(handle);
+        return *this;
+    }
+
+    process_chain_builder& process_chain_builder::before(const rsl::string_view processChainName)
+    {
+        validate_hook_builder();
+        m_currentHookBuilder.before(processChainName);
+        return *this;
+    }
+
+    process_chain_builder& process_chain_builder::dont_overlap(const process_chain_handle handle)
+    {
+        validate_hook_builder();
+        m_currentHookBuilder.dont_overlap(handle);
+        return *this;
+    }
+
+    process_chain_builder& process_chain_builder::dont_overlap(const rsl::string_view processChainName)
+    {
+        validate_hook_builder();
+        m_currentHookBuilder.dont_overlap(processChainName);
+        return *this;
+    }
+
+    process_chain_builder& process_chain_builder::interval(const rsl::time_span timeSpan) noexcept
+    {
+        validate_hook_builder();
+        m_currentHookBuilder.interval(timeSpan);
+        return *this;
+    }
+
+    void process_chain_builder::validate_hook_builder()
+    {
+        if (!m_currentHookBuilder.is_valid()) { add_hook(); }
+    }
+
+    rsl::pointer<process_hook> process_chain_builder::get_process_hook(const size_t index)
+    {
+        return { &m_processGraph->get_process_chain(m_handle)->hooks[index] };
+    }
+
+    process_chain_builder::process_chain_builder(
+            const process_chain_handle handle,
+            const rsl::pointer<process_graph_builder> processGraph) noexcept
+        : m_currentHookBuilder(),
+          m_handle(handle),
+          m_processGraph(processGraph)
+    {}
 
     process_chain_builder process_graph_builder::create_process_chain(const rsl::string_view processChainName)
     {
-        [[maybe_unused]] process_chain_handle handle = create_process_chain_impl(processChainName);
+        process_chain_handle handle = create_process_chain_impl(processChainName);
         rsl_assert_msg_rarely(!process_chain_exists(handle), "Duplicate process chain creation requests.");
-        return process_chain_builder(processChainName, { this });
+        return process_chain_builder(handle, { this });
+    }
+
+    process_chain_builder process_graph_builder::create_process_chain(const rsl::source_location anonymousLoc)
+    {
+        return create_process_chain(rsl::format("{}:{},{}", anonymousLoc.file_name(), anonymousLoc.line(), anonymousLoc.column()));
     }
 
     process_chain_handle process_graph_builder::get_process_chain(const rsl::string_view processChainName)
@@ -101,6 +223,10 @@ namespace rythe::core
                             requirementType = "construct";
                             requirementValue = requirement.componentType;
                             break;
+                        case process_hook_requirement_type::no_overlap:
+                            requirementType = "no_overlap";
+                            requirementValue = static_cast<rsl::id_type>(requirement.chain);
+                            break;
                     }
 
                     rsl::log::debug("\t\t\t{}: {}", requirementType, requirementValue);
@@ -115,6 +241,16 @@ namespace rythe::core
         }
     }
 
+    rsl::pointer<process_chain> process_graph_builder::get_process_chain(process_chain_handle handle)
+    {
+        const rsl::size_type index = static_cast<rsl::size_type>(handle);
+        if (index > m_chains.size())
+        {
+            return { nullptr };
+        }
+        return { &m_chains[index] };
+    }
+
     process_chain_handle process_graph_builder::create_process_chain_impl(const rsl::string_view processChainName)
     {
         rsl_assert_invalid_operation(!processChainName.empty());
@@ -127,12 +263,5 @@ namespace rythe::core
         }
 
         return handle;
-    }
-
-    void process_graph_builder::submit(process_chain_builder&& processChain) noexcept
-    {
-        process_chain_handle* handle = m_chainMap.find(processChain.m_value.name);
-        rsl_assert_invalid_operation(handle != nullptr);
-        m_chains[static_cast<size_t>(*handle)] = rsl::move(processChain.m_value);
     }
 }

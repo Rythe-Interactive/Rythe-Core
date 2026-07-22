@@ -48,6 +48,7 @@ namespace rythe::core
         rsl::id_type m_engineId = 0;
         rsl::allocator_storage m_allocator = { nullptr };
         rsl::type_map m_context;
+        rsl::time_span m_lastUpdateTime = rsl::time_span::zero;
     };
 }
 

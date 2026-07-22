@@ -45,7 +45,7 @@ namespace rythe::core
         template <typename T>
         T* try_cast() noexcept
         {
-            return const_cast<T*>(rsl::as_const(*this).template try_cast<T>());
+            return const_cast<T*>(rsl::as_const(*this).try_cast<T>());
         }
 
         template <typename T>
@@ -59,7 +59,7 @@ namespace rythe::core
         template <typename T>
         T& cast()
         {
-            return const_cast<T&>(rsl::as_const(*this).template cast<T>());
+            return const_cast<T&>(rsl::as_const(*this).cast<T>());
         }
     };
 

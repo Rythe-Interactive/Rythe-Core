@@ -23,8 +23,11 @@ namespace rythe::core
     void engine::update()
     {
         using namespace rsl::literals;
+        const rsl::time_span elapsedTime = rsl::main_clock.elapsed_time();
+        const rsl::time_span deltaTime = m_lastUpdateTime == rsl::time_span::zero ? rsl::time_span::zero : elapsedTime - m_lastUpdateTime;
+        m_lastUpdateTime = elapsedTime;
 
-        rsl::log::debug("Engine[{}] Update", m_engineId);
+        rsl::log::debug("Engine[{}] Update: {}", m_engineId, deltaTime.milliseconds());
 
         rsl::current_thread::sleep_for(1_s);
 

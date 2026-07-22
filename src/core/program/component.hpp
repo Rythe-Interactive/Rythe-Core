@@ -1,6 +1,6 @@
 #pragma once
-#include <rsl/utilities>
 #include <rsl/tuple>
+#include <rsl/utilities>
 
 namespace rythe::core
 {
@@ -58,7 +58,7 @@ namespace rythe::core
 
         template <typename T>
         struct _architype_component_sequence;
-                
+
         template <typename T>
         using _architype_component_sequence_t = typename _architype_component_sequence<T>::type;
 

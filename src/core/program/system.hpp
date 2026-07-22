@@ -9,7 +9,7 @@
 
 namespace rythe::core
 {
-    RYTHE_DECLARE_OPAQUE_HANDLE(process_chain_handle)
+    RYTHE_DECLARE_OPAQUE_HANDLE_UNDERLYING_TYPE_INVALID_VALUE(process_chain_handle, rsl::size_type, rsl::npos)
 
     enum struct [[rythe_closed_enum]] process_hook_requirement_type
     {
@@ -17,6 +17,7 @@ namespace rythe::core
         after,
         destroy,
         construct,
+        no_overlap,
     };
 
     struct process_hook_requirement
@@ -41,30 +42,30 @@ namespace rythe::core
     public:
         process_hook_builder(process_hook_builder&&) noexcept;
         process_hook_builder& operator=(process_hook_builder&& src) noexcept;
-        ~process_hook_builder();
 
-        [[rythe_always_inline]] process_hook_builder& after(process_chain_handle handle);
-        [[rythe_always_inline]] process_hook_builder& after(rsl::string_view processChainName);
-        [[rythe_always_inline]] process_hook_builder& before(process_chain_handle handle);
-        [[rythe_always_inline]] process_hook_builder& before(rsl::string_view processChainName);
+        process_hook_builder& after(process_chain_handle handle);
+        process_hook_builder& after(rsl::string_view processChainName);
+        process_hook_builder& before(process_chain_handle handle);
+        process_hook_builder& before(rsl::string_view processChainName);
+        process_hook_builder& dont_overlap(process_chain_handle handle);
+        process_hook_builder& dont_overlap(rsl::string_view processChainName);
 
         template <component_type ComponentType>
-        [[rythe_always_inline]] process_hook_builder& on_create();
+        process_hook_builder& on_create();
         template <component_type ComponentType>
-        [[rythe_always_inline]] process_hook_builder& on_destroy();
+        process_hook_builder& on_destroy();
 
-        [[rythe_always_inline]] process_hook_builder& interval(rsl::time_span timeSpan) noexcept;
+        process_hook_builder& interval(rsl::time_span timeSpan) noexcept;
 
     private:
         friend class process_graph_builder;
         friend class process_chain_builder;
 
-        [[rythe_always_inline]] process_hook_builder() noexcept = default;
-        [[rythe_always_inline]] process_hook_builder(rsl::size_type index, rsl::pointer<process_graph_builder> processGraph, rsl::pointer<process_chain_builder> processChainBuilder) noexcept;
+        process_hook_builder() noexcept = default;
+        process_hook_builder(rsl::size_type index, rsl::pointer<process_graph_builder> processGraph, rsl::pointer<process_chain_builder> processChainBuilder) noexcept;
 
-        [[rythe_always_inline]] bool is_valid() const noexcept;
+        bool is_valid() const noexcept;
 
-        process_hook m_value;
         rsl::size_type m_index = rsl::npos;
         rsl::pointer<process_chain_builder> m_processChainBuilder;
         rsl::pointer<process_graph_builder> m_processGraph;
@@ -81,40 +82,39 @@ namespace rythe::core
     {
     public:
         process_chain_builder(process_chain_builder&&) noexcept = default;
-        ~process_chain_builder();
 
-        [[rythe_always_inline]] process_chain_builder& add_hook();
+        process_chain_builder& add_hook();
 
-        [[rythe_always_inline]] process_chain_builder& after(process_chain_handle handle);
-        [[rythe_always_inline]] process_chain_builder& after(rsl::string_view processChainName);
-        [[rythe_always_inline]] process_chain_builder& before(process_chain_handle handle);
-        [[rythe_always_inline]] process_chain_builder& before(rsl::string_view processChainName);
+        process_chain_builder& after(process_chain_handle handle);
+        process_chain_builder& after(rsl::string_view processChainName);
+        process_chain_builder& before(process_chain_handle handle);
+        process_chain_builder& before(rsl::string_view processChainName);
+        process_chain_builder& dont_overlap(process_chain_handle handle);
+        process_chain_builder& dont_overlap(rsl::string_view processChainName);
 
         template <component_type ComponentType>
-        [[rythe_always_inline]] process_chain_builder& on_create();
+        process_chain_builder& on_create();
         template <component_type ComponentType>
-        [[rythe_always_inline]] process_chain_builder& on_destroy();
+        process_chain_builder& on_destroy();
 
-        [[rythe_always_inline]] process_chain_builder& interval(rsl::time_span timeSpan) noexcept;
+        process_chain_builder& interval(rsl::time_span timeSpan) noexcept;
 
-        template <typename ProcessImplType>
-        [[rythe_always_inline]] process_chain_builder& add_parallel_process(ProcessImplType&& func);
+        template <process_function_type ProcessImplType>
+        process_chain_builder& add_parallel_process(ProcessImplType&& func);
 
-        template <typename ProcessImplType>
-        [[rythe_always_inline]] process_chain_builder& add_sequential_process(ProcessImplType&& func);
+        template <process_function_type ProcessImplType>
+        process_chain_builder& add_sequential_process(ProcessImplType&& func);
 
     private:
         friend class process_graph_builder;
         friend class process_hook_builder;
 
-        [[rythe_always_inline]] void validate_hook_builder();
-
-        void submit(process_hook_builder&& hook) noexcept;
-
-        [[rythe_always_inline]] process_chain_builder(rsl::string_view name, rsl::pointer<process_graph_builder> processGraph) noexcept;
+        void validate_hook_builder();
+        rsl::pointer<process_hook> get_process_hook(size_t index);
+        process_chain_builder(process_chain_handle handle, rsl::pointer<process_graph_builder> processGraph) noexcept;
 
         process_hook_builder m_currentHookBuilder;
-        process_chain m_value;
+        process_chain_handle m_handle;
         rsl::pointer<process_graph_builder> m_processGraph;
     };
 
@@ -122,6 +122,7 @@ namespace rythe::core
     {
     public:
         [[nodiscard]] process_chain_builder create_process_chain(rsl::string_view processChainName);
+        [[nodiscard]] process_chain_builder create_process_chain(rsl::source_location anonymousLoc = rsl::source_location::current()); // anonymous chain
         [[nodiscard]] process_chain_handle get_process_chain(rsl::string_view processChainName);
         [[nodiscard]] bool process_chain_exists(rsl::string_view processChainName) const noexcept;
         [[nodiscard]] bool process_chain_exists(process_chain_handle handle) const noexcept;
@@ -130,11 +131,16 @@ namespace rythe::core
     private:
         friend class process_chain_builder;
 
+        rsl::pointer<process_chain> get_process_chain(process_chain_handle handle);
         process_chain_handle create_process_chain_impl(rsl::string_view processChainName);
-        void submit(process_chain_builder&& processChain) noexcept;
 
         rsl::dynamic_map<rsl::dynamic_string, process_chain_handle> m_chainMap;
         rsl::dynamic_array<process_chain> m_chains;
+    };
+
+    class process_graph
+    {
+
     };
 
     struct [[rsl_reflect(rsl::custom_attribute, rsl::restrict_function_signature(rsl::result<void>(rythe::core::process_graph_builder&)))]] system_function {};
