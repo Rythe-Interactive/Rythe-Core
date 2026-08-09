@@ -1,4 +1,5 @@
 local project = {
+    namespace = "core",
     additional_types = { "test", "editor" },
     dependencies = {
         "public rythe/rythe-standard-library",
