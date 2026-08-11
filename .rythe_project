@@ -8,7 +8,8 @@ local project = {
         "public third_party/tinyobj:header-only",
         "public third_party/semver:header-only"
     },
-    defines = { "RYTHE_INTERNAL" }
+    defines = { "RYTHE_INTERNAL" },
+    pch_auto_generate = true
 }
 
 return project
