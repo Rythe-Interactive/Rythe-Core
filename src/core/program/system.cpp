@@ -253,7 +253,7 @@ namespace rythe::core
 
     process_chain_handle process_graph_builder::create_process_chain_impl(const rsl::string_view processChainName)
     {
-        rsl_assert_invalid_operation(!processChainName.empty());
+        rsl_assert_invalid_operation(!processChainName.is_empty());
         auto [handle, newItem] = m_chainMap.try_emplace(processChainName);
 
         if (newItem)
