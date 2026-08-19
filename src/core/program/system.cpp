@@ -188,7 +188,7 @@ namespace rythe::core
     bool process_graph_builder::process_chain_exists(process_chain_handle handle) const noexcept
     {
         const process_chain& chain = m_chains[static_cast<size_t>(handle)];
-        return !chain.hooks.empty() && !chain.processes.empty();
+        return !chain.hooks.is_empty() && !chain.processes.is_empty();
     }
 
     void process_graph_builder::print()
