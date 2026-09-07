@@ -160,7 +160,7 @@ namespace rythe::core
     process_chain_builder process_graph_builder::create_process_chain(const rsl::string_view processChainName)
     {
         process_chain_handle handle = create_process_chain_impl(processChainName);
-        rsl_assert_msg_rarely(!process_chain_exists(handle), "Duplicate process chain creation requests.");
+        rsl_assert_msg_low_impact(!process_chain_exists(handle), "Duplicate process chain creation requests.");
         return process_chain_builder(handle, { this });
     }
 
